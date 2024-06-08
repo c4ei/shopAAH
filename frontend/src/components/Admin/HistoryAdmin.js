@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getListHistoryUser } from "../../services/API/historyApi";
 import io from "socket.io-client";
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:3021");
 
 export default function HistoryAdmin() {
   const dispatch = useDispatch();
@@ -14,9 +14,9 @@ export default function HistoryAdmin() {
   }, []);
 
   useEffect(() => {
-    //Nhận dữ liệu từ server gửi lên thông qua socket với key receive_order
+    //receive_order 키를 사용하여 소켓을 통해 서버에서 보낸 데이터를 수신합니다.
     socket.on("receive_order", (data) => {
-      setText("User ID: " + data + " Vừa Đặt Hàng");
+      setText("User ID: " + data + " AAH");
 
       setTimeout(() => {
         window.location.reload();

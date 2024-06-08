@@ -1,3 +1,7 @@
+/backend/public
+/frontend/build
+/backend/config/config.json
+*.txt
 # Logs
 logs
 *.log

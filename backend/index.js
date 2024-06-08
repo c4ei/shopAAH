@@ -13,20 +13,18 @@ dotenv.config();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3021",
     credentials: true,
   })
 );
 
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3021",
     credentials: true,
   },
 });
 
-const publicPathDirectory = path.join(__dirname, "public");
-app.use(express.static(publicPathDirectory));
 
 app.use(cookieParser());
 app.use(express.json());
@@ -64,7 +62,19 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 8000;
+const publicPathDirectory = path.join(__dirname, "public");
+app.use(express.static(publicPathDirectory));
+
+app.get('/', function(req,resp){
+  resp.sendFile( path.join(__dirname, 'public/index.html') )
+}) 
+//이 코드는 항상 가장 하단에 놓아야 잘됩니다. 
+app.get('*', function (req, resp) {
+  resp.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
+
+const PORT = process.env.PORT || 3021;
 
 httpServer.listen(PORT, () => {
   console.log(`App is running on port: ${PORT}`);

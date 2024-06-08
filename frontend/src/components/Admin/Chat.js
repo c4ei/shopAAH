@@ -6,7 +6,7 @@ import { createMessage, getListMessage } from "../../services/API/messengerApi";
 import queryString from "query-string";
 import { getListUser } from "../../services/API/userApi";
 import moment from "moment";
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:3021");
 
 export default function Chat() {
   const [load, setLoad] = useState(false);
