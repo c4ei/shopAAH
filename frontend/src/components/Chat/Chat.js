@@ -5,7 +5,7 @@ import io from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import queryString from "query-string";
 import moment from "moment";
-const socket = io.connect("http://localhost:3021");
+const socket = io.connect("https://shop.c4ei.net");
 
 export default function Chat() {
   const [activeChat, setActiveChat] = useState(false);

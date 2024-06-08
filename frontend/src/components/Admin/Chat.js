@@ -6,7 +6,7 @@ import { createMessage, getListMessage } from "../../services/API/messengerApi";
 import queryString from "query-string";
 import { getListUser } from "../../services/API/userApi";
 import moment from "moment";
-const socket = io("http://localhost:3021");
+const socket = io("https://shop.c4ei.net");
 
 export default function Chat() {
   const [load, setLoad] = useState(false);

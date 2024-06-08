@@ -13,14 +13,14 @@ dotenv.config();
 
 app.use(
   cors({
-    origin: "http://localhost:3021",
+    origin: "https://shop.c4ei.net",
     credentials: true,
   })
 );
 
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "http://localhost:3021",
+    origin: "https://shop.c4ei.net",
     credentials: true,
   },
 });

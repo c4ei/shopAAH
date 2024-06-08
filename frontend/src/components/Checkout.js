@@ -7,7 +7,7 @@ import { checkoutProduct, sendMailCheckout } from "../services/API/checkoutApi";
 import "../css/checkout.css";
 import { createHistoryUser } from "../services/API/historyApi";
 import io from "socket.io-client";
-const socket = io("http://localhost:3021");
+const socket = io("https://shop.c4ei.net");
 
 export default function Checkout() {
   const { carts, cartTotalPrice } = useSelector((state) => state.cart);
