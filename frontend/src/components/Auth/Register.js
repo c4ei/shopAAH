@@ -30,7 +30,7 @@ export default function Register() {
         .max(32, "Must be 6-32 letters"),
       phone: Yup.string()
         .required("(*) Phone is not empty")
-        .matches(/^\d{10}$/, "Number phone is invalid"),
+        .matches(/^\d{11}$/, "Number phone is invalid"),
     }),
     onSubmit: async (value) => {
       await registerUser(dispatch, navigate, value);
@@ -51,6 +51,8 @@ export default function Register() {
                 type="text"
                 placeholder="Full Name"
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.fullname}
               />
               {formik.errors.fullname && formik.touched.fullname ? (
                 <div className="text-danger">{formik.errors.fullname}</div>
@@ -64,6 +66,8 @@ export default function Register() {
                 placeholder="Email"
                 name="email"
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.email}
               />
               {formik.errors.email && formik.touched.email ? (
                 <div className="text-danger">{formik.errors.email}</div>
@@ -77,6 +81,8 @@ export default function Register() {
                 placeholder="Password"
                 name="password"
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.password}
               />
               {formik.errors.password && formik.touched.password ? (
                 <div className="text-danger">{formik.errors.password}</div>
@@ -90,6 +96,8 @@ export default function Register() {
                 placeholder="Phone"
                 name="phone"
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.phone}
               />
               {formik.errors.phone && formik.touched.phone ? (
                 <div className="text-danger">{formik.errors.phone}</div>
