@@ -11,7 +11,7 @@ emailRouter.post("/", [authenticate], async (req, res) => {
 
   const user = req.user;
 
-  const subject = "Hóa Đơn Đặt Hàng";
+  const subject = "AAH MALL";
   const status = false;
 
   const cartsUser = await getCartByUser(user.id);

@@ -60,7 +60,7 @@ export default function Products({ productPanigation, sort }) {
             <h6>
               <a className="reset-anchor">{item.name}</a>
             </h6>
-            <p className="small text-muted">${item.price}</p>
+            <p className="small text-muted">₩{item.price}</p>
           </div>
         </div>
       ))}

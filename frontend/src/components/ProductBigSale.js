@@ -78,7 +78,7 @@ export default function ProductBigSale({ productDiscount }) {
                   </a>
                 </h6>
                 <p className="small text-muted font-weight-bold">
-                  ${item.price} -{" "}
+                  ₩{item.price} -{" "}
                   <span className="bg-warning">{item.promotionPercent}%</span>
                 </p>
               </div>

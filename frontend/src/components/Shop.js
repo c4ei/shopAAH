@@ -176,7 +176,7 @@ export default function Shop() {
                       </ul>
                       <h2 className="h4">{item.name}</h2>
                       <p className="text-muted font-weight-bold">
-                        ${item.price}
+                        ₩{item.price}
                       </p>
                       <p className="text-small mb-4">{item.description}</p>
                       <div className="row align-items-stretch mb-4">

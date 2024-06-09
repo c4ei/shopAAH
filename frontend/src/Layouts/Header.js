@@ -30,7 +30,7 @@ export default function Header() {
       <nav className="navbar navbar-expand-lg navbar-light py-3 px-lg-0">
         <NavLink to="/" className="navbar-brand">
           <span className="font-weight-bold text-uppercase text-dark">
-            Boutique
+            AAH SHOP
           </span>
         </NavLink>
         <button

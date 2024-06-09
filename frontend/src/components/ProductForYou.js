@@ -81,7 +81,7 @@ export default function ProductForYou({ listProduct }) {
                       <p className="d-block"> {item.name}</p>
                     </a>
                   </h6>
-                  <p className="small text-muted">${item.price}</p>
+                  <p className="small text-muted">₩{item.price}</p>
                 </div>
               </div>
             </div>
