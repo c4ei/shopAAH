@@ -13,6 +13,18 @@ const addProduct = async (data) => {
 const getListProduct = async () => {
   try {
     const listProduct = await Product.findAll();
+    // const listProduct = await Product.findAll({limit: 100});
+    return listProduct;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getListProduct10 = async () => {
+  try {
+    const listProduct = await Product.findAll({
+      limit: 10
+    });
     return listProduct;
   } catch (err) {
     console.log(err);
@@ -115,6 +127,7 @@ module.exports = {
   getProductById,
   getProductByCategory,
   getListProduct,
+  getListProduct10,
   panigationProduct,
   deleteProduct,
   updateProduct,

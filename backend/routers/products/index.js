@@ -2,6 +2,7 @@ const express = require("express");
 const {
   addProduct,
   getListProduct,
+  getListProduct10,
   getProductById,
   panigationProduct,
   deleteProduct,
@@ -43,6 +44,52 @@ productRouter.post("/", async (req, res) => {
 
   res.status(200).send(newProduct);
 });
+
+productRouter.get("/main", async (req, res) => {
+  const page = Number.parseInt(req.query.page);
+  const size = Number.parseInt(req.query.size);
+  const keyWordSearch = req.query.search || "";
+  const category = req.query.category || "";
+  let products;
+
+  if (page && size) {
+    let start = (page - 1) * size;
+    let end = page * size;
+
+    if (category === "all") {
+      products = await getListProduct10();
+    } else {
+      products = await getProductByCategory(category);
+    }
+
+    let panigationProducts = products.slice(start, end);
+
+    if (!keyWordSearch) {
+      res.status(200).send(panigationProducts);
+    } else {
+      let newProduct = panigationProducts.filter((value) => {
+        return (
+          value.name.toLowerCase().indexOf(keyWordSearch.toLowerCase()) !== -1
+        );
+      });
+      res.status(200).send(newProduct);
+    }
+  } else if (category || keyWordSearch) {
+    if (category === "all") {
+      products = await getListProduct10();
+    } else {
+      products = await getProductByCategory(category);
+    }
+    res.status(200).send(products);
+  } else {
+    const products = await getListProduct10();
+    if (!products) {
+      return res.status(500).send("Can't get panigation page");
+    }
+    res.status(200).send(products);
+  }
+});
+
 
 productRouter.get("/:id", async (req, res) => {
   const { id } = req.params;

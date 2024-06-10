@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getListProduct } from "../services/API/productApi";
+// import { getListProduct } from "../services/API/productApi";
+import { getListProduct10 } from "../services/API/productApi";
 import ProductBigSale from "../components/ProductBigSale";
 import ProductForYou from "../components/ProductForYou";
 
@@ -13,7 +14,8 @@ export default function Home() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getListProduct(dispatch);
+    // getListProduct(dispatch);
+    getListProduct10(dispatch);
   }, []);
 
   const productDiscount = listProduct?.filter((product) => {
@@ -37,7 +39,7 @@ export default function Home() {
               <div className="row px-4 px-lg-5">
                 <div className="col-lg-6">
                   <p className="text-muted small text-uppercase mb-2">
-                    New Inspiration 2020
+                    New Inspiration 2024
                   </p>
                   <h1 className="h2 text-uppercase mb-3">
                     20% off on new season

@@ -31,6 +31,17 @@ export const getListProduct = async (dispatch, params) => {
   }
 };
 
+export const getListProduct10 = async (dispatch, params) => {
+  dispatch(getProductStart());
+  try {
+    const response = await axios.get(`${DOMAIN}/api/v1/products/main`, { params });
+    dispatch(getProductSuccess(response.data));
+  } catch (err) {
+    dispatch(getProductFailed(err));
+  }
+};
+
+
 export const getListProductPanigation = async (dispatch, params) => {
   dispatch(getProductPanigationStart());
   try {
