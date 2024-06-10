@@ -88,11 +88,11 @@ export default function HistoryAdmin() {
                           <td>{item.total}</td>
                           <td>
                             {item.delivery
-                              ? "Đã Vận Chuyển"
-                              : "Chưa Vận Chuyển"}
+                              ? "배송됨"
+                              : "미배송"}
                           </td>
                           <td>
-                            {item.status ? "Đã Thanh Toán" : "Chưa Thanh Toán"}
+                            {item.status ? "Paid" : "Unpaid"}
                           </td>
                           <td>
                             <a

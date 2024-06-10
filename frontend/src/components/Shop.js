@@ -201,11 +201,11 @@ export default function Shop() {
           <div className="row">
             <div className="col-lg-3 order-2 order-lg-1">
               <h5 className="text-uppercase mb-4">Categories</h5>
-              <div className="py-2 px-4 bg-dark text-white mb-3">
+              {/* <div className="py-2 px-4 bg-dark text-white mb-3">
                 <strong className="small text-uppercase font-weight-bold">
                   Fashion &amp; Acc
                 </strong>
-              </div>
+              </div> */}
               <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
@@ -213,64 +213,104 @@ export default function Shop() {
                     href="#"
                     onClick={() => handleCategory("all")}
                   >
-                    All
+All
                   </a>
                 </li>
               </ul>
-              <div className="py-2 px-4 bg-light mb-3">
-                <strong className="small text-uppercase font-weight-bold">
-                  Fashion Style
-                </strong>
-              </div>
               <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
                     href="#"
-                    onClick={() => handleCategory("clothes")}
+                    onClick={() => handleCategory("68")}
                   >
-                    Clothes
+건강
                   </a>
                 </li>
               </ul>
-              <div className="py-2 px-4 bg-light mb-3">
-                <strong className="small text-uppercase font-weight-bold">
-                  Health &amp; Beauty
-                </strong>
-              </div>
               <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
                     href="#"
-                    onClick={() => handleCategory("shoes")}
+                    onClick={() => handleCategory("72")}
                   >
-                    Shoes
+화장품
                   </a>
                 </li>
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
                     href="#"
-                    onClick={() => handleCategory("watches")}
+                    onClick={() => handleCategory("75")}
                   >
-                    Watches
+                    Watches & ACC
                   </a>
                 </li>
               </ul>
-              <div className="py-2 px-4 bg-light mb-3">
-                <strong className="small text-uppercase font-weight-bold">
-                  Electronics
-                </strong>
-              </div>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal mb-5">
+              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
                     href="#"
-                    onClick={() => handleCategory("electronics")}
+                    onClick={() => handleCategory("69")}
                   >
-                    Accessory
+                    가전
+                  </a>
+                </li>
+              </ul>
+              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
+                <li className="mb-2">
+                  <a
+                    className="reset-anchor"
+                    href="#"
+                    onClick={() => handleCategory("5")}
+                  >
+                    생활
+                  </a>
+                </li>
+              </ul>
+              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
+                <li className="mb-2">
+                  <a
+                    className="reset-anchor"
+                    href="#"
+                    onClick={() => handleCategory("70")}
+                  >
+                    주방
+                  </a>
+                </li>
+              </ul>
+              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
+                <li className="mb-2">
+                  <a
+                    className="reset-anchor"
+                    href="#"
+                    onClick={() => handleCategory("73")}
+                  >
+                    캐리어.잡화
+                  </a>
+                </li>
+              </ul>
+              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
+                <li className="mb-2">
+                  <a
+                    className="reset-anchor"
+                    href="#"
+                    onClick={() => handleCategory("74")}
+                  >
+                    캠핑
+                  </a>
+                </li>
+              </ul>
+              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
+                <li className="mb-2">
+                  <a
+                    className="reset-anchor"
+                    href="#"
+                    onClick={() => handleCategory("76")}
+                  >
+                    건강번들
                   </a>
                 </li>
               </ul>

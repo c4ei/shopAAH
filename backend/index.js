@@ -61,6 +61,52 @@ io.on("connection", (socket) => {
   });
 });
 
+// ###################### subscribe ######################
+const mysql = require('mysql2');
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// MySQL 데이터베이스 연결 설정
+const db = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE
+});
+
+db.connect(err => {
+  if (err) {
+    console.error('MySQL 연결 오류:', err);
+    return;
+  }
+  console.log('MySQL에 성공적으로 연결되었습니다.');
+});
+
+// 이메일 주소를 저장하는 라우트
+app.post('/subscribe', (req, res) => {
+  const email = req.body.email;
+
+  if (!email) {
+    return res.status(400).send('이메일 주소를 입력해 주세요.');
+  }
+
+  const query = 'INSERT INTO subscribers (email) VALUES (?)';
+
+  db.query(query, [email], (err, result) => {
+    if (err) {
+      if (err.code === 'ER_DUP_ENTRY') {
+        // 이미 존재하는 이메일의 경우
+        return res.status(400).send('이미 가입된 이메일 주소입니다.');
+      }
+      console.error('데이터베이스 오류:', err);
+      return res.status(500).send('서버 오류가 발생했습니다.');
+    }
+    res.status(200).send('구독해 주셔서 감사합니다!');
+  });
+});
+// ###################### subscribe ######################
+
 const publicPathDirectory = path.join(__dirname, "public");
 app.use(express.static(publicPathDirectory));
 

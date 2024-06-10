@@ -60,7 +60,7 @@ export default function Home() {
             </div>
             <div className="row">
               <div className="col-md-4 mb-4 mb-md-0">
-                <NavLink className="category-item" to="/shop?category=72">
+                <NavLink className="category-item" to="/shop">
                   <img
                     className="img-fluid"
                     src="/image/cat-img-1.jpg"
@@ -70,7 +70,7 @@ export default function Home() {
                 </NavLink>
               </div>
               <div className="col-md-4 mb-4 mb-md-0">
-                <NavLink className="category-item mb-4" to="/shop?category=70">
+                <NavLink className="category-item mb-4" to="/shop">
                   <img
                     className="img-fluid"
                     src="/image/cat-img-2.jpg"
@@ -78,7 +78,7 @@ export default function Home() {
                   />
                   <strong className="category-item-title">건강번들</strong>
                 </NavLink>
-                <NavLink className="category-item" to="/shop?category=75">
+                <NavLink className="category-item" to="/shop">
                   <img
                     className="img-fluid"
                     src="/image/cat-img-3.jpg"
@@ -94,7 +94,7 @@ export default function Home() {
                     src="/image/cat-img-4.jpg"
                     alt=""
                   />
-                  <strong className="category-item-title">Electronics</strong>
+                  <strong className="category-item-title">가전</strong>
                 </NavLink>
               </div>
             </div>

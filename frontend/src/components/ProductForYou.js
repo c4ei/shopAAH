@@ -35,58 +35,81 @@ export default function ProductForYou({ listProduct }) {
     ],
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const email = event.target.email.value;
+
+    try {
+      const response = await fetch('/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      });
+
+      const message = await response.text();
+      if (response.ok) {
+        alert(message);
+        document.location.href = '/';
+      } else {
+        alert(message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('서버 오류가 발생했습니다. 다시 시도해 주세요.');
+    }
+  };
+
   return (
     <Fragment>
       <Slider {...settings}>
-        {listProduct?.map((item, index) => {
-          return (
-            <div className="shadow " key={index}>
-              <div className="product text-center">
-                <div className="position-relative mb-3">
-                  <div className="badge text-white badge-secondary"></div>
-                  <NavLink className="d-block" to={`/detail/${item.id}`}>
-                    <img
-                      className="img-fluid w-100"
-                      style={{ height: "300px" }}
-                      src={item.img1}
-                      alt={item.img1}
-                    />
-                  </NavLink>
-                  <div className="product-overlay">
-                    <ul className="mb-0 list-inline">
-                      <li className="list-inline-item">
-                        <NavLink
-                          className="btn btn-sm btn-dark"
-                          to={`/detail/${item.id}`}
-                        >
-                          Add to cart
-                        </NavLink>
-                      </li>
-                      <li className="list-inline-item mr-0">
-                        {/* Dùng Modal phải có href để nó hiện ra thằng đó và thuộc tính data-toggle="modal" để mở modal*/}
-                        <a
-                          className="btn btn-sm btn-outline-dark"
-                          href={`#product_${item.id}`}
-                          data-toggle="modal"
-                        >
-                          <i className="fas fa-expand"></i>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="px-3">
-                  <h6>
-                    <a className="reset-anchor" href="detail.html">
-                      <p className="d-block"> {item.good_name}</p>
-                    </a>
-                  </h6>
-                  <p className="small text-muted">₩{item.price}</p>
+        {listProduct?.map((item, index) => (
+          <div className="shadow " key={index}>
+            <div className="product text-center">
+              <div className="position-relative mb-3">
+                <div className="badge text-white badge-secondary"></div>
+                <NavLink className="d-block" to={`/detail/${item.id}`}>
+                  <img
+                    className="img-fluid w-100"
+                    style={{ height: "300px" }}
+                    src={item.img1}
+                    alt={item.img1}
+                  />
+                </NavLink>
+                <div className="product-overlay">
+                  <ul className="mb-0 list-inline">
+                    <li className="list-inline-item">
+                      <NavLink
+                        className="btn btn-sm btn-dark"
+                        to={`/detail/${item.id}`}
+                      >
+                        Add to cart
+                      </NavLink>
+                    </li>
+                    <li className="list-inline-item mr-0">
+                      <a
+                        className="btn btn-sm btn-outline-dark"
+                        href={`#product_${item.id}`}
+                        data-toggle="modal"
+                      >
+                        <i className="fas fa-expand"></i>
+                      </a>
+                    </li>
+                  </ul>
                 </div>
               </div>
+              <div className="px-3">
+                <h6>
+                  <a className="reset-anchor" href="detail.html">
+                    <p className="d-block"> {item.good_name}</p>
+                  </a>
+                </h6>
+                <p className="small text-muted">₩{item.price}</p>
+              </div>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </Slider>
       <div className="py-5">
         <section className="py-5 bg-light">
@@ -101,7 +124,7 @@ export default function ProductForYou({ listProduct }) {
                     <div className="media-body text-left ml-3">
                       <h6 className="text-uppercase mb-1">Free shipping</h6>
                       <p className="text-small mb-0 text-muted">
-                        Free shipping worlwide
+                        Free shipping worldwide
                       </p>
                     </div>
                   </div>
@@ -116,7 +139,7 @@ export default function ProductForYou({ listProduct }) {
                     <div className="media-body text-left ml-3">
                       <h6 className="text-uppercase mb-1">24 x 7 service</h6>
                       <p className="text-small mb-0 text-muted">
-                        Free shipping worlwide
+                        Free shipping worldwide
                       </p>
                     </div>
                   </div>
@@ -131,7 +154,7 @@ export default function ProductForYou({ listProduct }) {
                     <div className="media-body text-left ml-3">
                       <h6 className="text-uppercase mb-1">Festival offer</h6>
                       <p className="text-small mb-0 text-muted">
-                        Free shipping worlwide
+                        Free shipping worldwide
                       </p>
                     </div>
                   </div>
@@ -151,11 +174,13 @@ export default function ProductForYou({ listProduct }) {
               </p>
             </div>
             <div className="col-lg-6">
-              <form action="#">
+              <form onSubmit={handleSubmit}>
                 <div className="input-group flex-column flex-sm-row mb-3">
                   <input
                     className="form-control form-control-lg py-3"
                     type="email"
+                    name="email"
+                    id="email"
                     placeholder="Enter your email address"
                     aria-describedby="button-addon2"
                   />
