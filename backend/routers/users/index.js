@@ -59,6 +59,7 @@ userRouter.post("/login", async (req, res) => {
       fullname: user.fullname,
       email: user.email,
       phone: user.phone,
+      admin: user.admin, // 추가
     });
 
     const refresh = await genrefreshToken({
@@ -66,6 +67,7 @@ userRouter.post("/login", async (req, res) => {
       fullname: user.fullname,
       email: user.email,
       phone: user.phone,
+      admin: user.admin, // 추가
     });
 
     res.cookie("refreshToken", refresh, {
@@ -131,12 +133,14 @@ userRouter.post("/refresh", (req, res) => {
       fullname: user.fullname,
       email: user.email,
       phone: user.phone,
+      admin: user.admin, // 추가
     });
     const newRefreshToken = await genrefreshToken({
       id: user.id,
       fullname: user.fullname,
       email: user.email,
       phone: user.phone,
+      admin: user.admin, // 추가
     });
 
     refreshTokens.push(newRefreshToken);
@@ -176,4 +180,6 @@ userRouter.put("/:id", async (req, res) => {
 
   res.status(200).send(data);
 });
+
+
 module.exports = userRouter;

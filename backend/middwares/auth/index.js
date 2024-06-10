@@ -13,17 +13,24 @@ const authenticate = async (req, res, next) => {
         return res.status(403).send("Token is not valid");
       }
       req.user = user;
+      // req.user = {
+      //   ...user.dataValues, // 기존 user 객체의 데이터를 모두 포함
+      //   isAdmin: user.isAdmin === "1", // isAdmin 플래그 포함
+      // };
+      // console.log("/backend/middwares/auth/index.js : " + JSON.stringify(user));
       next();
+    } else {
+      return res.status(401).send("You're not authenticated");
     }
   } catch (err) {
-    return res.status(401).send("You're not authenticated");
+    return res.status(401).send("You're not authenticated" + err);
   }
 };
 
 const verifyTokenandAdmin = (req, res, next) => {
   const user = req.user;
   const { id } = req.params;
-
+  // console.log("verifyTokenandAdmin : id - " + id);
   if (user.id === id || user.admin) {
     next();
   } else {
@@ -31,7 +38,8 @@ const verifyTokenandAdmin = (req, res, next) => {
   }
 };
 
+
 module.exports = {
   authenticate,
-  verifyTokenandAdmin,
+  verifyTokenandAdmin
 };

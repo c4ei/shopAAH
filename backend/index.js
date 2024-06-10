@@ -25,7 +25,6 @@ const io = require("socket.io")(httpServer, {
   },
 });
 
-
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/v1", rootRouter);
@@ -67,7 +66,49 @@ app.use(express.static(publicPathDirectory));
 
 app.get('/', function(req,resp){
   resp.sendFile( path.join(__dirname, 'public/index.html') )
-}) 
+})
+
+const jwt = require("jsonwebtoken");
+function isAdmin(req, res, next) {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(401).send("No refresh token found, please login.");
+  }
+
+  // Continue with your logic, e.g., verifying the token
+  jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, (err, user) => {
+    if (err) {
+      return res.status(403).send("Token is not valid.");
+    }
+
+    // Set user information on req.user
+    req.user = user;
+
+    const userIsAdmin = req.user && req.user.admin=="1";
+    if (userIsAdmin) {
+      next(); // User is an admin, proceed to the next middleware/route handler
+    } else {
+      res.status(403).send('Access denied. Only administrators can access this resource.');
+    }
+  });
+}
+
+// Restricted routes
+const adminRoutes = [
+  '/admin',
+  '/users',
+  '/products',
+  '/history',
+  '/chat'
+];
+
+adminRoutes.forEach(route => {
+  app.get(route, isAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
+  });
+});
+
 //이 코드는 항상 가장 하단에 놓아야 잘됩니다. 
 app.get('*', function (req, resp) {
   resp.sendFile(path.join(__dirname, 'public/index.html'));
