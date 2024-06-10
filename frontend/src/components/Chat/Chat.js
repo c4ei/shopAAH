@@ -11,7 +11,7 @@ export default function Chat() {
   const [activeChat, setActiveChat] = useState(false);
   const [textMessage, setTextMessage] = useState("");
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const AdminId = "5";
+  const AdminId = "2";
   const dispatch = useDispatch();
   const listMessage = useSelector(
     (state) => state.messenger.listmessage?.messages

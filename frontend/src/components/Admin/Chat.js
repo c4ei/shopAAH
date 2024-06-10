@@ -11,7 +11,7 @@ const socket = io("https://shop.c4ei.net");
 export default function Chat() {
   const [load, setLoad] = useState(false);
   const [text, setText] = useState("");
-  const AdminId = 5;
+  const AdminId = 2;
   const dispatch = useDispatch();
   const [idUser2, setIdUser2] = useState("");
   const listMessage = useSelector(

@@ -77,7 +77,7 @@ export default function UsersAdmin() {
                             <td>{user.email}</td>
                             <td>{user.phone}</td>
                             <td>
-                              {user.admin == 1 ? "Quản Trị" : "Khách Hàng"}
+                              {user.admin == 1 ? "관리자" : "고객"}
                             </td>
                             <td>
                               <button
