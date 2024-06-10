@@ -243,7 +243,7 @@ export default function Checkout() {
                         <strong className="text-uppercase small font-weight-bold">
                           Total
                         </strong>
-                        <span>${cartTotalPrice}</span>
+                        <span>₩{cartTotalPrice}</span>
                       </li>
                     </ul>
                   </div>

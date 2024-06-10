@@ -99,7 +99,7 @@ export default function CartProduct() {
                             Subtotal
                           </strong>
                           <span className="text-muted small">
-                            ${cartTotalPrice}
+                            ₩{cartTotalPrice}
                           </span>
                         </li>
                         <li className="border-bottom my-2"></li>
@@ -107,7 +107,7 @@ export default function CartProduct() {
                           <strong className="text-uppercase small font-weight-bold">
                             Total
                           </strong>
-                          <span>${cartTotalPrice}</span>
+                          <span>₩{cartTotalPrice}</span>
                         </li>
                       </ul>
                     </div>
