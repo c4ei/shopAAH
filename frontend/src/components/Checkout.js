@@ -31,7 +31,7 @@ export default function Checkout() {
             "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣\\s]+$",
           "Fullname is invalid"
         )
-        .min(10)
+        .min(3)
         .max(20),
       email: Yup.string()
         .required("Required")
@@ -47,10 +47,10 @@ export default function Checkout() {
         .matches(
           "^[/0-9a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
           "ẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-          "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣\\s]+$",
+          "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣\\s,()]+$",
           "Address is invalid"
         )
-        .max(50),
+        .max(100),
     }),
     onSubmit: async (values) => {
       for (let item of carts) {
@@ -230,10 +230,10 @@ export default function Checkout() {
                         <div key={index}>
                           <li className="d-flex align-items-center justify-content-between">
                             <strong className="small font-weight-bold">
-                              {item.product.name}
+                              {item.product.good_name}
                             </strong>
                             <span className="text-muted small">
-                              ${item.product.price} x {item.quantity}
+                              ₩{item.product.price} x {item.quantity}
                             </span>
                           </li>
                           <li className="border-bottom my-2"></li>

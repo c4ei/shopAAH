@@ -174,7 +174,7 @@ export default function Shop() {
                           <i className="fas fa-star small text-warning"></i>
                         </li>
                       </ul>
-                      <h2 className="h4">{item.name}</h2>
+                      <h2 className="h4">{item.good_name}</h2>
                       <p className="text-muted font-weight-bold">
                         ₩{item.price}
                       </p>

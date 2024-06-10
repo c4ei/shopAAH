@@ -113,13 +113,13 @@ export default function CartFilter() {
                       className="reset-anchor h6 animsition-link"
                       to={`/detail/${item.product.id}`}
                     >
-                      {item.product.name}
+                      {item.product.good_name}
                     </NavLink>
                   </div>
                 </td>
 
                 <td className="align-middle border-0">
-                  <p className="mb-0 small">${item.product.price}</p>
+                  <p className="mb-0 small">₩{item.product.price}</p>
                 </td>
                 <td className="align-middle border-0">
                   <div className="quantity justify-content-center">
@@ -147,7 +147,7 @@ export default function CartFilter() {
                 </td>
                 <td className="align-middle border-0">
                   <p className="mb-0 small">
-                    ${parseInt(item.quantity) * parseInt(item.product.price)}
+                    ₩{parseInt(item.quantity) * parseInt(item.product.price)}
                   </p>
                 </td>
                 <td className="align-middle border-0">

@@ -60,25 +60,25 @@ export default function Home() {
             </div>
             <div className="row">
               <div className="col-md-4 mb-4 mb-md-0">
-                <NavLink className="category-item" to="/shop">
+                <NavLink className="category-item" to="/shop?category=72">
                   <img
                     className="img-fluid"
                     src="/image/cat-img-1.jpg"
                     alt=""
                   />
-                  <strong className="category-item-title">Clothes</strong>
+                  <strong className="category-item-title">화장품</strong>
                 </NavLink>
               </div>
               <div className="col-md-4 mb-4 mb-md-0">
-                <NavLink className="category-item mb-4" to="/shop">
+                <NavLink className="category-item mb-4" to="/shop?category=70">
                   <img
                     className="img-fluid"
                     src="/image/cat-img-2.jpg"
                     alt=""
                   />
-                  <strong className="category-item-title">Shoes</strong>
+                  <strong className="category-item-title">건강번들</strong>
                 </NavLink>
-                <NavLink className="category-item" to="/shop">
+                <NavLink className="category-item" to="/shop?category=75">
                   <img
                     className="img-fluid"
                     src="/image/cat-img-3.jpg"

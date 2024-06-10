@@ -390,7 +390,7 @@ export default function ProductsAdmin() {
                         return (
                           <tr key={index}>
                             <td>{item.id}</td>
-                            <td>{item.name}</td>
+                            <td>{item.good_name}</td>
                             <td>{item.price}</td>
                             <td>
                               <img

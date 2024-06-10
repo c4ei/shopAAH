@@ -21,7 +21,7 @@ emailRouter.post("/", [authenticate], async (req, res) => {
   }, 0);
 
   const htmlHead = `<table style="width:50%">
-    <tr style="border: 1px solid black;"><th style="border: 1px solid black;">제품명</th><th style="border: 1px solid black;">영상</th><th style="border: 1px solid black;">가격</th><th style="border: 1px solid black;">수량</th><th style="border: 1px solid black;">돈</th>`;
+    <tr style="border: 1px solid black;"><th style="border: 1px solid black;">제품명</th><th style="border: 1px solid black;">제품사진</th><th style="border: 1px solid black;">가격</th><th style="border: 1px solid black;">수량</th><th style="border: 1px solid black;">구매금액</th>`;
 
   let htmlContent = "";
 
@@ -41,7 +41,7 @@ emailRouter.post("/", [authenticate], async (req, res) => {
       }</td>
       <td style="border: 1px solid black; font-size: 1.2rem; text-align: center;">
       ${parseInt(cartsUser[i].priceProduct) * parseInt(cartsUser[i].count)}
-      $</td><tr>`;
+      ₩</td><tr>`;
   }
   const htmlResult = `
   <h1>안녕하세요 ${fullName}</h1>

@@ -233,8 +233,8 @@ export default function DetailProduct() {
               <i className="fas fa-star small text-warning"></i>
             </li>
           </ul>
-          <h1>{product?.name}</h1>
-          <p className="text-muted lead">${product?.price}</p>
+          <h1>{product?.good_name}</h1>
+          <p className="text-muted lead">₩{product?.price}</p>
           {/* <p className="text-small mb-4">{product?.description}</p> */}
           <p className="text-small mb-4" dangerouslySetInnerHTML={{ __html: product?.description }} />
 

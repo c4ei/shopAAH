@@ -15,7 +15,7 @@ cartRouter.post("/", [authenticate], async (req, res) => {
   const cart = await addToCart({
     idUser: user.id,
     idProduct: idProduct,
-    nameProduct: product.name,
+    nameProduct: product.good_name,
     priceProduct: product.price,
     count: productCount,
     img: product.img1,

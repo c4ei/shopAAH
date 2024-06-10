@@ -74,7 +74,7 @@ export default function ProductBigSale({ productDiscount }) {
               <div className="px-3">
                 <h6>
                   <a className="reset-anchor" href="detail.html">
-                    <p className="d-block"> {item.name}</p>
+                    <p className="d-block"> {item.good_name}</p>
                   </a>
                 </h6>
                 <p className="small text-muted font-weight-bold">
