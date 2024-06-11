@@ -6,6 +6,8 @@ import DetailProduct from "../components/DetailProduct";
 import Shop from "../components/Shop";
 import HistoryUser from "../components/User/HistoryUser";
 import Home from "../page/Home";
+import ManageShop from "../components/ManageShop";
+
 
 const publicRoutes = [
   {
@@ -39,6 +41,10 @@ const publicRoutes = [
   {
     path: "/HistoryUser",
     component: HistoryUser,
+  },
+  {
+    path: "/manage",
+    component: ManageShop,
   },
 ];
 
