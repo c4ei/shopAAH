@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getListHistoryUser } from "../../services/API/historyApi";
+import { getListHistoryUser, updateHistory } from "../../services/API/historyApi"; // Assume updateHistory is an API function to update history item
 import io from "socket.io-client";
+import { Modal, Button, Form } from "react-bootstrap";
+
 const socket = io("https://shop.c4ei.net");
 
 export default function HistoryAdmin() {
   const dispatch = useDispatch();
   const { histories } = useSelector((state) => state.history?.listHistory);
   const [text, setText] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedHistory, setSelectedHistory] = useState(null);
+  const [updatedDelivery, setUpdatedDelivery] = useState(false);
+  const [updatedStatus, setUpdatedStatus] = useState(false);
 
   useEffect(() => {
     getListHistoryUser(dispatch);
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
-    //receive_order 키를 사용하여 소켓을 통해 서버에서 보낸 데이터를 수신합니다.
     socket.on("receive_order", (data) => {
       setText("User ID: " + data + " AAH");
 
@@ -23,6 +28,24 @@ export default function HistoryAdmin() {
       }, 4000);
     });
   }, []);
+
+  const handleViewClick = (history) => {
+    setSelectedHistory(history);
+    setUpdatedDelivery(history.delivery);
+    setUpdatedStatus(history.status);
+    setShowModal(true);
+  };
+
+  const handleSaveChanges = () => {
+    const updatedHistory = {
+      ...selectedHistory,
+      delivery: updatedDelivery,
+      status: updatedStatus,
+    };
+    updateHistory(dispatch, updatedHistory); // Call API to update history item
+    setShowModal(false);
+  };
+
   return (
     <div className="page-wrapper">
       <div className="page-breadcrumb">
@@ -87,9 +110,7 @@ export default function HistoryAdmin() {
                           <td>{item.address}</td>
                           <td>{item.total}</td>
                           <td>
-                            {item.delivery
-                              ? "배송됨"
-                              : "미배송"}
+                            {item.delivery ? "배송됨" : "미배송"}
                           </td>
                           <td>
                             {item.status ? "Paid" : "Unpaid"}
@@ -98,6 +119,7 @@ export default function HistoryAdmin() {
                             <a
                               style={{ cursor: "pointer", color: "white" }}
                               className="btn btn-success"
+                              onClick={() => handleViewClick(item)}
                             >
                               View
                             </a>
@@ -116,6 +138,43 @@ export default function HistoryAdmin() {
         <a href="https://c4ex.net">BUY AAH</a>{" "}
         <a href="https://shop.c4ei.net">AAH SHOP</a>.
       </footer>
+
+      {/* Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit History</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="formDelivery">
+              <Form.Label>Delivery</Form.Label>
+              <Form.Check
+                type="checkbox"
+                label="Delivered"
+                checked={updatedDelivery}
+                onChange={(e) => setUpdatedDelivery(e.target.checked)}
+              />
+            </Form.Group>
+            <Form.Group controlId="formStatus">
+              <Form.Label>Status</Form.Label>
+              <Form.Check
+                type="checkbox"
+                label="Paid"
+                checked={updatedStatus}
+                onChange={(e) => setUpdatedStatus(e.target.checked)}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleSaveChanges}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

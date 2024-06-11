@@ -28,3 +28,36 @@ export const getListHistoryUser = async (dispatch, params = "") => {
     dispatch(getListHistoryFailed());
   }
 };
+
+export const updateHistory = async (dispatch, updatedHistory) => {
+  try {
+    // console.log("Sending PUT request to update history");
+    // console.log("Updated history data:", updatedHistory);
+
+    const response = await fetch(`${DOMAIN}/api/v1/history/${updatedHistory.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        delivery: updatedHistory.delivery,
+        status: updatedHistory.status,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update history');
+    }
+
+    const data = await response.json();
+    // console.log("Response from server:", data);
+
+    // 선택적으로 상태 업데이트를 위한 Redux 액션을 디스패치합니다.
+    // dispatch({ type: 'UPDATE_HISTORY', payload: data });
+
+    // 히스토리 리스트를 다시 불러옵니다.
+    getListHistoryUser(dispatch);
+  } catch (error) {
+    console.error('Error updating history:', error);
+  }
+};
