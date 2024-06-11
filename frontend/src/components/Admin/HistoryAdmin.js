@@ -114,7 +114,7 @@ export default function HistoryAdmin() {
       </div>
       <footer className="footer text-center text-muted">
         <a href="https://c4ex.net">BUY AAH</a>{" "}
-        <a href="">Nguyễn Sang</a>.
+        <a href="https://shop.c4ei.net">AAH SHOP</a>.
       </footer>
     </div>
   );
