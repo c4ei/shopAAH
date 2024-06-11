@@ -314,7 +314,41 @@ All
                   </a>
                 </li>
               </ul>
+              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
+                <li className="mb-2">
+                  <a
+                    className="reset-anchor"
+                    href="#"
+                    onClick={() => handleCategory("81")}
+                  >
+                    먹거리
+                  </a>
+                </li>
+              </ul>
+              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
+                <li className="mb-2">
+                  <a
+                    className="reset-anchor"
+                    href="#"
+                    onClick={() => handleCategory("80")}
+                  >
+                    전자담배
+                  </a>
+                </li>
+              </ul>
+              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
+                <li className="mb-2">
+                  <a
+                    className="reset-anchor"
+                    href="#"
+                    onClick={() => handleCategory("78")}
+                  >
+                    계절가전
+                  </a>
+                </li>
+              </ul>
             </div>
+
             <div className="col-lg-9 order-1 order-lg-2 mb-5 mb-lg-0">
               <div className="row mb-3 align-items-center">
                 <Search handleSearch={handleSearch} />

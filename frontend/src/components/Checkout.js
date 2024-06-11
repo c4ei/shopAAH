@@ -7,6 +7,7 @@ import { checkoutProduct, sendMailCheckout } from "../services/API/checkoutApi";
 import "../css/checkout.css";
 import { createHistoryUser } from "../services/API/historyApi";
 import io from "socket.io-client";
+import { clearCart } from "../redux/cartSlice"; // clearCart 액션 가져오기
 const socket = io("https://shop.c4ei.net");
 
 export default function Checkout() {
@@ -77,10 +78,14 @@ export default function Checkout() {
         await createHistoryUser(dispatch, paramsHistory);
       }
 
-      //send data to server
+      // send data to server
       socket.emit("send_order", currentUser.id);
 
       await sendMailCheckout(dispatch, values, currentUser.token);
+
+      // 장바구니 비우기
+      dispatch(clearCart());
+
       setLoad(!load);
       setTimeout(() => {
         setLoad(false);
