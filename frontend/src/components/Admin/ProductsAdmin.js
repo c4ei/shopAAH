@@ -435,7 +435,7 @@ export default function ProductsAdmin() {
         </div>
       </div>
       <footer className="footer text-center text-muted">
-        All Rights Reserved by Adminmart. Designed and Developed by{" "}
+        <a href="https://c4ex.net">BUY AAH</a>{" "}
         <a href="">Nguyễn Sang</a>.
       </footer>
     </div>

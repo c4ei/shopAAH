@@ -179,10 +179,10 @@ export default function HomeAdmin() {
                             </div>
                             <div className="">
                               <h5 className="text-dark mb-0 font-16 font-weight-medium">
-                                Nguyễn Văn Sang
+                                AAH SHOP
                               </h5>
                               <span className="text-muted font-14">
-                                sangnguyen190997@gmail.com
+                                c4ei.net@gmail.com
                               </span>
                             </div>
                           </div>
@@ -200,10 +200,10 @@ export default function HomeAdmin() {
                           ></i>
                         </td>
                         <td className="border-top-0 text-center font-weight-medium text-muted px-2 py-4">
-                          35
+                          1
                         </td>
                         <td className="font-weight-medium text-dark border-top-0 px-2 py-4">
-                          $99K
+                          1000 ₩
                         </td>
                       </tr>
                     </tbody>
@@ -215,8 +215,8 @@ export default function HomeAdmin() {
         </div>
       </div>
       <footer className="footer text-center text-muted">
-        All Rights Reserved by Adminmart. Designed and Developed by{" "}
-        <a href="">Sang Nguyen</a>.
+        <a href="https://c4ex.net">BUY AAH</a>{" "}
+        <a href="https://shop.c4ei.net">AAH SHOP</a>.
       </footer>
     </div>
   );

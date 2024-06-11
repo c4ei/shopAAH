@@ -239,7 +239,7 @@ export default function Chat() {
         </div>
       </div>
       <footer className="footer text-center">
-        All Rights Reserved by Adminmart. Designed and Developed by{" "}
+        <a href="https://c4ex.net">BUY AAH</a>{" "}
         <a href="https://www.facebook.com/sangnguyen1909">Sang Nguyen</a>.
       </footer>
     </div>

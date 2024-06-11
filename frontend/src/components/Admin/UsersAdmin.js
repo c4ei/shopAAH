@@ -100,8 +100,8 @@ export default function UsersAdmin() {
         </div>
       </div>
       <footer className="footer text-center text-muted">
-        All Rights Reserved by Adminmart. Designed and Developed by{" "}
-        <a href="">Sang Nguyen</a>.
+        <a href="https://c4ex.net">BUY AAH</a>{" "}
+        <a href="https://shop.c4ei.net">AAH SHOP</a>.
       </footer>
     </div>
   );
