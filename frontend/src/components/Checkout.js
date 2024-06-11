@@ -246,6 +246,7 @@ export default function Checkout() {
                         <span>₩{cartTotalPrice}</span>
                       </li>
                     </ul>
+                    <h5 className="text-uppercase mb-4">입금하실 계좌정보 : 카카오뱅크 3333-27-5746222 예금주:씨포이아이(C4EI)</h5>
                   </div>
                 </div>
               </div>

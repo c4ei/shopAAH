@@ -21,21 +21,23 @@ emailRouter.post("/", [authenticate], async (req, res) => {
   }, 0);
 
   const htmlHead = `<table style="width:50%">
-    <tr style="border: 1px solid black;"><th style="border: 1px solid black;">제품명</th><th style="border: 1px solid black;">제품사진</th><th style="border: 1px solid black;">가격</th><th style="border: 1px solid black;">수량</th><th style="border: 1px solid black;">구매금액</th>`;
+    <tr style="border: 1px solid black;"><th style="border: 1px solid black;">제품명</th><th style="border: 1px solid black;">가격</th><th style="border: 1px solid black;">수량</th><th style="border: 1px solid black;">구매금액</th>`;
 
   let htmlContent = "";
+
+  // <th style="border: 1px solid black;">제품사진</th>
+  // <td style="border: 1px solid black; font-size: 1.2rem; text-align: center;"><img src=${
+  //   cartsUser[i].img
+  // }width="80" height="80"></td>
 
   for (let i = 0; i < cartsUser.length; i++) {
     htmlContent += `<tr>
       <td style="border: 1px solid black; font-size: 1.2rem; text-align: center;">${
         cartsUser[i].nameProduct
       }</td>
-      <td style="border: 1px solid black; font-size: 1.2rem; text-align: center;"><img src=${
-        cartsUser[i].img
-      }width="80" height="80"></td>
       <td style="border: 1px solid black; font-size: 1.2rem; text-align: center;">${
         cartsUser[i].priceProduct
-      }$</td>
+      }₩</td>
       <td style="border: 1px solid black; font-size: 1.2rem; text-align: center;">${
         cartsUser[i].count
       }</td>
@@ -47,9 +49,10 @@ emailRouter.post("/", [authenticate], async (req, res) => {
   <h1>안녕하세요 ${fullName}</h1>
   <h3>Phone: ${phone}</h3>
   <h3>Address: ${address}</h3>
+  <h3>입금하실 계좌정보 : 카카오뱅크 3333-27-5746222 예금주:씨포이아이(C4EI)</h3>
+  <h3>총 결제금액: ${total} ₩</h3>
     ${htmlHead}
     ${htmlContent}
-  <h1>총 결제금액: ${total} ₩
   <p>감사합니다!</p>
     `;
 
