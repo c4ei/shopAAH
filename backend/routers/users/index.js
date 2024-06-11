@@ -21,21 +21,26 @@ const userRouter = express.Router();
 let refreshTokens = [];
 
 userRouter.post("/register", async (req, res) => {
-  const { fullname, email, password, phone } = req.body;
+  const { fullname, email, password, phone, referrer_id } = req.body;
+  console.log(`${referrer_id} : referrer_id - /backend/routers/users/index.js`);
+  try {
+    const hashedPassword = await hashPassword(password);
+    const user = await createUser({
+      fullname,
+      email,
+      password: hashedPassword,
+      phone,
+      referrer_id,
+    });
 
-  const hashedPassword = await hashPassword(password);
-
-  const user = await createUser({
-    fullname,
-    email,
-    password: hashedPassword,
-    phone,
-  });
-
-  if (!user) {
-    return res.status(500).send("Can't create user");
+    if (!user) {
+      return res.status(500).send("Can't create user");
+    }
+    res.status(200).send(user);
+  } catch (error) {
+    console.error("Error creating user:", error); // 상세 로그 추가
+    res.status(400).json({ message: error.message });
   }
-  res.status(200).send(user);
 });
 
 userRouter.post("/login", async (req, res) => {
@@ -180,6 +185,24 @@ userRouter.put("/:id", async (req, res) => {
 
   res.status(200).send(data);
 });
+
+// ###################### referrer ######################
+userRouter.post("/validate-referrer", async (req, res) => {
+  const { referrer } = req.body;
+  console.log(referrer +" : referrer - /backend/routers/users/index.js");
+  try {
+    const user = await getUserByEmail(referrer);
+    if (user) {
+      res.json({ isValid: true });
+    } else {
+      res.json({ isValid: false });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ isValid: false, error: "Internal server error" });
+  }
+});
+// ###################### referrer ######################
 
 
 module.exports = userRouter;

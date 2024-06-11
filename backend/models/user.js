@@ -1,12 +1,8 @@
 "use strict";
 const { Model } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate({ Cart, Comment, History, Messenger, Converstation }) {
       User.hasOne(Cart, {
         foreignKey: "idUser",
@@ -22,18 +18,19 @@ module.exports = (sequelize, DataTypes) => {
       });
       User.hasMany(Messenger, { foreignKey: "senderId", as: "sender" });
       User.hasMany(Messenger, { foreignKey: "receiverId", as: "receiver" });
-      // User.hasOne(Converstation, { foreignKey: "user1Id", as: "creator" });
-      // User.hasOne(Converstation, { foreignKey: "user2Id", as: "recipient" });
     }
   }
+
   User.init(
     {
       fullname: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          min: 6,
-          max: 30,
+          len: {
+            args: [2, 30], // 유효성 검사를 len으로 통합하여 최소 2글자, 최대 30글자
+            msg: "Fullname must be between 2 and 30 characters",
+          },
         },
       },
       email: {
@@ -41,28 +38,48 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true,
         validate: {
-          min: 10,
-          max: 50,
-          isEmail: true,
+          len: {
+            args: [10, 50], // 최소 10글자, 최대 50글자
+            msg: "Email must be between 10 and 50 characters",
+          },
+          isEmail: {
+            msg: "Must be a valid email address",
+          },
         },
       },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          min: 6,
+          len: {
+            args: [6, 255], // 최소 6글자, 최대 255글자
+            msg: "Password must be between 6 and 255 characters",
+          },
         },
       },
       phone: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          is: /^[0-9]+$/,
+          is: {
+            args: /^[0-9]+$/,
+            msg: "Phone must contain only numbers",
+          },
         },
       },
       admin: {
-        type: DataTypes.STRING,
+        type: DataTypes.BOOLEAN,
         defaultValue: false,
+      },
+      referrer_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        validate: {
+          is: {
+            args: /^[0-9]+$/,
+            msg: "Referrer ID must contain only numbers",
+          },
+        },
       },
     },
     {
@@ -70,6 +87,6 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "User",
     }
   );
-  // User.sync({ alter: true });
+
   return User;
 };

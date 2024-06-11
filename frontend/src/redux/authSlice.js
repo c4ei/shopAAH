@@ -28,15 +28,23 @@ const authSlice = createSlice({
     },
     registerStart: (state) => {
       state.register.isFetching = true;
+      // state.isFetching = true;
+      // state.isError = false;
+      // state.errorMessage = "";
     },
     registerSuccess: (state) => {
       state.register.isFetching = false;
       state.register.isSuccess = true;
       state.register.error = false;
     },
-    registerFailed: (state) => {
-      state.register.isSuccess = false;
-      state.register.error = true;
+    // registerFailed: (state) => {
+    //   state.register.isSuccess = false;
+    //   state.register.error = true;
+    // },
+    registerFailed: (state, action) => {
+      state.isFetching = false;
+      state.isError = true;
+      state.errorMessage = action.payload;
     },
     logoutUserStart: (state) => {
       state.login.isFetching = true;

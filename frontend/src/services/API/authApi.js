@@ -30,7 +30,8 @@ export const registerUser = async (dispatch, navigate, user) => {
     dispatch(registerSuccess());
     navigate("/login");
   } catch (err) {
-    dispatch(registerFailed(err.response.data));
+    console.error("Error during registration:", err.response?.data); // 상세 로그 추가
+    dispatch(registerFailed(err.response?.data.message || "An error occurred"));
   }
 };
 
