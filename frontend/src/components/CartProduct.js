@@ -107,7 +107,16 @@ export default function CartProduct() {
                           <strong className="text-uppercase small font-weight-bold">
                             Total
                           </strong>
-                          <span>₩{cartTotalPrice}</span>
+                          <span>
+                            ₩{cartTotalPrice}
+                            {cartTotalPrice !== 0 && ( // 분모가 0인 경우 에러 방지
+                              <span>
+                                {" ["}
+                                {(cartTotalPrice/1500).toFixed(2)} AAH
+                                {"]"}
+                              </span>
+                            )}
+                          </span>
                         </li>
                       </ul>
                     </div>
