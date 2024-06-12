@@ -2,6 +2,7 @@
 /frontend/build
 /backend/config/config.json
 *.txt
+*.sql
 # Logs
 logs
 *.log
