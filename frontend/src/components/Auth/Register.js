@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "./Auth.css";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
-import { registerUser } from "../../services/API/authApi";
+import { registerUser, checkFullname, checkEmail, checkPhone } from "../../services/API/authApi";
 
-// Fullname 유효성 검사 함수
 const isValidFullname = (value) => {
   if (!value) return false;
   const koreanRegex = /^[가-힣]+$/;
@@ -19,7 +18,6 @@ const isValidFullname = (value) => {
   return false;
 };
 
-// Yup을 사용한 유효성 검사 스키마
 const validationSchema = Yup.object().shape({
   fullname: Yup.string()
     .required("(*) 이름을 입력하세요.")
@@ -55,6 +53,11 @@ const validationSchema = Yup.object().shape({
 export default function Register() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [checkMessage, setCheckMessage] = useState({ fullname: "", email: "", phone: "" });
+  const [isFullnameChecked, setIsFullnameChecked] = useState(false);
+  const [isEmailChecked, setIsEmailChecked] = useState(false);
+  const [isPhoneChecked, setIsPhoneChecked] = useState(false);
+
   const formik = useFormik({
     initialValues: {
       fullname: "",
@@ -69,10 +72,51 @@ export default function Register() {
         await registerUser(dispatch, navigate, values);
       } catch (error) {
         const errorMessage = error.response?.data?.message || "회원가입 중 오류가 발생했습니다.";
-        formik.setErrors({ phone: errorMessage }); // phone 필드에 오류 메시지 표시
+        formik.setErrors({ phone: errorMessage });
       }
     },
   });
+
+  const handleCheckFullname = async () => {
+    try {
+      const result = await checkFullname(formik.values.fullname);
+      setCheckMessage({ ...checkMessage, fullname: result.message });
+      setIsFullnameChecked(result.message === "사용 가능한 이름입니다.");
+    } catch (error) {
+      setCheckMessage({ ...checkMessage, fullname: "중복 확인 중 오류가 발생했습니다." });
+    }
+  };
+
+  const handleCheckEmail = async () => {
+    try {
+      const result = await checkEmail(formik.values.email);
+      setCheckMessage({ ...checkMessage, email: result.message });
+      setIsEmailChecked(result.message === "사용 가능한 이메일입니다.");
+    } catch (error) {
+      setCheckMessage({ ...checkMessage, email: "중복 확인 중 오류가 발생했습니다." });
+    }
+  };
+
+  const handleCheckPhone = async () => {
+    try {
+      const result = await checkPhone(formik.values.phone);
+      setCheckMessage({ ...checkMessage, phone: result.message });
+      setIsPhoneChecked(result.message === "사용 가능한 전화번호입니다.");
+    } catch (error) {
+      setCheckMessage({ ...checkMessage, phone: "중복 확인 중 오류가 발생했습니다." });
+    }
+  };
+
+  const isAllChecked = () => {
+    return (
+      isFullnameChecked &&
+      isEmailChecked &&
+      isPhoneChecked &&
+      !formik.errors.fullname &&
+      !formik.errors.email &&
+      !formik.errors.phone
+    );
+  };
 
   return (
     <div className="limiter">
@@ -85,11 +129,19 @@ export default function Register() {
                 name="fullname"
                 className="input100"
                 type="text"
-                placeholder="이름"
-                onChange={formik.handleChange}
+                placeholder="이름을 입력 후 확인 버튼을 클릭해 주세요"
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setIsFullnameChecked(false);
+                }}
                 onBlur={formik.handleBlur}
                 value={formik.values.fullname}
+                disabled={isFullnameChecked}
               />
+              <button type="button" onClick={handleCheckFullname} disabled={isFullnameChecked}>
+                확인
+              </button>
+              {checkMessage.fullname && <div className="text-info">{checkMessage.fullname}</div>}
               {formik.errors.fullname && formik.touched.fullname && (
                 <div className="text-danger">{formik.errors.fullname}</div>
               )}
@@ -99,14 +151,45 @@ export default function Register() {
               <input
                 className="input100"
                 type="text"
-                placeholder="이메일"
+                placeholder="이메일을 입력 후 확인 버튼을 클릭해 주세요"
                 name="email"
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setIsEmailChecked(false);
+                }}
                 onBlur={formik.handleBlur}
                 value={formik.values.email}
+                disabled={isEmailChecked}
               />
+              <button type="button" onClick={handleCheckEmail} disabled={isEmailChecked}>
+                확인
+              </button>
+              {checkMessage.email && <div className="text-info">{checkMessage.email}</div>}
               {formik.errors.email && formik.touched.email && (
                 <div className="text-danger">{formik.errors.email}</div>
+              )}
+            </div>
+
+            <div className="wrap-input100">
+              <input
+                className="input100"
+                type="text"
+                placeholder="전화번호를 입력 후 확인 버튼을 클릭해 주세요"
+                name="phone"
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setIsPhoneChecked(false);
+                }}
+                onBlur={formik.handleBlur}
+                value={formik.values.phone}
+                disabled={isPhoneChecked}
+              />
+              <button type="button" onClick={handleCheckPhone} disabled={isPhoneChecked}>
+                확인
+              </button>
+              {checkMessage.phone && <div className="text-info">{checkMessage.phone}</div>}
+              {formik.errors.phone && formik.touched.phone && (
+                <div className="text-danger">{formik.errors.phone}</div>
               )}
             </div>
 
@@ -129,21 +212,6 @@ export default function Register() {
               <input
                 className="input100"
                 type="text"
-                placeholder="전화번호"
-                name="phone"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.phone}
-              />
-              {formik.errors.phone && formik.touched.phone && (
-                <div className="text-danger">{formik.errors.phone}</div>
-              )}
-            </div>
-
-            <div className="wrap-input100">
-              <input
-                className="input100"
-                type="text"
                 placeholder="추천인 (이메일 또는 ID)"
                 name="referrer"
                 onChange={formik.handleChange}
@@ -155,7 +223,9 @@ export default function Register() {
               )}
             </div>
 
-            <button className="login100-form-btn" type="submit">회원가입</button>
+            <button className="login100-form-btn" type="submit" disabled={!isAllChecked()}>
+              회원가입
+            </button>
 
             <div className="text-center py-4">
               <span className="txt1">이미 계정이 있으신가요?</span>

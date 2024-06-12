@@ -19,7 +19,7 @@ export const loginUser = async (dispatch, navigate, user) => {
     dispatch(loginSuccess(response.data));
     navigate("/");
   } catch (err) {
-    dispatch(loginFailed(err));
+    dispatch(loginFailed(err.response?.data?.message || "로그인 중 오류가 발생했습니다."));
   }
 };
 
@@ -31,17 +31,51 @@ export const registerUser = async (dispatch, navigate, user) => {
     navigate("/login");
   } catch (err) {
     console.error("Error during registration:", err.response?.data); // 상세 로그 추가
-    dispatch(registerFailed(err.response?.data.message || "An error occurred"));
+    dispatch(registerFailed(err.response?.data?.message || "회원가입 중 오류가 발생했습니다."));
   }
 };
 
-export const logoutUser = async (
-  dispatch,
-  id,
-  accessToken,
-  navigate,
-  axiosJWT
-) => {
+// Fullname duplication check
+export const checkFullname = async (fullname) => {
+  try {
+    const response = await axios.post(`${DOMAIN}/api/v1/users/check-fullname`, { fullname });
+    return response.data;
+  } catch (error) {
+    throw new Error("이름 확인 중 오류가 발생했습니다.");
+  }
+};
+
+// Email duplication check
+export const checkEmail = async (email) => {
+  try {
+    const response = await axios.post(`${DOMAIN}/api/v1/users/check-email`, { email });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error checking email.");
+  }
+};
+
+// Phone duplication check
+export const checkPhone = async (phone) => {
+  try {
+    const response = await axios.post(`${DOMAIN}/api/v1/users/check-phone`, { phone });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error checking phone.");
+  }
+};
+
+// Referrer validation
+export const validateReferrer = async (referrer) => {
+  try {
+    const response = await axios.post(`${DOMAIN}/api/v1/users/validate-referrer`, { referrer });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error validating referrer.");
+  }
+};
+
+export const logoutUser = async (dispatch, id, accessToken, navigate, axiosJWT) => {
   dispatch(logoutUserStart());
   try {
     await axiosJWT.post(`${DOMAIN}/api/v1/users/logout`, id, {
@@ -53,6 +87,6 @@ export const logoutUser = async (
     localStorage.clear();
     navigate("/");
   } catch (err) {
-    dispatch(logoutUserFailed(err));
+    dispatch(logoutUserFailed(err.response?.data?.message || "로그아웃 중 오류가 발생했습니다."));
   }
 };

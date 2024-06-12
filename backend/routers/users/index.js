@@ -10,6 +10,8 @@ const {
 const {
   createUser,
   getUserByEmail,
+  getUserByPhone,
+  getUserByFullname,
   getListUser,
   getUserById,
   deleteUser,
@@ -204,5 +206,47 @@ userRouter.post("/validate-referrer", async (req, res) => {
 });
 // ###################### referrer ######################
 
+// ###################### 중복 확인 /backend/routers/users/index.js ######################
+userRouter.post("/check-fullname", async (req, res) => {
+  const { fullname } = req.body;
+  try {
+    const user = await getUserByFullname(fullname);
+    if (user) {
+      return res.status(200).json({ message: "이미 사용 중인 이름입니다. 다른 이름을 입력하세요." });
+    }
+    return res.status(200).json({ message: "사용 가능한 이름입니다." });
+  } catch (error) {
+    return res.status(500).json({ message: "이름 확인 중 오류가 발생했습니다." });
+  }
+});
+
+userRouter.post("/check-email", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await getUserByEmail(email);
+    if (user) {
+      return res.status(200).json({ message: "이미 사용 중인 이메일입니다. 다른 이메일을 입력하세요." });
+    }
+    return res.status(200).json({ message: "사용 가능한 이메일입니다." });
+  } catch (error) {
+    console.error("Error checking email:", error);
+    return res.status(500).json({ message: "이메일 확인 중 오류가 발생했습니다." });
+  }
+});
+
+userRouter.post("/check-phone", async (req, res) => {
+  const { phone } = req.body;
+  try {
+    const user = await getUserByPhone(phone);
+    if (user) {
+      return res.status(200).json({ message: "이미 사용 중인 전화번호입니다. 다른 전화번호를 입력하세요." });
+    }
+    return res.status(200).json({ message: "사용 가능한 전화번호입니다." });
+  } catch (error) {
+    console.error("Error checking phone:", error);
+    return res.status(500).json({ message: "전화번호 확인 중 오류가 발생했습니다." });
+  }
+});
+// ###################### 중복 확인 /backend/routers/users/index.js ######################
 
 module.exports = userRouter;

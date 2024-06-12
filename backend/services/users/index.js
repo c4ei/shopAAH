@@ -7,33 +7,9 @@ const createUser = async (user) => {
     return newUser;
   } catch (err) {
     console.log(err);
+    throw err;
   }
 };
-
-// const createUser = async (user) => {
-//   try {
-//     // 전화번호 중복 체크
-//     const existingUser = await User.findOne({ where: { phone: user.phone } });
-
-//     if (existingUser) {
-//       throw new Error("Phone number is already in use");
-//     }
-
-//     // 이메일 중복 체크 (선택 사항, 이미 unique로 설정된 경우 생략 가능)
-//     const existingEmailUser = await User.findOne({ where: { email: user.email } });
-
-//     if (existingEmailUser) {
-//       throw new Error("Email is already in use");
-//     }
-
-//     // 중복되지 않는 경우 사용자 생성
-//     const newUser = await User.create(user);
-//     return newUser;
-//   } catch (error) {
-//     console.error(error); // 오류 로그 추가
-//     throw error;
-//   }
-// };
 
 const getUserByEmail = async (email) => {
   try {
@@ -45,6 +21,7 @@ const getUserByEmail = async (email) => {
     return user;
   } catch (err) {
     console.log(err);
+    throw err;
   }
 };
 
@@ -58,6 +35,7 @@ const getUserById = async (id) => {
     return user;
   } catch (err) {
     console.log(err);
+    throw err;
   }
 };
 
@@ -67,6 +45,7 @@ const getListUser = async () => {
     return listUser;
   } catch (err) {
     console.log(err);
+    throw err;
   }
 };
 
@@ -80,6 +59,7 @@ const deleteUser = async (id) => {
     return userDeleted;
   } catch (err) {
     console.log(err);
+    throw err;
   }
 };
 
@@ -93,14 +73,60 @@ const updateUser = async (id, data) => {
     return updateUser;
   } catch (err) {
     console.log(err);
+    throw err;
   }
 };
+
+const getUserByPhone = async (phone) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        phone,
+      },
+    });
+    return user;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
+
+const getUserByFullname = async (fullname) => {
+  console.log("/backend/services/users/index.js 95 Line - getUserByFullname : " + fullname);
+  try {
+    const user = await User.findOne({
+      where: {
+        fullname,
+      },
+    });
+    return user;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
+
+async function checkFullname(fullname) {
+  try {
+    const user = await User.findOne({ where: { fullname } });
+    if (user) {
+      return { message: '이름이 이미 사용 중입니다.' };
+    } else {
+      return { message: '사용 가능한 이름입니다.' };
+    }
+  } catch (error) {
+    throw new Error('중복 확인 중 오류가 발생했습니다.');
+  }
+}
 
 module.exports = {
   createUser,
   getUserByEmail,
+  getUserByPhone,
+  getUserByFullname,
   getListUser,
   deleteUser,
   getUserById,
   updateUser,
+  checkFullname,
 };
