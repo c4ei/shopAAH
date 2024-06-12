@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { loginSuccess } from "../redux/authSlice";
-import { getTotalPrice } from "../redux/cartSlice";
 import { logoutUser } from "../services/API/authApi";
 import { createAxios } from "../services/API/createInstanceApi";
 
@@ -21,8 +20,13 @@ export default function Header() {
   const handleManage = () => {
     navigate("/manage");
   };
+
   const handleHistory = () => {
     navigate("/historyUser");
+  };
+
+  const handleAdmin = () => {
+    navigate("/admin");
   };
 
   return (
@@ -62,12 +66,6 @@ export default function Header() {
               <NavLink className="nav-link" to="/cart">
                 <i className="fas fa-dolly-flatbed mr-1 text-gray position-relative"></i>
                 Cart
-                {/* <span
-                  className="position-absolute px-1 text-xs text-white bg-danger rounded-circle"
-                  style={{ top: "18px" }}
-                >
-                  {carts.cartToTalProduct}
-                </span> */}
               </NavLink>
             </li>
             {user ? (
@@ -87,6 +85,14 @@ export default function Header() {
                   className="dropdown-menu mt-3"
                   aria-labelledby="pagesDropdown"
                 >
+                  {user.admin === "1" && (
+                    <button
+                      className="dropdown-item border-0 transition-link"
+                      onClick={handleAdmin}
+                    >
+                      Admin
+                    </button>
+                  )}
                   <button
                     className="dropdown-item border-0 transition-link"
                     onClick={handleManage}
