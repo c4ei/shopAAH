@@ -34,7 +34,10 @@ module.exports = (sequelize, DataTypes) => {
       ORG_ITEM: DataTypes.STRING,
       GDS_PRICE_ORG: DataTypes.INTEGER,
       PRICE_UP_DATE: DataTypes.STRING,
-      GDS_AAH_PRICE: DataTypes.INTEGER,
+      GDS_AAH_PRICE: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true, // Depending on your requirement
+      },
     },
     {
       sequelize,
