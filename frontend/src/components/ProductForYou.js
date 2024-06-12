@@ -122,9 +122,9 @@ export default function ProductForYou({ listProduct }) {
                       <use xlinkHref="#delivery-time-1"></use>
                     </svg>
                     <div className="media-body text-left ml-3">
-                      <h6 className="text-uppercase mb-1">Free shipping</h6>
+                      <h6 className="text-uppercase mb-1">Cryptocurrency Shopping</h6>
                       <p className="text-small mb-0 text-muted">
-                        Free shipping worldwide
+                        Cryptocurrency Shopping worldwide
                       </p>
                     </div>
                   </div>
@@ -139,7 +139,7 @@ export default function ProductForYou({ listProduct }) {
                     <div className="media-body text-left ml-3">
                       <h6 className="text-uppercase mb-1">24 x 7 service</h6>
                       <p className="text-small mb-0 text-muted">
-                        Free shipping worldwide
+                        Cryptocurrency Shopping worldwide
                       </p>
                     </div>
                   </div>
@@ -154,7 +154,7 @@ export default function ProductForYou({ listProduct }) {
                     <div className="media-body text-left ml-3">
                       <h6 className="text-uppercase mb-1">Festival offer</h6>
                       <p className="text-small mb-0 text-muted">
-                        Free shipping worldwide
+                        Cryptocurrency Shopping worldwide
                       </p>
                     </div>
                   </div>
