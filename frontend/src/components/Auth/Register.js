@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import "./Auth.css";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,8 +8,8 @@ import { registerUser, checkFullname, checkEmail, checkPhone } from "../../servi
 
 const isValidFullname = (value) => {
   if (!value) return false;
-  const koreanRegex = /^[가-힣]+$/;
-  const englishRegex = /^[A-Za-z]+$/;
+  const koreanRegex = /^[가-힣0-9]+$/; // 숫자를 허용하도록 정규식 수정
+  const englishRegex = /^[A-Za-z0-9]+$/; // 숫자를 허용하도록 정규식 수정
   if (koreanRegex.test(value)) {
     return value.length >= 2 && value.length <= 30;
   } else if (englishRegex.test(value)) {
@@ -51,20 +51,25 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function Register() {
+  // URL 파라미터 추출
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const referrerFromURL = searchParams.get("referer_id") || "";
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [checkMessage, setCheckMessage] = useState({ fullname: "", email: "", phone: "" });
   const [isFullnameChecked, setIsFullnameChecked] = useState(false);
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [isPhoneChecked, setIsPhoneChecked] = useState(false);
-
+  // useFormik 초기값 설정
   const formik = useFormik({
     initialValues: {
       fullname: "",
       email: "",
       password: "",
       phone: "",
-      referrer: "",
+      referrer: referrerFromURL, // 여기서 URL에서 추출한 값을 초기값으로 설정
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -217,6 +222,7 @@ export default function Register() {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.referrer}
+                disabled={referrerFromURL ? true : false} // referrerFromURL이 있는 경우에만 disabled
               />
               {formik.errors.referrer && formik.touched.referrer && (
                 <div className="text-danger">{formik.errors.referrer}</div>

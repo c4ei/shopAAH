@@ -81,6 +81,15 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      reward_points: {
+        type: DataTypes.DECIMAL(10, 2), // Decimal 형식으로 변경
+        allowNull: true,
+        validate: {
+          isDecimal: {
+            msg: "Reward points must be a decimal number",
+          },
+        },
+      },
     },
     {
       sequelize,
