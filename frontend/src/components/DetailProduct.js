@@ -117,7 +117,6 @@ export default function DetailProduct() {
     <div className="py-5">
       <div className="container">
         <div className="row mb-5">
-        
           <div className="row m-sm-0">
             <div className="col-sm-2 p-sm-0 order-2 order-sm-1 mt-2 mt-sm-0">
               <div
@@ -215,7 +214,7 @@ export default function DetailProduct() {
               </a>
             </div>
           </div>
-        
+
           <ul className="list-inline mb-2">
             <li className="list-inline-item m-0">
               <i className="fas fa-star small text-warning"></i>
@@ -233,10 +232,15 @@ export default function DetailProduct() {
               <i className="fas fa-star small text-warning"></i>
             </li>
           </ul>
-          <h1>{product?.good_name}</h1>
-          <p className="text-muted lead">₩{product?.price}</p>
-          {/* <p className="text-small mb-4">{product?.description}</p> */}
-          <p className="text-small mb-4" dangerouslySetInnerHTML={{ __html: product?.description }} />
+          <h1 itemProp="name">{product?.good_name}</h1>
+          <p className="text-muted lead">
+            <span itemProp="priceCurrency" content="KRW">₩</span>
+            <span itemProp="price">{product?.price}</span>
+          </p>
+          <p
+            className="text-small mb-4"
+            dangerouslySetInnerHTML={{ __html: product?.description }}
+          />
 
           <div className="row align-items-stretch mb-4">
             <div className="col-sm-5 pr-sm-0">
@@ -297,7 +301,6 @@ export default function DetailProduct() {
               </li>
             </ul>
           </div>
-        
         </div>
         <div className="form-group">
           <label htmlFor="exampleFormControlTextarea1">Comment:</label>

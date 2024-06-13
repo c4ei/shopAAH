@@ -19,9 +19,9 @@ export default function Checkout() {
 
   const formik = useFormik({
     initialValues: {
-      fullName: "",
-      email: "",
-      phone: "",
+      fullName: currentUser ? currentUser.fullname : "",
+      email: currentUser ? currentUser.email : "",
+      phone: currentUser ? currentUser.phone : "",
       address: "",
     },
     validationSchema: Yup.object({
@@ -29,10 +29,10 @@ export default function Checkout() {
         .matches(
           "^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
             "ẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-            "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣\\s]+$",
+            "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣0-9\\s]+$",
           "Fullname is invalid"
         )
-        .min(3)
+        .min(2)
         .max(20),
       email: Yup.string()
         .required("Required")
@@ -48,7 +48,7 @@ export default function Checkout() {
         .matches(
           "^[/0-9a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
           "ẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-          "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣\\s,()]+$",
+          "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣0-9\\s,()]+$",
           "Address is invalid"
         )
         .max(100),
@@ -81,7 +81,9 @@ export default function Checkout() {
       // send data to server
       socket.emit("send_order", currentUser.id);
 
+      setLoad(true); // 로딩 상태를 설정합니다.
       await sendMailCheckout(dispatch, values, currentUser.token);
+      setLoad(false); // 로딩 상태를 해제합니다.
 
       // 장바구니 비우기
       dispatch(clearCart());
@@ -219,6 +221,7 @@ export default function Checkout() {
                         className="btn btn-dark"
                         style={{ color: "white" }}
                         type="submit"
+                        disabled={formik.isSubmitting} // 버튼 비활성화 설정
                       >
                         Place order
                       </button>
