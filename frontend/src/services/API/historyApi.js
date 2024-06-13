@@ -1,3 +1,4 @@
+// /shop.c4ei.net/frontend/src/services/API/historyApi.js
 import axios from "axios";
 import {
   getHistoryFailed,
@@ -9,16 +10,18 @@ import {
 } from "../../redux/historySlice";
 import { DOMAIN } from "../../utils/settings/config";
 
-export const createHistoryUser = async (dispatch, params) => {
+// 히스토리 생성
+export const createHistoryUser = async (dispatch, historyData, detailsData) => {
   dispatch(getHistoryStart());
   try {
-    await axios.post(`${DOMAIN}/api/v1/history`, params);
+    await axios.post(`${DOMAIN}/api/v1/history`, { historyData, detailsData });
     dispatch(getHistorySuccess());
   } catch (err) {
     dispatch(getHistoryFailed(err));
   }
 };
 
+// 히스토리 리스트 가져오기
 export const getListHistoryUser = async (dispatch, params = "") => {
   dispatch(getListHistoryStart());
   try {
@@ -29,28 +32,22 @@ export const getListHistoryUser = async (dispatch, params = "") => {
   }
 };
 
-export const updateHistory = async (dispatch, updatedHistory) => {
+// 히스토리 업데이트
+export const updateHistory = async (dispatch, updatedHistory, detailsData) => {
   try {
-    // console.log("Sending PUT request to update history");
-    // console.log("Updated history data:", updatedHistory);
-
-    const response = await fetch(`${DOMAIN}/api/v1/history/${updatedHistory.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    const response = await axios.put(`${DOMAIN}/api/v1/history/${updatedHistory.id}`, {
+      historyData: {
         delivery: updatedHistory.delivery,
         status: updatedHistory.status,
-      }),
+      },
+      detailsData,
     });
 
     if (!response.ok) {
       throw new Error('Failed to update history');
     }
 
-    const data = await response.json();
-    // console.log("Response from server:", data);
+    const data = await response.data;
 
     // 선택적으로 상태 업데이트를 위한 Redux 액션을 디스패치합니다.
     // dispatch({ type: 'UPDATE_HISTORY', payload: data });

@@ -1,3 +1,4 @@
+// /shop.c4ei.net/frontend/src/components/Checkout.js
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -54,29 +55,21 @@ export default function Checkout() {
         .max(100),
     }),
     onSubmit: async (values) => {
-      for (let item of carts) {
-        const params = {
-          idProduct: item.product.id,
-          productCount: item.quantity,
-        };
-        const query = "?" + queryString.stringify(params);
+      const paramsHistory = {
+        idUser: currentUser.id,
+        phone: values.phone,
+        address: values.address,
+        fullname: values.fullName,
+        total: cartTotalPrice,
+      };
 
-        await checkoutProduct(
-          dispatch,
-          query,
-          currentUser.token,
-          currentUser.id
-        );
+      const detailsData = carts.map((item) => ({
+        productId: item.product.id,
+        purchasePrice: item.product.price,
+        quantity: item.quantity,
+      }));
 
-        const paramsHistory = {
-          idUser: currentUser.id,
-          phone: values.phone,
-          address: values.address,
-          fullname: values.fullName,
-          total: cartTotalPrice,
-        };
-        await createHistoryUser(dispatch, paramsHistory);
-      }
+      await createHistoryUser(dispatch, paramsHistory, detailsData);
 
       // send data to server
       socket.emit("send_order", currentUser.id);
