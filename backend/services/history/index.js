@@ -1,5 +1,5 @@
 // /shop.c4ei.net/backend/services/history/index.js
-const { History, User, HistoryDetail } = require("../../models");
+const { History, User, HistoryDetail, Product } = require("../../models");
 
 const gethistory = async (idUser) => {
   try {
@@ -21,7 +21,6 @@ const createHistory = async (data) => {
   try {
     const newHistory = await History.create(historyData);
 
-    // HistoryDetail 항목들을 생성합니다.
     if (detailsData && detailsData.length > 0) {
       const historyDetails = detailsData.map(detail => ({
         ...detail,
@@ -47,6 +46,20 @@ const getListHistory = async () => {
   }
 };
 
+const getHistoryDetail = async (historyId) => {
+  console.log("historyId : " + historyId  +" /backend/services/history/index.js 50 line ");
+  try {
+    const historyDetail = await HistoryDetail.findAll({
+      where: { historyId },
+      include: [Product], // 필요한 경우 Product 모델도 포함
+    });
+    return historyDetail;
+  } catch (err) {
+    console.error("Error getting history detail:", err);
+    return null;
+  }
+};
+
 const updateHistory = async (id, data) => {
   const { historyData, detailsData } = data; // historyData와 detailsData로 데이터 분리
 
@@ -60,9 +73,7 @@ const updateHistory = async (id, data) => {
       return null;
     }
 
-    // HistoryDetail 항목들을 업데이트하거나 생성합니다.
     if (detailsData && detailsData.length > 0) {
-      // 기존의 HistoryDetail 항목들을 삭제하고 다시 생성합니다.
       await HistoryDetail.destroy({ where: { historyId: id } });
       const historyDetails = detailsData.map(detail => ({
         ...detail,
@@ -86,4 +97,5 @@ module.exports = {
   createHistory,
   getListHistory,
   updateHistory,
+  getHistoryDetail,
 };

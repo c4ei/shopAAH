@@ -7,6 +7,9 @@ import {
   getListHistoryFailed,
   getListHistoryStart,
   getListHistorySucess,
+  getHistoryDetailStart,
+  getHistoryDetailSuccess,
+  getHistoryDetailFailed,
 } from "../../redux/historySlice";
 import { DOMAIN } from "../../utils/settings/config";
 
@@ -29,6 +32,18 @@ export const getListHistoryUser = async (dispatch, params = "") => {
     dispatch(getListHistorySucess(response.data));
   } catch (err) {
     dispatch(getListHistoryFailed());
+  }
+};
+
+// 히스토리 상세 정보 가져오기
+export const getHistoryDetail = async (dispatch, historyId) => {
+  dispatch(getHistoryDetailStart());
+  try {
+    const response = await axios.get(`${DOMAIN}/api/v1/history/detail/${historyId}`);
+    console.log("API response:", response.data); // 디버깅 로그 추가
+    dispatch(getHistoryDetailSuccess(response.data));
+  } catch (err) {
+    dispatch(getHistoryDetailFailed(err));
   }
 };
 

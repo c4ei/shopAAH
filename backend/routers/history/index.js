@@ -5,6 +5,7 @@ const {
   createHistory,
   getListHistory,
   updateHistory,
+  getHistoryDetail, // 새로운 함수 임포트
 } = require("../../services/history");
 const historyRouter = express.Router();
 
@@ -25,6 +26,18 @@ historyRouter.get("/", async (req, res) => {
     }
     res.status(200).send(listHistory);
   }
+});
+
+// 히스토리 상세 정보 가져오기
+historyRouter.get("/detail/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const historyDetail = await getHistoryDetail(id);
+  if (!historyDetail) {
+    return res.status(500).send("Can't get history detail");
+  }
+
+  res.status(200).send(historyDetail);
 });
 
 // 히스토리 생성

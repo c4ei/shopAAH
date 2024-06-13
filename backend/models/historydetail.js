@@ -1,28 +1,36 @@
+// /shop.c4ei.net/backend/models/historydetail.js
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class HistoryDetail extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate({ History, Product }) {
-      // define association here
       HistoryDetail.belongsTo(History, { foreignKey: "historyId" });
       HistoryDetail.belongsTo(Product, { foreignKey: "productId" });
     }
   }
   HistoryDetail.init(
     {
-      historyId: DataTypes.INTEGER,
-      productId: DataTypes.INTEGER,
-      purchasePrice: DataTypes.DECIMAL(20, 2),
-      quantity: DataTypes.INTEGER,
+      historyId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      productId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      purchasePrice: {
+        type: DataTypes.DECIMAL(20, 2),
+        allowNull: false,
+      },
+      quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
     },
     {
       sequelize,
       modelName: "HistoryDetail",
+      timestamps: true,
     }
   );
   return HistoryDetail;
