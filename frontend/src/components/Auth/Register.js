@@ -51,7 +51,6 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function Register() {
-  // URL 파라미터 추출
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const referrerFromURL = searchParams.get("referer_id") || "";
@@ -62,14 +61,14 @@ export default function Register() {
   const [isFullnameChecked, setIsFullnameChecked] = useState(false);
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [isPhoneChecked, setIsPhoneChecked] = useState(false);
-  // useFormik 초기값 설정
+
   const formik = useFormik({
     initialValues: {
       fullname: "",
       email: "",
       password: "",
       phone: "",
-      referrer: referrerFromURL, // 여기서 URL에서 추출한 값을 초기값으로 설정
+      referrer: referrerFromURL,
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -87,6 +86,9 @@ export default function Register() {
       const result = await checkFullname(formik.values.fullname);
       setCheckMessage({ ...checkMessage, fullname: result.message });
       setIsFullnameChecked(result.message === "사용 가능한 이름입니다.");
+      if (result.message === "사용 가능한 이름입니다.") {
+        formik.setErrors({ ...formik.errors, fullname: '' });
+      }
     } catch (error) {
       setCheckMessage({ ...checkMessage, fullname: "중복 확인 중 오류가 발생했습니다." });
     }
@@ -97,6 +99,9 @@ export default function Register() {
       const result = await checkEmail(formik.values.email);
       setCheckMessage({ ...checkMessage, email: result.message });
       setIsEmailChecked(result.message === "사용 가능한 이메일입니다.");
+      if (result.message === "사용 가능한 이메일입니다.") {
+        formik.setErrors({ ...formik.errors, email: '' });
+      }
     } catch (error) {
       setCheckMessage({ ...checkMessage, email: "중복 확인 중 오류가 발생했습니다." });
     }
@@ -107,6 +112,9 @@ export default function Register() {
       const result = await checkPhone(formik.values.phone);
       setCheckMessage({ ...checkMessage, phone: result.message });
       setIsPhoneChecked(result.message === "사용 가능한 전화번호입니다.");
+      if (result.message === "사용 가능한 전화번호입니다.") {
+        formik.setErrors({ ...formik.errors, phone: '' });
+      }
     } catch (error) {
       setCheckMessage({ ...checkMessage, phone: "중복 확인 중 오류가 발생했습니다." });
     }
@@ -130,22 +138,24 @@ export default function Register() {
           <div className="wrap-login100">
             <span className="login100-form-title mt-5">회원가입</span>
             <div className="wrap-input100">
-              <input
-                name="fullname"
-                className="input100"
-                type="text"
-                placeholder="이름을 입력 후 확인 버튼을 클릭해 주세요"
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  setIsFullnameChecked(false);
-                }}
-                onBlur={formik.handleBlur}
-                value={formik.values.fullname}
-                disabled={isFullnameChecked}
-              />
-              <button type="button" onClick={handleCheckFullname} disabled={isFullnameChecked}>
-                확인
-              </button>
+              <div className="input-group">
+                <input
+                  name="fullname"
+                  className="input100"
+                  type="text"
+                  placeholder="이름을 입력 후 확인 버튼을 클릭해 주세요"
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    setIsFullnameChecked(false);
+                  }}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.fullname}
+                  disabled={isFullnameChecked}
+                />
+                <button type="button" onClick={handleCheckFullname} disabled={isFullnameChecked}>
+                  확인
+                </button>
+              </div>
               {checkMessage.fullname && <div className="text-info">{checkMessage.fullname}</div>}
               {formik.errors.fullname && formik.touched.fullname && (
                 <div className="text-danger">{formik.errors.fullname}</div>
@@ -153,22 +163,24 @@ export default function Register() {
             </div>
 
             <div className="wrap-input100">
-              <input
-                className="input100"
-                type="text"
-                placeholder="이메일을 입력 후 확인 버튼을 클릭해 주세요"
-                name="email"
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  setIsEmailChecked(false);
-                }}
-                onBlur={formik.handleBlur}
-                value={formik.values.email}
-                disabled={isEmailChecked}
-              />
-              <button type="button" onClick={handleCheckEmail} disabled={isEmailChecked}>
-                확인
-              </button>
+              <div className="input-group">
+                <input
+                  className="input100"
+                  type="text"
+                  placeholder="이메일을 입력 후 확인 버튼을 클릭해 주세요"
+                  name="email"
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    setIsEmailChecked(false);
+                  }}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.email}
+                  disabled={isEmailChecked}
+                />
+                <button type="button" onClick={handleCheckEmail} disabled={isEmailChecked}>
+                  확인
+                </button>
+              </div>
               {checkMessage.email && <div className="text-info">{checkMessage.email}</div>}
               {formik.errors.email && formik.touched.email && (
                 <div className="text-danger">{formik.errors.email}</div>
@@ -176,22 +188,24 @@ export default function Register() {
             </div>
 
             <div className="wrap-input100">
-              <input
-                className="input100"
-                type="text"
-                placeholder="전화번호를 입력 후 확인 버튼을 클릭해 주세요"
-                name="phone"
-                onChange={(e) => {
-                  formik.handleChange(e);
-                  setIsPhoneChecked(false);
-                }}
-                onBlur={formik.handleBlur}
-                value={formik.values.phone}
-                disabled={isPhoneChecked}
-              />
-              <button type="button" onClick={handleCheckPhone} disabled={isPhoneChecked}>
-                확인
-              </button>
+              <div className="input-group">
+                <input
+                  className="input100"
+                  type="text"
+                  placeholder="전화번호(숫자만) 입력 후 확인 버튼을 클릭해 주세요"
+                  name="phone"
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    setIsPhoneChecked(false);
+                  }}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.phone}
+                  disabled={isPhoneChecked}
+                />
+                <button type="button" onClick={handleCheckPhone} disabled={isPhoneChecked}>
+                  확인
+                </button>
+              </div>
               {checkMessage.phone && <div className="text-info">{checkMessage.phone}</div>}
               {formik.errors.phone && formik.touched.phone && (
                 <div className="text-danger">{formik.errors.phone}</div>
@@ -222,7 +236,7 @@ export default function Register() {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.referrer}
-                disabled={referrerFromURL ? true : false} // referrerFromURL이 있는 경우에만 disabled
+                disabled={referrerFromURL ? true : false}
               />
               {formik.errors.referrer && formik.touched.referrer && (
                 <div className="text-danger">{formik.errors.referrer}</div>
