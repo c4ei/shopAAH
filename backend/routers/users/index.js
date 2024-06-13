@@ -23,7 +23,21 @@ const userRouter = express.Router();
 let refreshTokens = [];
 
 userRouter.post("/register", async (req, res) => {
-  const { fullname, email, password, phone, referrer_id } = req.body;
+  const { fullname, email, password, phone, referrer } = req.body;
+  let referrer_id = null;
+  // referrer가 이메일 형식인지 확인
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(referrer)) {
+    try {
+      // 이메일에 해당하는 사용자 조회
+      const user = await getUserByEmail(referrer);
+      if (user) {
+        referrer_id = user.id; // 사용자의 ID를 referrer_id로 설정
+      }
+    } catch (error) {
+      console.error("Error finding user by email:", error);
+      return res.status(500).send("Error finding user by email");
+    }
+  }
   console.log(`${referrer_id} : referrer_id - /backend/routers/users/index.js`);
   try {
     const hashedPassword = await hashPassword(password);

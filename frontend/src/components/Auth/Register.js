@@ -82,6 +82,11 @@ export default function Register() {
   });
 
   const handleCheckFullname = async () => {
+    formik.setFieldTouched('fullname', true, true); // 필드를 터치하여 포커스를 잃은 것으로 설정
+    if (!isValidFullname(formik.values.fullname)) {
+      setCheckMessage({ ...checkMessage, fullname: "이름은 한글 2자 이상, 영문 6자 이상이어야 합니다." });
+      return;
+    }
     try {
       const result = await checkFullname(formik.values.fullname);
       setCheckMessage({ ...checkMessage, fullname: result.message });
@@ -95,6 +100,11 @@ export default function Register() {
   };
 
   const handleCheckEmail = async () => {
+    formik.setFieldTouched('email', true, true); // 필드를 터치하여 포커스를 잃은 것으로 설정
+    if (!formik.values.email || formik.errors.email) {
+      setCheckMessage({ ...checkMessage, email: "유효한 이메일을 입력하세요." });
+      return;
+    }
     try {
       const result = await checkEmail(formik.values.email);
       setCheckMessage({ ...checkMessage, email: result.message });
@@ -108,6 +118,11 @@ export default function Register() {
   };
 
   const handleCheckPhone = async () => {
+    formik.setFieldTouched('phone', true, true); // 필드를 터치하여 포커스를 잃은 것으로 설정
+    if (!formik.values.phone || formik.errors.phone) {
+      setCheckMessage({ ...checkMessage, phone: "유효한 전화번호를 입력하세요." });
+      return;
+    }
     try {
       const result = await checkPhone(formik.values.phone);
       setCheckMessage({ ...checkMessage, phone: result.message });
@@ -195,8 +210,9 @@ export default function Register() {
                   placeholder="전화번호(숫자만) 입력 후 확인 버튼을 클릭해 주세요"
                   name="phone"
                   onChange={(e) => {
-                    formik.handleChange(e);
-                    setIsPhoneChecked(false);
+                    const inputValue = e.target.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자는 제거
+                    formik.setFieldValue('phone', inputValue); // formik 값 업데이트
+                    setIsPhoneChecked(false); // 체크 초기화
                   }}
                   onBlur={formik.handleBlur}
                   value={formik.values.phone}
