@@ -178,7 +178,7 @@ export default function Shop() {
                       <p className="text-muted font-weight-bold">
                         ₩{item.price}
                       </p>
-                      <p className="text-small mb-4">{item.description}</p>
+                      {/* <p className="text-small mb-4">{item.description}</p> */}
                       <div className="row align-items-stretch mb-4">
                         <div className="col-sm-5 pl-sm-0 fix_addwish">
                           <a className="btn btn-dark btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0">

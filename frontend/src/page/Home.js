@@ -10,7 +10,9 @@ export default function Home() {
   const listProduct = useSelector(
     (state) => state.product.products?.allProduct
   );
-
+  // 제품 목록을 12개로 제한합니다
+  const limitedListProduct = listProduct?.slice(0, 12);
+  
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -100,7 +102,8 @@ export default function Home() {
               <h2 className="h5 text-uppercase mb-4">Product Spend For You</h2>
             </div>
             <div className="row d-block">
-              <ProductForYou listProduct={listProduct} />
+              {/* <ProductForYou listProduct={listProduct} /> */}
+              <ProductForYou listProduct={limitedListProduct} />
             </div>
           </div>
 

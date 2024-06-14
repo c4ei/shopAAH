@@ -1,3 +1,4 @@
+// /shop.c4ei.net/frontend/src/components/DetailProduct.js
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -8,6 +9,7 @@ import ProductForYou from "./ProductForYou";
 import queryString from "query-string";
 import moment from "moment";
 import { toast } from "react-toastify";
+import "./DetailProduct.css"; // Import custom CSS file
 
 export default function DetailProduct() {
   const { id } = useParams();
@@ -15,6 +17,8 @@ export default function DetailProduct() {
   const listProduct = useSelector(
     (state) => state.product.products?.allProduct
   );
+  // 제품 목록을 12개로 제한합니다
+  const limitedListProduct = listProduct?.slice(0, 12);
   const user = useSelector((state) => state.auth.login.currentUser);
   const listComment = useSelector(
     (state) => state.comment.loadComment.listComment
@@ -23,7 +27,6 @@ export default function DetailProduct() {
   const [star, setStar] = useState(5);
   const [comment, setComment] = useState("");
   const [loadComment, setLoadComment] = useState(false);
-
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
 
@@ -47,7 +50,6 @@ export default function DetailProduct() {
         progress: undefined,
         theme: "colored",
       });
-      // return;
     } else {
       setQuantity((value) => value - 1);
       toast.success("Delete Product Success", {
@@ -62,6 +64,7 @@ export default function DetailProduct() {
       });
     }
   };
+
   const incrementQuantity = () => {
     setQuantity((value) => value + 1);
     toast.success("Add Product Success", {
@@ -77,7 +80,7 @@ export default function DetailProduct() {
   };
 
   const onChangeText = (value) => {
-    quantity(value);
+    setQuantity(value);
   };
 
   const handleAddToCart = (product, quantity) => {
@@ -123,34 +126,26 @@ export default function DetailProduct() {
                 className="owl-thumbs d-flex flex-row flex-sm-column"
                 data-slider-id="1"
               >
-                <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0">
-                  <img
-                    className="w-100"
-                    src={product?.img1}
-                    alt={product?.img1}
-                  />
-                </div>
-                <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0">
-                  <img
-                    className="w-100"
-                    src={product?.img2}
-                    alt={product?.img2}
-                  />
-                </div>
-                <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0">
-                  <img
-                    className="w-100"
-                    src={product?.img3}
-                    alt={product?.img3}
-                  />
-                </div>
-                <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0">
-                  <img
-                    className="w-100"
-                    src={product?.img4}
-                    alt={product?.img4}
-                  />
-                </div>
+                {product?.img1 && (
+                  <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0">
+                    <img className="w-100" src={product?.img1} alt={product?.img1} />
+                  </div>
+                )}
+                {product?.img2 && (
+                  <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0">
+                    <img className="w-100" src={product?.img2} alt={product?.img2} />
+                  </div>
+                )}
+                {product?.img3 && (
+                  <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0">
+                    <img className="w-100" src={product?.img3} alt={product?.img3} />
+                  </div>
+                )}
+                {product?.img4 && (
+                  <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0">
+                    <img className="w-100" src={product?.img4} alt={product?.img4} />
+                  </div>
+                )}
               </div>
             </div>
             <div
@@ -159,34 +154,26 @@ export default function DetailProduct() {
               data-ride="carousel"
             >
               <div className="carousel-inner owl-carousel product-slider">
-                <div className="carousel-item active">
-                  <img
-                    className="d-block w-100"
-                    src={product?.img1}
-                    alt="First slide"
-                  />
-                </div>
-                <div className="carousel-item">
-                  <img
-                    className="d-block w-100"
-                    src={product?.img2}
-                    alt="Second slide"
-                  />
-                </div>
-                <div className="carousel-item">
-                  <img
-                    className="d-block w-100"
-                    src={product?.img3}
-                    alt="Third slide"
-                  />
-                </div>
-                <div className="carousel-item">
-                  <img
-                    className="d-block w-100"
-                    src={product?.img4}
-                    alt="Third slide"
-                  />
-                </div>
+                {product?.img1 && (
+                  <div className="carousel-item active">
+                    <img className="d-block w-100" src={product?.img1} alt="First slide" />
+                  </div>
+                )}
+                {product?.img2 && (
+                  <div className="carousel-item">
+                    <img className="d-block w-100" src={product?.img2} alt="Second slide" />
+                  </div>
+                )}
+                {product?.img3 && (
+                  <div className="carousel-item">
+                    <img className="d-block w-100" src={product?.img3} alt="Third slide" />
+                  </div>
+                )}
+                {product?.img4 && (
+                  <div className="carousel-item">
+                    <img className="d-block w-100" src={product?.img4} alt="Fourth slide" />
+                  </div>
+                )}
               </div>
               <a
                 className="carousel-control-prev"
@@ -194,10 +181,7 @@ export default function DetailProduct() {
                 role="button"
                 data-slide="prev"
               >
-                <span
-                  className="carousel-control-prev-icon"
-                  aria-hidden="true"
-                ></span>
+                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span className="sr-only">Previous</span>
               </a>
               <a
@@ -206,39 +190,26 @@ export default function DetailProduct() {
                 role="button"
                 data-slide="next"
               >
-                <span
-                  className="carousel-control-next-icon"
-                  aria-hidden="true"
-                ></span>
+                <span className="carousel-control-next-icon" aria-hidden="true"></span>
                 <span className="sr-only">Next</span>
               </a>
             </div>
           </div>
 
           <ul className="list-inline mb-2">
-            <li className="list-inline-item m-0">
-              <i className="fas fa-star small text-warning"></i>
-            </li>
-            <li className="list-inline-item m-0">
-              <i className="fas fa-star small text-warning"></i>
-            </li>
-            <li className="list-inline-item m-0">
-              <i className="fas fa-star small text-warning"></i>
-            </li>
-            <li className="list-inline-item m-0">
-              <i className="fas fa-star small text-warning"></i>
-            </li>
-            <li className="list-inline-item m-0">
-              <i className="fas fa-star small text-warning"></i>
-            </li>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <li className="list-inline-item m-0" key={index}>
+                <i className="fas fa-star small text-warning"></i>
+              </li>
+            ))}
           </ul>
-          <h1 itemProp="name">{product?.good_name}</h1>
-          <p className="text-muted lead">
+          <h1 itemProp="name" className="text-center text-sm-left">{product?.good_name}</h1>
+          <p className="text-muted lead text-center text-sm-left">
             <span itemProp="priceCurrency" content="KRW">₩</span>
             <span itemProp="price">{product?.price}</span>
           </p>
           <p
-            className="text-small mb-4"
+            className="text-small mb-4 text-center text-sm-left product-description"
             dangerouslySetInnerHTML={{ __html: product?.description }}
           />
 
@@ -323,6 +294,11 @@ export default function DetailProduct() {
               max="5"
               value={star}
               onChange={(e) => setStar(e.target.value)}
+              style={{
+                fontSize: '14px',
+                minWidth: '60px',
+                padding: '2px 6px'
+              }}
             />
             &nbsp; &nbsp;
             <span className="mt-2">Star</span>
@@ -394,7 +370,8 @@ export default function DetailProduct() {
         </div>
         <h2 className="h5 text-uppercase mb-4">Related products</h2>
         <div className="row d-block">
-          <ProductForYou listProduct={listProduct} />
+          {/* <ProductForYou listProduct={listProduct} /> */}
+          <ProductForYou listProduct={limitedListProduct} />
         </div>
       </div>
     </div>
