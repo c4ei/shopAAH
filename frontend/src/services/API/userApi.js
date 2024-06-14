@@ -17,6 +17,7 @@ export const getListUser = async (dispatch, accessToken) => {
         token: `Bearer ${accessToken}`,
       },
     });
+    // console.log(" /frontend/src/services/API/userApi.js - 20 :  "+JSON.stringify(response.data) );
     dispatch(getUserSuccess(response.data));
   } catch (err) {
     dispatch(getUserFailed(err));

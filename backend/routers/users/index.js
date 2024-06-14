@@ -1,3 +1,4 @@
+// /shop.c4ei.net/backend/routers/users/index.js
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const { authenticate, verifyTokenandAdmin } = require("../../middwares/auth");
@@ -49,7 +50,7 @@ userRouter.post("/register", async (req, res) => {
       return res.status(500).send("Error finding user by ID");
     }
   }
-  console.log(`${referrer_id} : referrer_id - /backend/routers/users/index.js`);
+  // console.log(`${referrer_id} : referrer_id - /backend/routers/users/index.js`);
   try {
     const hashedPassword = await hashPassword(password);
     const user = await createUser({
@@ -91,7 +92,11 @@ userRouter.post("/login", async (req, res) => {
       fullname: user.fullname,
       email: user.email,
       phone: user.phone,
-      admin: user.admin, // 추가
+      admin: user.admin,
+      address1: user.address1,
+      address2: user.address2,
+      postcode: user.postcode,
+      address: `${user.address1} ${user.address2} ${user.postcode}`,
     });
 
     const refresh = await genrefreshToken({
@@ -99,7 +104,11 @@ userRouter.post("/login", async (req, res) => {
       fullname: user.fullname,
       email: user.email,
       phone: user.phone,
-      admin: user.admin, // 추가
+      admin: user.admin,
+      address1: user.address1,
+      address2: user.address2,
+      postcode: user.postcode,
+      address: `${user.address1} ${user.address2} ${user.postcode}`,
     });
 
     res.cookie("refreshToken", refresh, {

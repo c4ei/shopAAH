@@ -1,3 +1,4 @@
+// /shop.c4ei.net/backend/services/users/index.js
 "use strict";
 const { User } = require("../../models");
 
@@ -17,6 +18,7 @@ const getUserByEmail = async (email) => {
       where: {
         email,
       },
+      attributes: ['id', 'fullname', 'email', 'phone', 'admin', 'address1', 'address2', 'postcode', 'password'] // 추가: 'password'
     });
     return user;
   } catch (err) {
@@ -28,9 +30,8 @@ const getUserByEmail = async (email) => {
 const getUserById = async (id) => {
   try {
     const user = await User.findOne({
-      where: {
-        id,
-      },
+      where: { id },
+      attributes: ['id', 'fullname', 'email', 'phone', 'admin', 'address1', 'address2', 'postcode'] // 필요한 필드 추가
     });
     return user;
   } catch (err) {
@@ -41,7 +42,9 @@ const getUserById = async (id) => {
 
 const getListUser = async () => {
   try {
-    const listUser = await User.findAll();
+    const listUser = await User.findAll({
+      attributes: ['id', 'fullname', 'email', 'phone', 'admin', 'address1', 'address2', 'postcode'] // 필요한 필드 추가
+    });
     return listUser;
   } catch (err) {
     console.log(err);
@@ -52,9 +55,7 @@ const getListUser = async () => {
 const deleteUser = async (id) => {
   try {
     const userDeleted = await User.destroy({
-      where: {
-        id,
-      },
+      where: { id },
     });
     return userDeleted;
   } catch (err) {
@@ -66,9 +67,7 @@ const deleteUser = async (id) => {
 const updateUser = async (id, data) => {
   try {
     const updateUser = await User.update(data, {
-      where: {
-        id,
-      },
+      where: { id },
     });
     return updateUser;
   } catch (err) {
@@ -80,9 +79,8 @@ const updateUser = async (id, data) => {
 const getUserByPhone = async (phone) => {
   try {
     const user = await User.findOne({
-      where: {
-        phone,
-      },
+      where: { phone },
+      attributes: ['id', 'fullname', 'email', 'phone', 'admin', 'address1', 'address2', 'postcode'] // 필요한 필드 추가
     });
     return user;
   } catch (err) {
@@ -95,9 +93,8 @@ const getUserByFullname = async (fullname) => {
   console.log("/backend/services/users/index.js 95 Line - getUserByFullname : " + fullname);
   try {
     const user = await User.findOne({
-      where: {
-        fullname,
-      },
+      where: { fullname },
+      attributes: ['id', 'fullname', 'email', 'phone', 'admin', 'address1', 'address2', 'postcode'] // 필요한 필드 추가
     });
     return user;
   } catch (err) {

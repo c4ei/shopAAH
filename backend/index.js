@@ -107,6 +107,21 @@ app.post('/subscribe', (req, res) => {
 });
 // ###################### subscribe ######################
 
+// ###################### address ######################
+app.post('/saveUserInfo', (req, res) => {
+  const { id, email, phone, address1, address2, postcode } = req.body;
+  
+  const query = ` UPDATE Users SET  email = ?,  phone = ?,  address1 = ?,  address2 = ?,  postcode = ? WHERE id = ? `;
+  
+  db.query(query, [email, phone, address1, address2, postcode, id], (err, result) => {
+    if (err) {
+      return res.status(500).send("정보를 저장하는 동안 오류가 발생했습니다.");
+    }
+    res.send("정보가 성공적으로 저장되었습니다.");
+  });
+});
+// ###################### address ######################
+
 const publicPathDirectory = path.join(__dirname, "public");
 app.use(express.static(publicPathDirectory));
 

@@ -1,3 +1,4 @@
+// /shop.c4ei.net/backend/models/user.js
 "use strict";
 const { Model } = require("sequelize");
 
@@ -89,6 +90,19 @@ module.exports = (sequelize, DataTypes) => {
             msg: "Reward points must be a decimal number",
           },
         },
+      },
+      // 새로운 필드 추가
+      address1: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      address2: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      postcode: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
     },
     {

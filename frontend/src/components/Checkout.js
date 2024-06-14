@@ -1,4 +1,5 @@
 // /shop.c4ei.net/frontend/src/components/Checkout.js
+import { Link } from "react-router-dom"; // Link 컴포넌트를 import합니다.
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,7 +24,7 @@ export default function Checkout() {
       fullName: currentUser ? currentUser.fullname : "",
       email: currentUser ? currentUser.email : "",
       phone: currentUser ? currentUser.phone : "",
-      address: "",
+      address: currentUser ? `${currentUser.address1} ${currentUser.address2} ${currentUser.postcode}` : "",
     },
     validationSchema: Yup.object({
       fullName: Yup.string()
@@ -194,7 +195,7 @@ export default function Checkout() {
                         className="text-small text-uppercase"
                         htmlFor="Address"
                       >
-                        Address:{" "}
+                        Address: <Link to="/manage" className="btn btn-secondary ml-3">주소 설정 하러 가기</Link> {" "}
                       </label>
                       <input
                         className="form-control form-control-lg"
