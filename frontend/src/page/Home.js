@@ -89,6 +89,10 @@ export default function Home() {
                   <a className="btn btn-dark" href="shop.html">
                     AAH로 구매하기
                   </a>
+                  <br/><br/>
+                  <a className="btn btn-dark" href="https://docs.google.com/document/d/1cVD4bqt3K9rIK2kO1SCSWljD0X0mJ-OceeK_F3DBnaU/edit?usp=sharing" target="_blank">
+                    AAH몰설명서
+                  </a>
                 </div>
               </div>
             </div>
