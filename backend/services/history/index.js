@@ -8,6 +8,7 @@ const gethistory = async (idUser) => {
         idUser,
       },
       include: [HistoryDetail], // HistoryDetail을 포함하여 조회
+      order: [['createdAt', 'DESC']], // createdAt 기준 내림차순으로 정렬
     });
     return historyUser;
   } catch (err) {

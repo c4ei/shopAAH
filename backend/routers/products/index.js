@@ -1,3 +1,4 @@
+// /shop.c4ei.net/backend/routers/products/index.js
 const express = require("express");
 const {
   addProduct,

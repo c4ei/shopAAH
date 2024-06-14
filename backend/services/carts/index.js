@@ -1,3 +1,4 @@
+// /shop.c4ei.net/backend/services/carts/index.js
 const { Cart, User } = require("../../models");
 
 const getCartByUser = async (idUser) => {

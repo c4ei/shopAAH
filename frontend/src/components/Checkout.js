@@ -45,16 +45,16 @@ export default function Checkout() {
         .matches(/^[0-9]+$/, "Number phone is invalid")
         .min(10)
         .max(11),
-      address: Yup.string()
+        address: Yup.string()
         .required("Required")
         .matches(
           "^[/0-9a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
           "ẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-          "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣0-9\\s,()]+$",
+          "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣0-9\\s,()\\-]+$", // - 추가
           "Address is invalid"
         )
         .max(100),
-    }),
+      }),
     onSubmit: async (values) => {
       const paramsHistory = {
         idUser: currentUser.id,
@@ -103,21 +103,6 @@ export default function Checkout() {
             <div className="row px-4 px-lg-5 py-lg-4 align-items-center">
               <div className="col-lg-6">
                 <h1 className="h2 text-uppercase mb-0">Checkout</h1>
-              </div>
-              <div className="col-lg-6 text-lg-right">
-                <nav aria-label="breadcrumb">
-                  <ol className="breadcrumb justify-content-lg-end mb-0 px-0">
-                    <li className="breadcrumb-item">
-                      <a href="index.html">Home</a>
-                    </li>
-                    <li className="breadcrumb-item">
-                      <a href="cart.html">Cart</a>
-                    </li>
-                    <li className="breadcrumb-item active" aria-current="page">
-                      Checkout
-                    </li>
-                  </ol>
-                </nav>
               </div>
             </div>
           </div>
