@@ -1,7 +1,7 @@
+// /shop.c4ei.net/frontend/src/page/Home.js
 import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import { getListProduct } from "../services/API/productApi";
 import { getListProduct10 } from "../services/API/productApi";
 import ProductBigSale from "../components/ProductBigSale";
 import ProductForYou from "../components/ProductForYou";
@@ -14,13 +14,53 @@ export default function Home() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // getListProduct(dispatch);
     getListProduct10(dispatch);
   }, []);
 
   const productDiscount = listProduct?.filter((product) => {
     return product.promotionPercent >= 20;
   });
+
+  const partnerImages = [
+    "https://i.ibb.co/5vgnxxc/image.png",
+    "https://i.ibb.co/xGTQwgz/image.png",
+    "https://i.ibb.co/5LzVfNC/image.png",
+    "https://i.ibb.co/jfXd9dm/image.png",
+    "https://i.ibb.co/gW3F61X/image.png",
+    "https://i.ibb.co/88J4QLT/image.png",
+    "https://i.ibb.co/6ZtB5nb/image.png",
+    "https://i.ibb.co/MnydK1p/image.png",
+    "https://i.ibb.co/VTq67yC/image.png",
+    "https://i.ibb.co/rd68yX3/image.png",
+    "https://i.ibb.co/VHRgJQG/image.png",
+    "https://i.ibb.co/WfxKjCW/image.png",
+    "https://i.ibb.co/BZRZGdG/image.png",
+    "https://i.ibb.co/dbgvhpw/image.png",
+    "https://i.ibb.co/qYj2NVq/image.png",
+    "https://i.ibb.co/3hX32zY/image.png",
+    "https://i.ibb.co/Z11HQzM/image.png",
+    "https://i.ibb.co/yXKKLYb/image.png",
+    "https://i.ibb.co/XXMMdLC/image.png",
+    "https://i.ibb.co/PgHZZS4/image.png",
+    "https://i.ibb.co/27JK4By/image.png",
+    "https://i.ibb.co/gZRm9sQ/image.png",
+    "https://i.ibb.co/pb3kZJG/image.png",
+    "https://i.ibb.co/FqFPSt3/image.png",
+    "https://i.ibb.co/D7NYJRd/image.png",
+    "https://i.ibb.co/qsVhdMj/image.png",
+    "https://i.ibb.co/0jkrgcG/image.png",
+    "https://i.ibb.co/ZTq2jyg/image.png",
+    "https://i.ibb.co/hyy0R3p/image.png",
+    "https://i.ibb.co/VTQDmMt/image.png",
+    "https://i.ibb.co/58zByNQ/image.png",
+    "https://i.ibb.co/khtFSw8/image.png",
+    "https://i.ibb.co/FsjBmHL/image.png",
+    "https://i.ibb.co/g4vf1qH/image.png",
+    "https://i.ibb.co/KVtkHfR/image.png",
+    "https://i.ibb.co/xGHYKtf/image.png",
+    "https://i.ibb.co/MVx392C/image.png",
+    "https://i.ibb.co/NWXwBs9/2.png"
+  ];
 
   return (
     <div className="page-holder">
@@ -45,12 +85,25 @@ export default function Home() {
                     20% off on new season
                   </h1>
                   <a className="btn btn-dark" href="shop.html">
-                    Browse collections
+                    AAH로 구매하기
                   </a>
                 </div>
               </div>
             </div>
           </div>
+
+          <div className="py-5" id="section_product">
+            <div>
+              <p className="small text-muted small text-uppercase mb-1">
+                Made the hard way
+              </p>
+              <h2 className="h5 text-uppercase mb-4">Product Spend For You</h2>
+            </div>
+            <div className="row d-block">
+              <ProductForYou listProduct={listProduct} />
+            </div>
+          </div>
+
           <div className="pt-5">
             <div className="text-center">
               <p className="small text-muted small text-uppercase mb-1">
@@ -110,15 +163,18 @@ export default function Home() {
               <ProductBigSale productDiscount={productDiscount} />
             </div>
           </div>
-          <div className="py-5" id="section_product">
-            <div>
+
+          <div className="py-5" id="section_partners">
+            <div className="text-center">
               <p className="small text-muted small text-uppercase mb-1">
-                Made the hard way
+                Trusted by top brands
               </p>
-              <h2 className="h5 text-uppercase mb-4">Product Spend For You</h2>
+              <h2 className="h5 text-uppercase mb-4">Partners</h2>
             </div>
-            <div className="row d-block">
-              <ProductForYou listProduct={listProduct} />
+            <div className="d-flex flex-wrap justify-content-center">
+              {partnerImages.map((src, index) => (
+                <img key={index} src={src} alt={`partner-${index}`} style={{ height: "80px", padding: "5px" }} />
+              ))}
             </div>
           </div>
         </div>
