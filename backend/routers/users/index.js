@@ -1,6 +1,7 @@
 // /shop.c4ei.net/backend/routers/users/index.js
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const OAuth2Client = require("google-auth-library");
 const { authenticate, verifyTokenandAdmin } = require("../../middwares/auth");
 const {
   comparePassword,
@@ -282,5 +283,203 @@ userRouter.post("/check-phone", async (req, res) => {
   }
 });
 // ###################### 중복 확인 /backend/routers/users/index.js ######################
+
+// ###################### oAuth /backend/routers/users/index.js ######################
+// https://shop.c4ei.net/api/v1/users/google?code=111
+userRouter.get("/google", async (req, res) => {
+  const code = req.query.code;
+  console.log("line 292 [/backend/routers/users/index.js] code:"+code);
+});
+// https://shop.c4ei.net/api/v1/users/google
+userRouter.post("/google", async (req, res) => {
+  console.log("line 295 [/backend/routers/users/index.js] req.body.code : " + req.body.code);
+
+  let goo_data = await GoogleOAuth2RedirectPage(req.body.code);
+  console.log( goo_data +" : goo_data");
+  // front에서 넘어온 code를 정리합니다.
+  
+  // const oAuth2Client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID, process.env.REACT_APP_GOOGLE_SECRET_KEY, "postmessage");
+  // const {tokens} = await oAuth2Client.getToken(req.body.code);
+  // console.log("code ", tokens);
+  // res.send(tokens);
+
+});
+
+// 구글로그인은 email로 로그인 처리
+userRouter.post("/googlelogin", async (req, res) => {
+  const {email, fullname} = req.body;
+  console.log("line 311 [/backend/routers/users/index.js] req.body.email : " + email +" / fullname : " + fullname);
+  let msg = "";
+  const user = await getUserByEmail(email);
+  if (!user) {
+    msg = "reg";
+    let password = "asdf1234";
+    const hashedPassword = await hashPassword(password);
+    const user = await createUser({
+      fullname,
+      email,
+      password: hashedPassword,
+      phone,
+      referrer_id,
+    });
+  } else{
+    msg = "login";
+    const token = await genToken({
+      id: user.id,
+      fullname: user.fullname,
+      email: user.email,
+      phone: user.phone,
+      admin: user.admin,
+      address1: user.address1,
+      address2: user.address2,
+      postcode: user.postcode,
+      address: `${user.address1} ${user.address2} ${user.postcode}`,
+    });
+    
+    const refresh = genrefreshToken({
+      id: user.id,
+      fullname: user.fullname,
+      email: user.email,
+      phone: user.phone,
+      admin: user.admin,
+      address1: user.address1,
+      address2: user.address2,
+      postcode: user.postcode,
+      address: `${user.address1} ${user.address2} ${user.postcode}`,
+    });
+
+    res.cookie("refreshToken", refresh, {
+      httpOnly: true,
+      secure: false,
+      path: "/",
+      sameSite: "strict",
+    });
+
+    refreshTokens.push(refresh);
+  }
+  console.log("##################################################################################################");
+  console.log("line 361 [/backend/routers/users/index.js] msg : " + msg );
+  console.log("##################################################################################################");
+  return msg;
+});
+
+async function GoogleOAuth2RedirectPage(code) {
+  // 1. 인가코드
+  // const code = new URL(window.location.href).searchParams.get("code");
+  // 2. access Token 요청
+  // const getToken = async (code) => {
+      const REST_API_KEY = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+      const REDIRECT_URI = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
+      const SECRET_KEY = process.env.REACT_APP_GOOGLE_SECRET_KEY;
+      const response = await fetch(`https://oauth2.googleapis.com/token?grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&client_secret=${SECRET_KEY}&code=${code}`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
+      });
+      // "email": "elisa.g.beckett@gmail.com", // The user's email address
+      // "name": "Elisa Beckett",
+      
+      console.log(JSON.stringify(response.json()) +" : 323 ");
+      console.log(response.data.email +" : response.data.email");
+      return response.json();
+  // }
+
+  // useEffect(() => { if (code) { getToken(code).then((res) => { console.log(res.access_token); }) } }, []);
+  // return true;
+}
+
+// https://shop.c4ei.net/api/v1/users/kakao
+userRouter.get("/kakao/oauth", async (req, res) => {
+  console.log("line 289 [/backend/routers/users/index.js] /kakao/oauth");
+  const code = req.query.code;
+  console.log("line 300 [/backend/routers/users/index.js] code:"+code);
+
+  const kakaoResponse = await axios.post(
+    'https://kapi.kakao.com/v2/user/me',
+    {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    },
+  );
+  idToken = kakaoResponse.data.id;
+  name = kakaoResponse.data.kakao_account.profile.nickname;
+
+
+  // // 2. access Token 요청
+  // // const getToken = async (code) => {
+  //   const KAKAO_REST_API_KEY = process.env.REACT_APP_KAKAO_REST_API_KEY;
+  //   const KAKAO_REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI;
+
+  //   const dataKakao = await fetch(`https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${KAKAO_REST_API_KEY}&redirect_uri=${KAKAO_REDIRECT_URI}&code=${code}`, {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8', },
+  //   });
+  //   console.log("line 303 [/backend/routers/users/index.js] response.json():"+JSON.stringify(dataKakao.json()));
+  //   // return res.render("<script>alert('no dataKakao!!!');document.location.href = '/';</script>");
+    res.redirect("/");
+});
+
+userRouter.post("/kakao", async (req, res) => {
+  console.log("req.body : " + JSON.stringify(req.body));
+  const { dataKakao } = req.body;
+  console.log("line 308 [/backend/routers/users/index.js] code:"+code);
+  // return response.json();
+  let USER_ID = dataKakao?.data.USER_ID;
+  let USER_EMAIL = dataKakao?.data.USER_EMAIL;
+  let USER_NAME = dataKakao?.data.USER_NAME;
+  let USER_ADDR1 = dataKakao?.data.USER_ADDR1;
+  let USER_ADDR2 = dataKakao?.data.USER_ADDR2;
+  console.log(USER_EMAIL + " : USER_EMAIL / "+ USER_ID + " : USER_ID / USER_NAME : " + USER_NAME + " / USER_ADDR1 : " + USER_ADDR1 + " / USER_ADDR2 : " + USER_ADDR2 );
+
+  //
+  const user = await getUserByEmail(USER_EMAIL);
+
+  if (!user) {
+    return res.render("<script>alert('no email!!!');document.location.href = '/';</script>");
+    // return res.status(404).send("Wrong email!!!");
+  }
+
+  const token = await genToken({
+    id: user.id,
+    fullname: user.fullname,
+    email: user.email,
+    phone: user.phone,
+    admin: user.admin,
+    address1: user.address1,
+    address2: user.address2,
+    postcode: user.postcode,
+    address: `${user.address1} ${user.address2} ${user.postcode}`,
+  });
+
+  const refresh = genrefreshToken({
+    id: user.id,
+    fullname: user.fullname,
+    email: user.email,
+    phone: user.phone,
+    admin: user.admin,
+    address1: user.address1,
+    address2: user.address2,
+    postcode: user.postcode,
+    address: `${user.address1} ${user.address2} ${user.postcode}`,
+  });
+
+  res.cookie("refreshToken", refresh, {
+    httpOnly: true,
+    secure: false,
+    path: "/",
+    sameSite: "strict",
+  });
+
+  refreshTokens.push(refresh);
+  const { password, ...others } = user.dataValues;
+  res.status(200).send({ ...others, token });
+
+  res.redirect("/");
+});
+
+
+// ###################### oAuth /backend/routers/users/index.js ######################
 
 module.exports = userRouter;
