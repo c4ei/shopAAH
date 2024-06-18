@@ -113,7 +113,7 @@ app.post('/saveUserInfo', (req, res) => {
   const { id, email, phone, address1, address2, postcode } = req.body;
   
   const query = ` UPDATE Users SET  email = ?,  phone = ?,  address1 = ?,  address2 = ?,  postcode = ? WHERE id = ? `;
-  
+  // console.log(phone + " : phone / " +id + " : id ");
   db.query(query, [email, phone, address1, address2, postcode, id], (err, result) => {
     if (err) {
       return res.status(500).send("정보를 저장하는 동안 오류가 발생했습니다.");

@@ -9,15 +9,16 @@ export default function ManageShop() {
   const [userInfo, setUserInfo] = useState({ id: "", email: "", phone: "", address: "", address1: "", address2: "", postcode: "", reward_points: 0 });
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [isPhoneEditOpen, setIsPhoneEditOpen] = useState(false);
+  const [newPhone, setNewPhone] = useState("");
 
   useEffect(() => {
-    // console.log("14 line /frontend/src/components/ManageShop.js : "+ JSON.stringify(user));
     if (user) {
       setUserInfo({
         id: user.id,
         email: user.email,
         phone: user.phone,
-        address:  `${user.address1} ${user.address2} ${user.postcode}`,
+        address: `${user.address1} ${user.address2} ${user.postcode}`,
         address1: user.address1,
         address2: user.address2,
         postcode: user.postcode,
@@ -63,6 +64,30 @@ export default function ManageShop() {
     setUserInfo({ ...userInfo, address2: e.target.value });
   };
 
+  // 전화 번호 변경 핸들러
+  const handlePhoneChange = (e) => {
+    setUserInfo({ ...userInfo, phone: e.target.value });
+  };
+
+  // 새 전화번호 저장 함수
+  const saveNewPhone = () => {
+    if (/^\d{11}$/.test(newPhone)) {
+      const updatedUserInfo = { ...userInfo, phone: newPhone };
+      axios.post('/saveUserInfo', updatedUserInfo)
+        .then(response => {
+          alert("전화번호가 성공적으로 저장되었습니다.");
+          setUserInfo(updatedUserInfo);
+          setIsPhoneEditOpen(false);
+        })
+        .catch(error => {
+          console.error("전화번호 저장 오류:", error);
+          alert("전화번호를 저장하는 동안 오류가 발생했습니다.");
+        });
+    } else {
+      alert("전화번호는 숫자만 11자리여야 합니다.");
+    }
+  };
+
   // 정보 저장 함수
   const saveUserInfo = () => {
     axios.post('/saveUserInfo', userInfo)
@@ -78,7 +103,6 @@ export default function ManageShop() {
       });
   };
 
-
   return (
     <div className="container">
       <h2 className="my-4">내 정보</h2>
@@ -90,7 +114,27 @@ export default function ManageShop() {
           </tr>
           <tr>
             <th>전화번호</th>
-            <td>{userInfo.phone}</td>
+            <td>
+              {userInfo.phone} &nbsp;
+              {userInfo.phone.startsWith("999") && (
+                <>
+                  <button onClick={() => setIsPhoneEditOpen(true)}>변경</button>
+                  {isPhoneEditOpen && (
+                    <div className="phone-edit-modal">
+                      <input
+                        type="text"
+                        value={newPhone}
+                        onChange={(e) => setNewPhone(e.target.value)}
+                        placeholder="전화번호를 입력하세요"
+                        maxLength={11}
+                      />&nbsp;
+                      <button onClick={saveNewPhone}>저장</button>
+                      <button onClick={() => setIsPhoneEditOpen(false)}>닫기</button>
+                    </div>
+                  )}
+                </>
+              )}
+            </td>
           </tr>
           <tr>
             <td colSpan={2}>
@@ -129,7 +173,7 @@ export default function ManageShop() {
                 <th>우편번호</th>
                 <td>
                   {userInfo.postcode}
-                  &nbsp;<button onClick={saveUserInfo}>주소 저장</button>
+                  &nbsp;<button onClick={saveUserInfo}>정보 저장</button>
                 </td>
               </tr>
             </>
