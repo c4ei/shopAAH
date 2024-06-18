@@ -1,3 +1,4 @@
+// /shop.c4ei.net/backend/middwares/auth/index.js
 const { verifyToken } = require("../../services/auth");
 const { getUserByEmail, getUserById } = require("../../services/users");
 

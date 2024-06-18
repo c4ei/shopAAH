@@ -1,7 +1,6 @@
 // /shop.c4ei.net/backend/routers/users/index.js
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const OAuth2Client = require("google-auth-library");
 const { authenticate, verifyTokenandAdmin } = require("../../middwares/auth");
 const {
   comparePassword,
@@ -21,6 +20,8 @@ const {
 } = require("../../services/users");
 
 const userRouter = express.Router();
+const { OAuth2Client } = require('google-auth-library'); // google
+const goo_client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID); // google
 
 let refreshTokens = [];
 
@@ -88,40 +89,7 @@ userRouter.post("/login", async (req, res) => {
   }
 
   if (user && isValidPassword) {
-    const token = await genToken({
-      id: user.id,
-      fullname: user.fullname,
-      email: user.email,
-      phone: user.phone,
-      admin: user.admin,
-      address1: user.address1,
-      address2: user.address2,
-      postcode: user.postcode,
-      address: `${user.address1} ${user.address2} ${user.postcode}`,
-    });
-
-    const refresh = await genrefreshToken({
-      id: user.id,
-      fullname: user.fullname,
-      email: user.email,
-      phone: user.phone,
-      admin: user.admin,
-      address1: user.address1,
-      address2: user.address2,
-      postcode: user.postcode,
-      address: `${user.address1} ${user.address2} ${user.postcode}`,
-    });
-
-    res.cookie("refreshToken", refresh, {
-      httpOnly: true,
-      secure: false,
-      path: "/",
-      sameSite: "strict",
-    });
-
-    refreshTokens.push(refresh);
-    const { password, ...others } = user.dataValues;
-    res.status(200).send({ ...others, token });
+    await fn_oauth_login(res, user);
   }
 });
 
@@ -188,9 +156,9 @@ userRouter.post("/refresh", (req, res) => {
     refreshTokens.push(newRefreshToken);
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
-      secure: false,
+      secure: true,  // 변경: 'false' -> 'true'
       path: "/",
-      sameSite: "strict",
+      sameSite: "lax",  // 변경: 'strict' -> 'lax'
     });
 
     res.status(200).send({ accessToken: newAccessToken });
@@ -285,45 +253,61 @@ userRouter.post("/check-phone", async (req, res) => {
 // ###################### 중복 확인 /backend/routers/users/index.js ######################
 
 // ###################### oAuth /backend/routers/users/index.js ######################
-// https://shop.c4ei.net/api/v1/users/google?code=111
-userRouter.get("/google", async (req, res) => {
-  const code = req.query.code;
-  console.log("line 292 [/backend/routers/users/index.js] code:"+code);
-});
-// https://shop.c4ei.net/api/v1/users/google
-userRouter.post("/google", async (req, res) => {
-  console.log("line 295 [/backend/routers/users/index.js] req.body.code : " + req.body.code);
-
-  let goo_data = await GoogleOAuth2RedirectPage(req.body.code);
-  console.log( goo_data +" : goo_data");
-  // front에서 넘어온 code를 정리합니다.
-  
-  // const oAuth2Client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID, process.env.REACT_APP_GOOGLE_SECRET_KEY, "postmessage");
-  // const {tokens} = await oAuth2Client.getToken(req.body.code);
-  // console.log("code ", tokens);
-  // res.send(tokens);
-
-});
 
 // 구글로그인은 email로 로그인 처리
-userRouter.post("/googlelogin", async (req, res) => {
-  const {email, fullname} = req.body;
-  console.log("line 311 [/backend/routers/users/index.js] req.body.email : " + email +" / fullname : " + fullname);
-  let msg = "";
+async function userExists(email) {
   const user = await getUserByEmail(email);
   if (!user) {
-    msg = "reg";
-    let password = "asdf1234";
-    const hashedPassword = await hashPassword(password);
-    const user = await createUser({
-      fullname,
-      email,
-      password: hashedPassword,
-      phone,
-      referrer_id,
+    return false;
+  }else{
+    return true;
+  }
+}
+
+async function registerUser(email, fullname){
+  let password = process.env.TEMP_USER_PASSWD;
+  const hashedPassword = await hashPassword(password);
+  let referrer_id = "2";
+  let randomNumber8 = String(Math.floor(Math.random() * 100000000)).padStart(8, '0');
+  let phone = "999"+randomNumber8;
+  const user = await createUser({
+    fullname,
+    email,
+    password: hashedPassword,
+    phone,
+    referrer_id,
+  });
+};
+
+userRouter.post('/googlelogin', async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    const ticket = await goo_client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID
     });
-  } else{
-    msg = "login";
+    const payload = ticket.getPayload();
+    const email = payload.email;
+    const fullname = payload.name;
+    console.log("line 326 [/backend/routers/users/index.js] payload.email : " + email +" / payload.name : " + fullname );
+
+    if (!await userExists(email)) {
+      await registerUser(email, fullname);
+    }
+
+    const user = await getUserByEmail(email);
+    await fn_oauth_login(res, user);
+    
+  } catch (error) {
+    console.error("Error during Google login:", error);
+    res.status(400).json({ error: "Invalid ID token" });
+  }
+});
+
+// 백엔드 응답 함수 예시
+async function fn_oauth_login(res, user) {
+  try {
     const token = await genToken({
       id: user.id,
       fullname: user.fullname,
@@ -335,8 +319,8 @@ userRouter.post("/googlelogin", async (req, res) => {
       postcode: user.postcode,
       address: `${user.address1} ${user.address2} ${user.postcode}`,
     });
-    
-    const refresh = genrefreshToken({
+
+    const refresh = await genrefreshToken({
       id: user.id,
       fullname: user.fullname,
       email: user.email,
@@ -350,44 +334,21 @@ userRouter.post("/googlelogin", async (req, res) => {
 
     res.cookie("refreshToken", refresh, {
       httpOnly: true,
-      secure: false,
+      secure: true,
       path: "/",
-      sameSite: "strict",
+      sameSite: "lax",
     });
 
     refreshTokens.push(refresh);
+    const { password, ...others } = user.dataValues;
+    res.status(200).send({ ...others, token });
+    // res.status(200).json({ status: 'success', data: { ...others }, token });
+  } catch (error) {
+    console.error("Error during login process:", error);
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
   }
-  console.log("##################################################################################################");
-  console.log("line 361 [/backend/routers/users/index.js] msg : " + msg );
-  console.log("##################################################################################################");
-  return msg;
-});
-
-async function GoogleOAuth2RedirectPage(code) {
-  // 1. 인가코드
-  // const code = new URL(window.location.href).searchParams.get("code");
-  // 2. access Token 요청
-  // const getToken = async (code) => {
-      const REST_API_KEY = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-      const REDIRECT_URI = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
-      const SECRET_KEY = process.env.REACT_APP_GOOGLE_SECRET_KEY;
-      const response = await fetch(`https://oauth2.googleapis.com/token?grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&client_secret=${SECRET_KEY}&code=${code}`, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          },
-      });
-      // "email": "elisa.g.beckett@gmail.com", // The user's email address
-      // "name": "Elisa Beckett",
-      
-      console.log(JSON.stringify(response.json()) +" : 323 ");
-      console.log(response.data.email +" : response.data.email");
-      return response.json();
-  // }
-
-  // useEffect(() => { if (code) { getToken(code).then((res) => { console.log(res.access_token); }) } }, []);
-  // return true;
 }
+
 
 // https://shop.c4ei.net/api/v1/users/kakao
 userRouter.get("/kakao/oauth", async (req, res) => {
@@ -440,41 +401,6 @@ userRouter.post("/kakao", async (req, res) => {
     return res.render("<script>alert('no email!!!');document.location.href = '/';</script>");
     // return res.status(404).send("Wrong email!!!");
   }
-
-  const token = await genToken({
-    id: user.id,
-    fullname: user.fullname,
-    email: user.email,
-    phone: user.phone,
-    admin: user.admin,
-    address1: user.address1,
-    address2: user.address2,
-    postcode: user.postcode,
-    address: `${user.address1} ${user.address2} ${user.postcode}`,
-  });
-
-  const refresh = genrefreshToken({
-    id: user.id,
-    fullname: user.fullname,
-    email: user.email,
-    phone: user.phone,
-    admin: user.admin,
-    address1: user.address1,
-    address2: user.address2,
-    postcode: user.postcode,
-    address: `${user.address1} ${user.address2} ${user.postcode}`,
-  });
-
-  res.cookie("refreshToken", refresh, {
-    httpOnly: true,
-    secure: false,
-    path: "/",
-    sameSite: "strict",
-  });
-
-  refreshTokens.push(refresh);
-  const { password, ...others } = user.dataValues;
-  res.status(200).send({ ...others, token });
 
   res.redirect("/");
 });

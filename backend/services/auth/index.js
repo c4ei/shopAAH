@@ -1,3 +1,4 @@
+// /shop.c4ei.net/backend/services/auth/index.js
 "use strict";
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");

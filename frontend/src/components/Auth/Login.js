@@ -6,8 +6,8 @@ import { loginUser } from "../../services/API/authApi";
 import "./Auth.css";
 import { GoogleLogin } from "@react-oauth/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import jwt_decode from "jwt-decode"; // JWT 디코딩을 위한 라이브러리
-import axios from "axios"; // HTTP 요청을 위한 라이브러리
+// import jwt_decode from "jwt-decode";
+import axios from "axios";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -15,48 +15,50 @@ export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const user = { email, password };
-    loginUser(dispatch, navigate, user);
+    await loginUser(dispatch, navigate, user);
+    navigate("/"); // 로그인 후 메인 페이지로 이동
   };
+  // const handleLogin = async () => {
+  //   const user = { email, password };
+  //   try {
+  //     const response = await loginUser(dispatch, navigate, user);
+  //     // console.log("Login Response:", response);
+  
+  //     if (response && response.status === "success") {
+  //       localStorage.setItem("token", response.token);
+  //       const user = { email, password };
+  //       await loginUser(dispatch, navigate, user);
+  //       navigate("/manage");
+  //     } 
+  //     // else { console.error("Login failed:", response ? response.message : "No response from server"); }
+  //   } catch (error) {
+  //     console.error("Login Error:", error);
+  //   }
+  // };
 
-  // Google 클라이언트 ID를 환경 변수에서 가져옴
   const google_clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-
-  // Google OAuth 로그인 성공 시 호출되는 함수
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      // JWT 디코딩
-      const decoded = jwt_decode(credentialResponse.credential);
-      const email = decoded.email;
-      const fullname = decoded.name;
-
-      // 디버깅용 이메일 출력
-      console.log("Decoded JWT:", decoded);
-      console.log("Email:", email , " / fullname :" , fullname);
-
-      // 이메일을 백엔드로 전송
-      const response = await axios.post("https://shop.c4ei.net/api/v1/users/googlelogin", { email, fullname });
-      console.log("백엔드 응답:", response.data);
-      // 백엔드 응답이 "login"인 경우 홈 페이지로 리디렉션
-      if (response.data === "login") {
-        alert("login ok");
-        document.location.href = "/";
-      } else {
-        // 로그인 성공 후 홈 페이지로 리디렉션 // msg - login , reg
-        alert("reg ok");
-        document.location.href = "/";
-      }
-
-      // 추가 로직이 필요한 경우 여기에 작성
+      const response = await axios.post("https://shop.c4ei.net/api/v1/users/googlelogin", {
+        token: credentialResponse.credential
+      });
+      // console.log("Backend Response:", response.data);
+  
+      if (response.data.status === "success") {
+        // console.log("Login Successful, Token:", response.data.token);
+        localStorage.setItem("token", response.data.token);
+        navigate("/manage");
+      } 
+      // else { console.error("Google Login failed:", response.data.message || "Unknown error"); }
     } catch (error) {
-      console.error("JWT 디코딩 중 오류 발생:", error);
+      console.error("Login Error:", error);
     }
   };
-
-  // Google OAuth 로그인 실패 시 호출되는 함수
+  
   const handleGoogleError = () => {
-    console.log("로그인 실패");
+    console.log("Login failed");
   };
 
   return (
@@ -96,12 +98,11 @@ export default function Login() {
             </NavLink>
           </div>
 
-          {/* Google OAuth 로그인 버튼 */}
           <div className="text-center py-4">
             <GoogleOAuthProvider clientId={google_clientId}>
               <GoogleLogin
-                onSuccess={handleGoogleSuccess} // 로그인 성공 시 호출되는 함수
-                onError={handleGoogleError} // 로그인 실패 시 호출되는 함수
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
               />
             </GoogleOAuthProvider>
           </div>

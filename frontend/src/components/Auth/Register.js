@@ -1,3 +1,4 @@
+// /shop.c4ei.net/frontend/src/components/Auth/Register.js
 import React, { useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import "./Auth.css";
@@ -137,12 +138,12 @@ export default function Register() {
 
   const isAllChecked = () => {
     return (
-      isFullnameChecked &&
+      // isFullnameChecked &&
       isEmailChecked &&
-      isPhoneChecked &&
-      !formik.errors.fullname &&
-      !formik.errors.email &&
-      !formik.errors.phone
+      // isPhoneChecked &&
+      // !formik.errors.fullname &&
+      !formik.errors.email 
+      // && !formik.errors.phone
     );
   };
 
@@ -167,9 +168,9 @@ export default function Register() {
                   value={formik.values.fullname}
                   disabled={isFullnameChecked}
                 />
-                <button type="button" onClick={handleCheckFullname} disabled={isFullnameChecked}>
+                {/* <button type="button" onClick={handleCheckFullname} disabled={isFullnameChecked}>
                   확인
-                </button>
+                </button> */}
               </div>
               {checkMessage.fullname && <div className="text-info">{checkMessage.fullname}</div>}
               {formik.errors.fullname && formik.touched.fullname && (
@@ -218,9 +219,9 @@ export default function Register() {
                   value={formik.values.phone}
                   disabled={isPhoneChecked}
                 />
-                <button type="button" onClick={handleCheckPhone} disabled={isPhoneChecked}>
+                {/* <button type="button" onClick={handleCheckPhone} disabled={isPhoneChecked}>
                   확인
-                </button>
+                </button> */}
               </div>
               {checkMessage.phone && <div className="text-info">{checkMessage.phone}</div>}
               {formik.errors.phone && formik.touched.phone && (
