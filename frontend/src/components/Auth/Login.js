@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
-import { loginUser } from "../../services/API/authApi";
+import { loginUser, login_goo_id } from "../../services/API/authApi";
 import "./Auth.css";
 import { GoogleLogin } from "@react-oauth/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -47,11 +47,13 @@ export default function Login() {
       // console.log("Backend Response:", response.data);
   
       if (response.data.status === "success") {
-        // console.log("Login Successful, Token:", response.data.token);
-        localStorage.setItem("token", response.data.token);
+        const email = response.data.data.email;
+        // console.log("53 line email : " + email);
+        await login_goo_id(dispatch, navigate, email);
         navigate("/manage");
-      } 
-      // else { console.error("Google Login failed:", response.data.message || "Unknown error"); }
+      } else {
+        console.error("Google Login failed:", response.data.message || "Unknown error");
+      }
     } catch (error) {
       console.error("Login Error:", error);
     }

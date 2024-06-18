@@ -89,7 +89,7 @@ userRouter.post("/login", async (req, res) => {
   }
 
   if (user && isValidPassword) {
-    await fn_oauth_login(res, user);
+    await fn_oauth_login(res, user, "c4ei");
   }
 });
 
@@ -279,6 +279,29 @@ async function registerUser(email, fullname){
   });
 };
 
+// /backend/routers/users/index.js
+userRouter.post("/login_goo_id", async (req, res) => {
+  // console.log("Request body:", req.body); // 디버깅을 위해 추가
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).send("Email is required");
+  }
+
+  try {
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).send("Wrong email!!!");
+    }
+
+    await fn_oauth_login(res, user);
+  } catch (error) {
+    console.error("Error in login_goo_id:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 userRouter.post('/googlelogin', async (req, res) => {
   const { token } = req.body;
 
@@ -297,7 +320,7 @@ userRouter.post('/googlelogin', async (req, res) => {
     }
 
     const user = await getUserByEmail(email);
-    await fn_oauth_login(res, user);
+    await fn_oauth_login(res, user , "Google");
     
   } catch (error) {
     console.error("Error during Google login:", error);
@@ -306,7 +329,7 @@ userRouter.post('/googlelogin', async (req, res) => {
 });
 
 // 백엔드 응답 함수 예시
-async function fn_oauth_login(res, user) {
+async function fn_oauth_login(res, user , _site) {
   try {
     const token = await genToken({
       id: user.id,
@@ -341,8 +364,13 @@ async function fn_oauth_login(res, user) {
 
     refreshTokens.push(refresh);
     const { password, ...others } = user.dataValues;
-    res.status(200).send({ ...others, token });
-    // res.status(200).json({ status: 'success', data: { ...others }, token });
+    
+    if(_site=="Google"){
+      res.status(200).json({ status: 'success', data: { ...others }, token });
+    }else{
+      res.status(200).send({ ...others, token });
+    }
+
   } catch (error) {
     console.error("Error during login process:", error);
     res.status(500).json({ status: 'error', message: 'Internal server error' });

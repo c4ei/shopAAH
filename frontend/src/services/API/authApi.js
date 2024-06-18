@@ -1,3 +1,4 @@
+// /frontend/src/services/API/authApi.js
 import {
   loginFailed,
   loginStart,
@@ -16,6 +17,18 @@ export const loginUser = async (dispatch, navigate, user) => {
   dispatch(loginStart());
   try {
     const response = await axios.post(`${DOMAIN}/api/v1/users/login`, user);
+    dispatch(loginSuccess(response.data));
+    navigate("/");
+  } catch (err) {
+    dispatch(loginFailed(err.response?.data?.message || "로그인 중 오류가 발생했습니다."));
+  }
+};
+
+export const login_goo_id = async (dispatch, navigate, email) => {
+  // console.log("Email in login_goo_id:", email); // 디버깅을 위해 추가
+  dispatch(loginStart());
+  try {
+    const response = await axios.post(`${DOMAIN}/api/v1/users/login_goo_id`, { email });
     dispatch(loginSuccess(response.data));
     navigate("/");
   } catch (err) {
