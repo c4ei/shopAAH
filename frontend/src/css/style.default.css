@@ -171,7 +171,14 @@ html {
     filter: grayscale(40%);
     transition: all 0.3s;
   }
-  
+  /* Media query for mobile devices */
+  @media only screen and (max-width: 767px) {
+    .product img {
+      max-height: 260px;
+      max-width: 300px;
+    }
+  }
+
   .product-overlay {
     width: 100%;
     position: absolute;

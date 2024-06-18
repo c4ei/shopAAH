@@ -195,7 +195,8 @@ export default function DetailProduct() {
               </a>
             </div>
           </div>
-
+        </div>
+        <div className="row mb-5">
           <ul className="list-inline mb-2">
             {Array.from({ length: 5 }).map((_, index) => (
               <li className="list-inline-item m-0" key={index}>

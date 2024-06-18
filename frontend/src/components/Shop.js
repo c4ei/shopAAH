@@ -12,13 +12,6 @@ import Search from "./Search";
 import Sort from "./Sort";
 
 export default function Shop() {
-  const productPanigation = useSelector(
-    (state) => state.product.productPanigation?.allProductPanigation
-  );
-  const productFilter = useSelector(
-    (state) => state.product.productFilter?.allProductFilter
-  );
-
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState("default");
   const [totalPage, setTotalPage] = useState();
@@ -26,9 +19,16 @@ export default function Shop() {
     page: "1",
     size: "9",
     search: "",
-    category: "all",
+    // category: "all",
+    category: "76",
   });
   const dispatch = useDispatch();
+  const productPanigation = useSelector(
+    (state) => state.product.productPanigation?.allProductPanigation
+  );
+  const productFilter = useSelector(
+    (state) => state.product.productFilter?.allProductFilter
+  );
 
   useEffect(() => {
     (async () => {
