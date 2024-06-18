@@ -27,6 +27,33 @@ export default function ManageShop() {
     }
   }, [user]);
 
+  // useEffect(() => {
+  //   if (user) {
+  //     fetchUserInfo(user.id);
+  //   }
+  // }, [user]);
+
+  // const fetchUserInfo = async (userId) => {
+  //   try {
+  //     // will make /api/v2/users/getUserInfo 
+  //     const response = await axios.get(`/api/v2/users/getUserInfo/${userId}`);
+  //     const userData = response.data;
+  //     setUserInfo({
+  //       id: userData.id,
+  //       email: userData.email,
+  //       phone: userData.phone,
+  //       address: `${userData.address1} ${userData.address2} ${userData.postcode}`,
+  //       address1: userData.address1,
+  //       address2: userData.address2,
+  //       postcode: userData.postcode,
+  //       reward_points: userData.reward_points,
+  //     });
+  //   } catch (error) {
+  //     console.error("사용자 정보를 가져오는 중 오류가 발생했습니다:", error);
+  //     alert("사용자 정보를 가져오는 중 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+  //   }
+  // };
+
   // 클립보드에 복사하는 함수
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text)
@@ -64,11 +91,6 @@ export default function ManageShop() {
     setUserInfo({ ...userInfo, address2: e.target.value });
   };
 
-  // 전화 번호 변경 핸들러
-  const handlePhoneChange = (e) => {
-    setUserInfo({ ...userInfo, phone: e.target.value });
-  };
-
   // 새 전화번호 저장 함수
   const saveNewPhone = () => {
     if (/^\d{11}$/.test(newPhone)) {
@@ -77,6 +99,7 @@ export default function ManageShop() {
         .then(response => {
           alert("전화번호가 성공적으로 저장되었습니다.");
           setUserInfo(updatedUserInfo);
+          // setUserInfo({ ...userInfo, phone: newPhone });
           setIsPhoneEditOpen(false);
         })
         .catch(error => {
