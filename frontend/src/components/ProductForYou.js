@@ -183,7 +183,7 @@ export default function ProductForYou({ listProduct }) {
                     id="email"
                     placeholder="Enter your email address"
                     aria-describedby="button-addon2"
-                    style={{ minWidth: '300px'}}
+                    style={{ minWidth: '200px' , width: '300px' }}
                   />
                   <div className="input-group-append">
                     <button

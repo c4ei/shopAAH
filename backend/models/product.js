@@ -1,3 +1,4 @@
+// /shop.c4ei.net/backend/models/product.js
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
@@ -39,6 +40,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true, // Depending on your requirement
       },
       GDS_STOCK: DataTypes.INTEGER,
+      rating: DataTypes.DECIMAL(2, 1),
     },
     {
       sequelize,

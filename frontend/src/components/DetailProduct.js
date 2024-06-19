@@ -148,7 +148,32 @@ export default function DetailProduct() {
     <div className="py-5">
       <div className="container">
         <div className="row mb-5">
-          <div className="row m-sm-0">
+          {/* <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0"> */}
+          <div class="product-container">
+            <div class="product-image">
+              <img className="w-100" src={product?.img1} alt={product?.img1} style={{ width: '300px', height: '300px' }}  />
+            </div>
+            <div className="product-details">
+              <h1 itemprop="name">{product?.good_name}</h1>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <ul className="list-inline mb-2" style={{ marginRight: '10px' }}>
+                  {/* Array.from({ length: 5 })는 5개의 빈 요소를 가진 배열을 생성합니다.
+                  index < product?.rating 조건은 index가 product?.rating보다 작으면 채워진 별(text-warning), 
+                  그렇지 않으면 비어있는 별(text-muted)을 표시합니다. */}
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <li className="list-inline-item m-0" key={index}>
+                      <i className={`fas fa-star ${index < product?.rating ? 'text-warning' : 'text-muted'}`}></i>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-muted lead" style={{ margin: 0 }}>
+                  <span itemprop="priceCurrency" content="KRW">₩</span>
+                  <span itemprop="price">{product?.price?.toLocaleString()}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          {/* <div className="row m-sm-0">
             <div className="col-sm-2 p-sm-0 order-2 order-sm-1 mt-2 mt-sm-0">
               <div
                 className="owl-thumbs d-flex flex-row flex-sm-column"
@@ -222,21 +247,10 @@ export default function DetailProduct() {
                 <span className="sr-only">Next</span>
               </a>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="row mb-5">
-          <ul className="list-inline mb-2">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <li className="list-inline-item m-0" key={index}>
-                <i className="fas fa-star small text-warning"></i>
-              </li>
-            ))}
-          </ul>
-          <h1 itemProp="name" className="text-center text-sm-left">{product?.good_name}</h1>
-          <p className="text-muted lead text-center text-sm-left">
-            <span itemProp="priceCurrency" content="KRW">₩</span>
-            <span itemProp="price">{product?.price}</span>
-          </p>
+          
           <p
             className="text-small mb-4 text-center text-sm-left product-description"
             dangerouslySetInnerHTML={{ __html: product?.description }}
