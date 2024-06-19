@@ -31,11 +31,11 @@ export default function Products({ productPanigation, sort }) {
               </NavLink>
               <div className="product-overlay">
                 <ul className="mb-0 list-inline">
-                  <li className="list-inline-item m-0 p-0">
+                  {/* <li className="list-inline-item m-0 p-0">
                     <a className="btn btn-sm btn-outline-dark" href="#">
                       <i className="far fa-heart"></i>
                     </a>
-                  </li>
+                  </li> */}
                   <li className="list-inline-item m-0 p-0">
                     <NavLink
                       className="btn btn-sm btn-dark"

@@ -13,16 +13,20 @@ import "./DetailProduct.css"; // Import custom CSS file
 
 export default function DetailProduct() {
   const { id } = useParams();
+  // console.log("Product ID from URL:", id);
+
   const product = useSelector((state) => state.product.productDetail?.product);
   const listProduct = useSelector(
     (state) => state.product.products?.allProduct
   );
-  // 제품 목록을 12개로 제한합니다
   const limitedListProduct = listProduct?.slice(0, 12);
   const user = useSelector((state) => state.auth.login.currentUser);
-  const listComment = useSelector(
-    (state) => state.comment.loadComment.listComment
-  );
+  
+  const listComment = useSelector((state) => {
+    const comments = state.comment.loadComment.listComment;
+    // console.log("Selected comments from state:", comments);
+    return comments.filter(comment => comment.idProduct === parseInt(id));
+  });
 
   const [star, setStar] = useState(5);
   const [comment, setComment] = useState("");
@@ -32,11 +36,28 @@ export default function DetailProduct() {
 
   useEffect(() => {
     getProductById(dispatch, id);
-  }, []);
+  }, [dispatch, id]);
 
   useEffect(() => {
     getListProduct(dispatch);
-  }, []);
+  }, [dispatch]);
+
+  useEffect(() => {
+    // console.log("useEffect triggered with loadComment:", loadComment, "and id:", id);
+    const fetchComments = async () => {
+      if (loadComment) {
+        const params = {
+          idProduct: id,
+        };
+        const query = "?" + queryString.stringify(params);
+        // console.log("Fetching comments with query:", query);
+        await getCommentProduct(dispatch, query);
+        // console.log("Comments fetched");
+        setLoadComment(false);
+      }
+    };
+    fetchComments();
+  }, [loadComment, dispatch, id]);
 
   const decrementQuantity = () => {
     if (quantity <= 1) {
@@ -101,20 +122,9 @@ export default function DetailProduct() {
     const data = { id, comment, star };
     await createComment(dispatch, data, user.token);
     setLoadComment(true);
+    setComment(""); // 댓글 입력 초기화
+    setStar(5);    // 별점 초기화
   };
-
-  useEffect(() => {
-    (async () => {
-      if (loadComment) {
-        const params = {
-          idProduct: id,
-        };
-        const query = "?" + queryString.stringify(params);
-        await getCommentProduct(dispatch, query);
-      }
-      setLoadComment(false);
-    })();
-  }, [loadComment]);
 
   const getCategoryName = (category) => {
     switch(category) {
@@ -146,22 +156,22 @@ export default function DetailProduct() {
               >
                 {product?.img1 && (
                   <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0">
-                    <img className="w-100" src={product?.img1} alt={product?.img1} />
+                    <img className="w-100" src={product?.img1} alt={product?.img1} style={{ width: 'auto', height: '300px' }}  />
                   </div>
                 )}
                 {product?.img2 && (
                   <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0">
-                    <img className="w-100" src={product?.img2} alt={product?.img2} />
+                    <img className="w-100" src={product?.img2} alt={product?.img2} style={{ width: 'auto', height: '300px' }}  />
                   </div>
                 )}
                 {product?.img3 && (
                   <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0">
-                    <img className="w-100" src={product?.img3} alt={product?.img3} />
+                    <img className="w-100" src={product?.img3} alt={product?.img3} style={{ width: 'auto', height: '300px' }}  />
                   </div>
                 )}
                 {product?.img4 && (
                   <div className="owl-thumb-item flex-fill mb-2 mr-2 mr-sm-0">
-                    <img className="w-100" src={product?.img4} alt={product?.img4} />
+                    <img className="w-100" src={product?.img4} alt={product?.img4} style={{ width: 'auto', height: '300px' }}  />
                   </div>
                 )}
               </div>
@@ -174,22 +184,22 @@ export default function DetailProduct() {
               <div className="carousel-inner owl-carousel product-slider">
                 {product?.img1 && (
                   <div className="carousel-item active">
-                    <img className="d-block w-100" src={product?.img1} alt="First slide" />
+                    <img className="d-block w-100" src={product?.img1} alt="First slide" style={{ width: 'auto', height: '300px' }}  />
                   </div>
                 )}
                 {product?.img2 && (
                   <div className="carousel-item">
-                    <img className="d-block w-100" src={product?.img2} alt="Second slide" />
+                    <img className="d-block w-100" src={product?.img2} alt="Second slide" style={{ width: 'auto', height: '300px' }}  />
                   </div>
                 )}
                 {product?.img3 && (
                   <div className="carousel-item">
-                    <img className="d-block w-100" src={product?.img3} alt="Third slide" />
+                    <img className="d-block w-100" src={product?.img3} alt="Third slide" style={{ width: 'auto', height: '300px' }}  />
                   </div>
                 )}
                 {product?.img4 && (
                   <div className="carousel-item">
-                    <img className="d-block w-100" src={product?.img4} alt="Fourth slide" />
+                    <img className="d-block w-100" src={product?.img4} alt="Fourth slide" style={{ width: 'auto', height: '300px' }}  />
                   </div>
                 )}
               </div>
