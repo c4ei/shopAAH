@@ -116,6 +116,37 @@ export default function DetailProduct() {
     })();
   }, [loadComment]);
 
+  const getCategoryName = (category) => {
+    switch(category) {
+      case "68":
+        return "건강";
+      case "72":
+        return "화장품";
+      case "75":
+        return "Watches & ACC";
+      case "69":
+        return "가전";
+      case "5":
+        return "생활";
+      case "70":
+        return "주방";
+      case "73":
+        return "캐리어.잡화";
+      case "74":
+        return "캠핑";
+      case "76":
+        return "건강번들";
+      case "81":
+        return "먹거리";
+      case "80":
+        return "전자담배";
+      case "78":
+        return "계절가전";
+      default:
+        return "Unknown category";
+    }
+  };
+
   return (
     <div className="py-5">
       <div className="container">
@@ -265,7 +296,10 @@ export default function DetailProduct() {
                 <strong className="text-uppercase text-dark">
                   Category:
                 </strong>
-                <a className="reset-anchor ml-2">{product?.category}s</a>
+                <a className="reset-anchor ml-2">
+                   { getCategoryName(product?.category) }
+                  {/* {product?.category}s */}
+                </a>
               </li>
               <li className="px-3 py-2 mb-1 bg-white text-muted">
                 <strong className="text-uppercase text-dark">Tags:</strong>

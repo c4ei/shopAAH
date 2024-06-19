@@ -29,6 +29,8 @@ export default function Shop() {
   const productFilter = useSelector(
     (state) => state.product.productFilter?.allProductFilter
   );
+  // 제품 목록을 12개로 제한합니다
+  const limitedproductFilter = productFilter?.slice(0, 20);
 
   useEffect(() => {
     (async () => {
@@ -126,7 +128,9 @@ export default function Shop() {
           </div>
         </div>
       </div>
-      {productFilter?.map((item, index) => (
+      {
+      limitedproductFilter?.map((item, index) => (
+      // productFilter?.map((item, index) => (
         <div className="modal fade show" id={`product_${item.id}`} key={index}>
           <div
             className="modal-dialog modal-lg modal-dialog-centered"
@@ -146,7 +150,8 @@ export default function Shop() {
                     <img className="d-none" href={item.img3} />
                   </div>
                   <div className="col-lg-6">
-                    {/* Để tắt modal phải có class="close" và data-dissmiss="modal" và aria-label="Close" */}
+                    {/* Để tắt modal phải có class="close" và data-dissmiss="modal" và aria-label="Close"
+                    모달을 끄려면 class="close" 및 data-dissmiss="modal" 및 aria-label="Close"가 있어야 합니다. */}
                     <a
                       className="close p-4"
                       type="button"
