@@ -65,7 +65,7 @@ emailRouter.post("/", [authenticate], async (req, res) => {
   }
 
   const htmlResult = `
-    <h1>안녕하세요 ${fullName}</h1>
+    <h1>안녕하세요 ${fullName}님</h1>
     <h3>Phone: ${phone}</h3>
     <h3>Address: ${address}</h3>
     <h3>입금하실 계좌정보 : 카카오뱅크 3333-27-5746222 예금주:씨포이아이(C4EI)</h3>
