@@ -118,32 +118,19 @@ export default function DetailProduct() {
 
   const getCategoryName = (category) => {
     switch(category) {
-      case "68":
-        return "건강";
-      case "72":
-        return "화장품";
-      case "75":
-        return "Watches & ACC";
-      case "69":
-        return "가전";
-      case "5":
-        return "생활";
-      case "70":
-        return "주방";
-      case "73":
-        return "캐리어.잡화";
-      case "74":
-        return "캠핑";
-      case "76":
-        return "건강번들";
-      case "81":
-        return "먹거리";
-      case "80":
-        return "전자담배";
-      case "78":
-        return "계절가전";
-      default:
-        return "Unknown category";
+      case "68": return "건강";
+      case "72": return "화장품";
+      case "75": return "Watches & ACC";
+      case "69": return "가전";
+      case "5": return "생활";
+      case "70": return "주방";
+      case "73": return "캐리어.잡화";
+      case "74": return "캠핑";
+      case "76": return "건강번들";
+      case "81": return "먹거리";
+      case "80": return "전자담배";
+      case "78": return "계절가전";
+      default: return "Unknown category";
     }
   };
 
@@ -280,16 +267,22 @@ export default function DetailProduct() {
               </div>
             </div>
             <div className="col-sm-3 pl-sm-0">
-              <button
-                className="btn btn-dark btn-md btn-block d-flex align-items-center justify-content-center px-0 text-white ml-2"
-                onClick={() => handleAddToCart(product, quantity)}
-              >
-                Add to cart
-              </button>
+              {product?.GDS_STOCK === 0 ? (
+                <div className="btn btn-danger btn-md btn-block d-flex align-items-center justify-content-center px-0 text-white ml-2">
+                  재고 없음
+                </div>
+              ) : (
+                <button
+                  className="btn btn-dark btn-md btn-block d-flex align-items-center justify-content-center px-0 text-white ml-2"
+                  onClick={() => handleAddToCart(product, quantity)}
+                >
+                  Add to cart
+                </button>
+              )}
             </div>
-            <a className="btn btn-link text-dark p-1 mb-4" href="#">
+            {/* <a className="btn btn-link text-dark p-1 mb-4" href="#">
               <i className="far fa-heart mr-2"></i>Add to wish list
-            </a>
+            </a> */}
             <br></br>
             <ul className="list-unstyled small d-inline-block">
               <li className="px-3 py-2 mb-1 bg-white text-muted">
