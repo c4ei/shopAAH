@@ -38,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: true, // Depending on your requirement
       },
+      GDS_STOCK: DataTypes.INTEGER,
     },
     {
       sequelize,

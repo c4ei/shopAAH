@@ -1,5 +1,7 @@
+// /shop.c4ei.net/frontend/src/components/Admin/ProductsAdmin.js
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 import queryString from "query-string";
 import {
   createProduct,
@@ -10,6 +12,7 @@ import {
 import Pagination from "@mui/material/Pagination";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 
 export default function ProductsAdmin() {
   const productPanigation = useSelector(
@@ -120,6 +123,31 @@ export default function ProductsAdmin() {
 
   const handleDelete = async (id) => {
     await deleteProduct(dispatch, id);
+  };
+
+  // #########################
+  const [showModal, setShowModal] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState({});
+  
+  const handleUpdateClick = (item) => {
+    setCurrentProduct(item);
+    setShowModal(true);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setCurrentProduct({ ...currentProduct, [name]: value });
+  };
+
+  const handleSave = () => {
+    axios.post('/saveProduct', currentProduct)
+      .then(response => {
+        alert(response.data);
+        setShowModal(false);
+      })
+      .catch(error => {
+        alert('Error saving product information');
+      });
   };
 
   return (
@@ -405,6 +433,7 @@ export default function ProductsAdmin() {
                                 type="submit"
                                 className="btn btn-success mx-2"
                                 style={{ cursor: "pointer", color: "white" }}
+                                onClick={() => handleUpdateClick(item)}
                               >
                                 Update
                               </button>
@@ -423,6 +452,191 @@ export default function ProductsAdmin() {
                       })}
                     </tbody>
                   </table>
+
+                  <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
+                    <Modal.Header closeButton>
+                      <Modal.Title>제품 수정</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <Form>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>상품명</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="text"
+                              name="good_name"
+                              value={currentProduct.good_name}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>설명</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="text"
+                              name="description"
+                              value={currentProduct.description}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>가격</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="number"
+                              name="price"
+                              value={currentProduct.price}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>이미지 1</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="text"
+                              name="img1"
+                              value={currentProduct.img1}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>이미지 2</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="text"
+                              name="img2"
+                              value={currentProduct.img2}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>이미지 3</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="text"
+                              name="img3"
+                              value={currentProduct.img3}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>이미지 4</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="text"
+                              name="img4"
+                              value={currentProduct.img4}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>카테고리</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="text"
+                              name="category"
+                              value={currentProduct.category}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>원래 가격</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="number"
+                              name="originalPrice"
+                              value={currentProduct.originalPrice}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>할인율</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="number"
+                              name="promotionPercent"
+                              value={currentProduct.promotionPercent}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>원본 URL</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="text"
+                              name="ORG_ITEM"
+                              value={currentProduct.ORG_ITEM}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>AAH 상품 가격</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="number"
+                              step="0.01"
+                              name="GDS_AAH_PRICE"
+                              value={currentProduct.GDS_AAH_PRICE}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={2}>
+                            <Form.Label>재고</Form.Label>
+                          </Col>
+                          <Col md={10}>
+                            <Form.Control
+                              type="number"
+                              name="GDS_STOCK"
+                              value={currentProduct.GDS_STOCK}
+                              onChange={handleInputChange}
+                            />
+                          </Col>
+                        </Row>
+                      </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <Button variant="secondary" onClick={() => setShowModal(false)}>닫기</Button>
+                      <Button variant="primary" onClick={handleSave}>변경사항 저장</Button>
+                    </Modal.Footer>
+                  </Modal>
+
                   <Pagination
                     count={totalPage}
                     page={page}

@@ -123,6 +123,36 @@ app.post('/saveUserInfo', (req, res) => {
 });
 // ###################### address ######################
 
+// ###################### Product ######################
+app.post('/saveProduct', (req, res) => {
+  const {
+    id, good_name, description, price, img1, img2, img3, img4, category, 
+    originalPrice, promotionPercent, ORG_ITEM, GDS_PRICE_ORG, 
+    GDS_AAH_PRICE, GDS_STOCK
+  } = req.body;
+
+  const query = `UPDATE Products SET 
+    good_name = ?, description = ?, price = ?, img1 = ?, img2 = ?, 
+    img3 = ?, img4 = ?, category = ?, originalPrice = ?, 
+    promotionPercent = ?, ORG_ITEM = ?, GDS_PRICE_ORG = ?, 
+    GDS_AAH_PRICE = ?, GDS_STOCK = ? 
+    WHERE id = ?`;
+
+  db.query(query, [
+    good_name, description, price, img1, img2, img3, img4, category, 
+    originalPrice, promotionPercent, ORG_ITEM, GDS_PRICE_ORG, 
+    GDS_AAH_PRICE, GDS_STOCK, id
+  ], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).send('제품 정보를 저장하는 동안 오류가 발생했습니다.');
+    }
+    res.send('제품 정보가 DB에 성공적으로 저장되었습니다.\n페이지를 새로 고침 하셔야 반영확인 됩니다.');
+  });
+});
+// ###################### Product ######################
+
+
 const publicPathDirectory = path.join(__dirname, "public");
 app.use(express.static(publicPathDirectory));
 
