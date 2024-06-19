@@ -41,12 +41,11 @@ export default function Products({ productPanigation, sort }) {
                       className="btn btn-sm btn-dark"
                       to={`/detail/${item.id}`}
                     >
-                      Add to cart
+                      SHOW
                     </NavLink>
                   </li>
-                  <li className="list-inline-item mr-0">
-                    {/* Dùng Modal phải có href để nó hiện ra thằng đó và thuộc tính data-toggle="modal" để mở modal
-                    모달을 사용하려면 href가 있어야 표시되고 모달을 열려면 data-toggle="modal" 속성이 있어야 합니다. */}
+                  {/* 모달을 사용하려면 href가 있어야 표시되고 모달을 열려면 data-toggle="modal" 속성이 있어야 합니다. */}
+                  {/* <li className="list-inline-item mr-0">
                     <a
                       className="btn btn-sm btn-outline-dark"
                       href={`#product_${item.id}`}
@@ -54,7 +53,7 @@ export default function Products({ productPanigation, sort }) {
                     >
                       <i className="fas fa-expand"></i>
                     </a>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             </div>

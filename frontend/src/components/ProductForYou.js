@@ -84,10 +84,10 @@ export default function ProductForYou({ listProduct }) {
                         className="btn btn-sm btn-dark"
                         to={`/detail/${item.id}`}
                       >
-                        Add to cart
+                        SHOW
                       </NavLink>
                     </li>
-                    <li className="list-inline-item mr-0">
+                    {/* <li className="list-inline-item mr-0">
                       <a
                         className="btn btn-sm btn-outline-dark"
                         href={`#product_${item.id}`}
@@ -95,7 +95,7 @@ export default function ProductForYou({ listProduct }) {
                       >
                         <i className="fas fa-expand"></i>
                       </a>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
               </div>

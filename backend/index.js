@@ -57,7 +57,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_order", (data) => {
-    //Xử lý xong server gửi ngược lại client admin thông qua socket với key receive_order
+    //처리 후 서버는 receive_order 키가 있는 소켓을 통해 클라이언트 관리자에게 이를 다시 보냅니다.
     socket.broadcast.emit("receive_order", data);
   });
 });
