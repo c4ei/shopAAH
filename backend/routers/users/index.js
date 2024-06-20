@@ -313,7 +313,7 @@ userRouter.post('/googlelogin', async (req, res) => {
     const payload = ticket.getPayload();
     const email = payload.email;
     const fullname = payload.name;
-    console.log("line 326 [/backend/routers/users/index.js] payload.email : " + email +" / payload.name : " + fullname );
+    // console.log("line 326 [/backend/routers/users/index.js] payload.email : " + email +" / payload.name : " + fullname );
 
     if (!await userExists(email)) {
       await registerUser(email, fullname);
@@ -411,16 +411,16 @@ userRouter.get("/kakao/oauth", async (req, res) => {
 });
 
 userRouter.post("/kakao", async (req, res) => {
-  console.log("req.body : " + JSON.stringify(req.body));
+  // console.log("req.body : " + JSON.stringify(req.body));
   const { dataKakao } = req.body;
-  console.log("line 308 [/backend/routers/users/index.js] code:"+code);
+  // console.log("line 308 [/backend/routers/users/index.js] code:"+code);
   // return response.json();
   let USER_ID = dataKakao?.data.USER_ID;
   let USER_EMAIL = dataKakao?.data.USER_EMAIL;
   let USER_NAME = dataKakao?.data.USER_NAME;
   let USER_ADDR1 = dataKakao?.data.USER_ADDR1;
   let USER_ADDR2 = dataKakao?.data.USER_ADDR2;
-  console.log(USER_EMAIL + " : USER_EMAIL / "+ USER_ID + " : USER_ID / USER_NAME : " + USER_NAME + " / USER_ADDR1 : " + USER_ADDR1 + " / USER_ADDR2 : " + USER_ADDR2 );
+  // console.log(USER_EMAIL + " : USER_EMAIL / "+ USER_ID + " : USER_ID / USER_NAME : " + USER_NAME + " / USER_ADDR1 : " + USER_ADDR1 + " / USER_ADDR2 : " + USER_ADDR2 );
 
   //
   const user = await getUserByEmail(USER_EMAIL);

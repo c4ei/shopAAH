@@ -40,7 +40,7 @@ export const getHistoryDetail = async (dispatch, historyId) => {
   dispatch(getHistoryDetailStart());
   try {
     const response = await axios.get(`${DOMAIN}/api/v1/history/detail/${historyId}`);
-    console.log("API response:", response.data); // 디버깅 로그 추가
+    // console.log("API response:", response.data); // 디버깅 로그 추가
     dispatch(getHistoryDetailSuccess(response.data));
   } catch (err) {
     dispatch(getHistoryDetailFailed(err));

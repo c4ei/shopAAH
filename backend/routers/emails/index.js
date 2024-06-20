@@ -15,7 +15,7 @@ emailRouter.post("/", [authenticate], async (req, res) => {
 
   // Get the user's history (assuming the most recent history is required)
   const userHistory = await gethistory(user.id);
-  console.log("User History:", userHistory);
+  // console.log("User History:", userHistory);
   
   // Check if gethistory returns data in descending order
   const recentHistory = userHistory.length > 0 ? userHistory[0] : null;
@@ -26,7 +26,7 @@ emailRouter.post("/", [authenticate], async (req, res) => {
 
   // Get the details of the most recent history
   const historyDetails = await getHistoryDetail(recentHistory.id);
-  console.log("History Details:", historyDetails);
+  // console.log("History Details:", historyDetails);
 
   const total = historyDetails.reduce((total, item) => {
     return total + parseInt(item.purchasePrice) * parseInt(item.quantity);

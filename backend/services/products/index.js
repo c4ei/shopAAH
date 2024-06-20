@@ -168,7 +168,7 @@ const getTotalProductsCount = async (keyWordSearch = "", category = "all") => {
       whereClause.category = category;
     }
     const count = await Product.count({ where: whereClause });
-    console.log("### 171 ### /backend/services/products/index.js getTotalProductsCount count : "+count);
+    // console.log("### 171 ### /backend/services/products/index.js getTotalProductsCount count : "+count);
     return count;
   } catch (error) {
     console.error("전체 제품 수를 가져오는 중 오류 발생:", error);

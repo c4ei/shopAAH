@@ -61,7 +61,7 @@ productRouter.get("/", async (req, res) => {
 
     if (keyWordSearch || category !== "all") {
       products = await searchProducts(keyWordSearch, category, offset, limit);
-      console.log("#### /backend/routers/products/index.js 64 line products.length : "+products.length);
+      // console.log("#### /backend/routers/products/index.js 64 line products.length : "+products.length);
       totalProducts = await getTotalProductsCount(keyWordSearch, category); // 전체 제품 수를 가져오는 함수
     } else {
       products = await getListProduct();

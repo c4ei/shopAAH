@@ -55,10 +55,10 @@ export default function DetailProduct() {
   }, [loadComment, dispatch, id]);
 
   // 디버깅 로그
-  console.log('product:', product);
-  console.log('listProduct:', listProduct);
-  console.log('isFetching:', isFetching);
-  console.log('error:', error);
+  // console.log('product:', product);
+  // console.log('listProduct:', listProduct);
+  // console.log('isFetching:', isFetching);
+  // console.log('error:', error);
 
   if (isFetching) {
     return <div>Loading...</div>;

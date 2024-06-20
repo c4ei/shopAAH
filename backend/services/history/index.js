@@ -48,7 +48,7 @@ const getListHistory = async () => {
 };
 
 const getHistoryDetail = async (historyId) => {
-  console.log("historyId : " + historyId  +" /backend/services/history/index.js 50 line ");
+  // console.log("historyId : " + historyId  +" /backend/services/history/index.js 50 line ");
   try {
     const historyDetail = await HistoryDetail.findAll({
       where: { historyId },

@@ -45,8 +45,8 @@ export default function Shop() {
       const newQuery = "?" + query;
       const { products, totalProducts } = await getListProductPanigation(dispatch, newQuery) || {};
 
-      console.log("/frontend/src/components/Shop.js --59 -- products: ", products);
-      console.log("/frontend/src/components/Shop.js --59 -- totalProducts: ", totalProducts);
+      // console.log("/frontend/src/components/Shop.js --59 -- products: ", products);
+      // console.log("/frontend/src/components/Shop.js --59 -- totalProducts: ", totalProducts);
 
       // 상품 목록을 가져왔을 때 totalProducts로 totalPage 설정
       setTotalPage(Math.ceil(totalProducts / pagination.size));

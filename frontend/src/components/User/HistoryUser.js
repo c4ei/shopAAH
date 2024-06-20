@@ -10,7 +10,7 @@ export default function HistoryUser() {
   const user = useSelector((state) => state.auth.login.currentUser);
   const historyDetail = useSelector((state) => state.history.historyDetail?.detail || []);
   
-  console.log("historyDetail:", historyDetail); // 디버깅 로그 추가
+  // console.log("historyDetail:", historyDetail); // 디버깅 로그 추가
 
   const [expandedIndex, setExpandedIndex] = useState(null);
 

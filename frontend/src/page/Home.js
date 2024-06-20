@@ -18,9 +18,9 @@ export default function Home() {
   }, [dispatch]);
 
   // 디버깅 로그
-  console.log('listProduct:', listProduct);
-  console.log('isFetching:', isFetching);
-  console.log('error:', error);
+  // console.log('listProduct:', listProduct);
+  // console.log('isFetching:', isFetching);
+  // console.log('error:', error);
 
   if (isFetching) {
     return <div>Loading...</div>;
@@ -30,12 +30,13 @@ export default function Home() {
     return <div>Error loading products. Please try again later.</div>;
   }
 
-  const limitedListProduct = listProduct.slice(0, 12);
+  const limitedListProduct = Array.isArray(listProduct) ? listProduct.slice(0, 12) : [];
 
-  const productDiscount = listProduct.filter((product) => {
+  const productDiscount = Array.isArray(listProduct) ? listProduct.filter((product) => {
     return product.promotionPercent >= 20;
-  });
+  }) : [];
 
+  
   const partnerImages = [
     "https://i.ibb.co/5vgnxxc/image.png",
     "https://i.ibb.co/xGTQwgz/image.png",

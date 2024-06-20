@@ -58,7 +58,7 @@ const historySlice = createSlice({
     getHistoryDetailSuccess: (state, action) => {
       state.historyDetail.isFetching = false;
       state.historyDetail.detail = action.payload;
-      console.log('Redux state updated:', action.payload); // 디버깅 로그 추가
+      // console.log('Redux state updated:', action.payload); // 디버깅 로그 추가
     },
     getHistoryDetailFailed: (state) => {
       state.historyDetail.isFetching = false;
