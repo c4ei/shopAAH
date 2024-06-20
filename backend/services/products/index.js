@@ -1,5 +1,5 @@
-const { Product } = require("../../models");
-const { Op } = require("sequelize");
+const { Product } = require("../../models"); // Sequelize 모델 가져오기
+const { Op } = require("sequelize"); // Sequelize 연산자 가져오기
 
 const addProduct = async (data) => {
   try {
@@ -122,6 +122,43 @@ const searchProduct = async (search) => {
   } catch (err) {}
 };
 
+// 검색 기능 추가
+const searchProducts = async (keyword, category, offset, limit) => {
+  try {
+    const where = {
+      [Op.or]: [
+        {
+          good_name: {
+            [Op.like]: `%${keyword}%`,
+          },
+        },
+        {
+          price: {
+            [Op.like]: `%${keyword}%`,
+          },
+        },
+      ],
+    };
+
+    if (category && category !== "all") {
+      where.category = {
+        [Op.like]: `%${category}%`,
+      };
+    }
+    
+    const products = await Product.findAll({
+      where,
+      offset: offset,
+      limit: limit,
+    });
+    return products;
+  } catch (err) {
+    console.error("Error searching products:", err);
+    throw err;
+  }
+};
+
+
 module.exports = {
   addProduct,
   getProductById,
@@ -132,4 +169,5 @@ module.exports = {
   deleteProduct,
   updateProduct,
   searchProduct,
+  searchProducts,
 };
