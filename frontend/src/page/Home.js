@@ -130,13 +130,13 @@ export default function Home() {
                 </NavLink>
               </div>
               <div className="col-md-4 mb-4 mb-md-0">
-                <NavLink className="category-item mb-4" to="/shop?category=76">
+                <NavLink className="category-item mb-4" to="/shop?category=68">
                   <img
                     className="img-fluid"
                     src="/image/cat-img-2.jpg"
                     alt=""
                   />
-                  <strong className="category-item-title">건강번들</strong>
+                  <strong className="category-item-title">건강</strong>
                 </NavLink>
                 <NavLink className="category-item" to="/shop?category=72">
                   <img
