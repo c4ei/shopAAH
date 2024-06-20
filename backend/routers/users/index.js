@@ -27,7 +27,7 @@ let refreshTokens = [];
 
 userRouter.post("/register", async (req, res) => {
   const { fullname, email, password, phone, referrer } = req.body;
-  let referrer_id = null;
+  let referrer_id = 2;
    // referrer가 이메일 형식인지 확인
   if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(referrer)) {
     try {

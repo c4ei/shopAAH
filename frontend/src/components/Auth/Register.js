@@ -159,7 +159,7 @@ export default function Register() {
                   name="fullname"
                   className="input100"
                   type="text"
-                  placeholder="이름을 입력 후 확인 버튼을 클릭해 주세요"
+                  placeholder="이름 입력"
                   onChange={(e) => {
                     formik.handleChange(e);
                     setIsFullnameChecked(false);
@@ -208,7 +208,7 @@ export default function Register() {
                 <input
                   className="input100"
                   type="text"
-                  placeholder="전화번호(숫자만) 입력 후 확인 버튼을 클릭해 주세요"
+                  placeholder="전화번호(숫자만) 입력"
                   name="phone"
                   onChange={(e) => {
                     const inputValue = e.target.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자는 제거

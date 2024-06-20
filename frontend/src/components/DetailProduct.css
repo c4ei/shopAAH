@@ -2,29 +2,36 @@
 /shop.c4ei.net/frontend/src/components/DetailProduct.css
 */
 
+/* 기본 PC용 스타일 */
 .product-container {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  flex-direction: row; /* 기본 좌우 배치 */
 }
+
 .product-image {
   flex: 1;
   max-width: 300px;
   max-height: 300px;
 }
+
 .product-details {
   flex: 2;
   margin-left: 20px;
 }
+
 .product-details h1 {
   font-size: 24px;
   margin: 10px 0;
 }
+
 .product-details p {
   font-size: 18px;
   color: #777;
 }
+
 .product-details .stars {
   color: #FFD700;
 }
@@ -45,6 +52,18 @@
 
 /* 모바일 화면에서 숫자 입력란 스타일 조정 */
 @media (max-width: 576px) {
+  .product-container {
+    flex-direction: column; /* 모바일에서 위아래 배치 */
+  }
+  .product-image {
+    max-width: 100%; /* 모바일에서 이미지 너비를 100%로 설정 */
+    max-height: auto; /* 높이를 자동으로 설정하여 비율 유지 */
+  }
+  .product-details {
+    margin-left: 0; /* 모바일에서는 좌측 마진을 제거 */
+    margin-top: 20px; /* 모바일에서는 이미지 아래로 디테일을 배치 */
+  }
+  
   .form-control {
     font-size: 14px; /* 숫자 입력란의 글자 크기를 원하는 크기로 설정 */
     min-width: 40px !important; /* 최소 너비 설정 */
@@ -56,14 +75,15 @@
     min-width: 60px !important; /* 최소 너비 설정 */
     padding: 2px 6px !important; /* 패딩 설정 */
   }
-  
+
   .text-center {
     text-align: center !important;
   }
-  
+
   .text-sm-left {
     text-align: left !important;
   }
+
   .carousel-item img {
     width: 100%; /* 모바일 화면에서 이미지를 가득 채우도록 너비를 100%로 설정 */
     max-width: none; /* 최대 너비 제한 해제 */
