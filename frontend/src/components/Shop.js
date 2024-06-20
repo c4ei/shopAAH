@@ -1,4 +1,4 @@
-// /shop.c4ei.net/frontend/src/components/Shop.js
+// /frontend/src/components/Shop.js
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Products from "./Products";
@@ -21,6 +21,8 @@ export default function Shop() {
 
   const dispatch = useDispatch();
   const productPanigation = useSelector((state) => state.product.productPanigation?.allProductPanigation || []);
+  const isFetching = useSelector((state) => state.product.products.isFetching);
+  const error = useSelector((state) => state.product.products.error);
 
   useEffect(() => {
     const params = queryString.parse(window.location.search);
@@ -45,13 +47,14 @@ export default function Shop() {
       const newQuery = "?" + query;
       const { products, totalProducts } = await getListProductPanigation(dispatch, newQuery) || {};
 
-      // console.log("/frontend/src/components/Shop.js --59 -- products: ", products);
-      // console.log("/frontend/src/components/Shop.js --59 -- totalProducts: ", totalProducts);
+      // 디버깅 로그
+      console.log("/frontend/src/components/Shop.js --59 -- products: ", products);
+      console.log("/frontend/src/components/Shop.js --59 -- totalProducts: ", totalProducts);
 
       // 상품 목록을 가져왔을 때 totalProducts로 totalPage 설정
       setTotalPage(Math.ceil(totalProducts / pagination.size));
     })();
-  }, [pagination, page, sort]); // pagination, page, sort 변경 시에만 호출
+  }, [pagination, page, sort, dispatch]); // dispatch 추가
 
   useEffect(() => {
     (async () => {
@@ -66,7 +69,7 @@ export default function Shop() {
       const newQuery = "?" + query;
       await getListProductFilter(dispatch, newQuery);
     })();
-  }, [pagination, sort]); // pagination, sort 변경 시에만 호출
+  }, [pagination, sort, dispatch]); // dispatch 추가
 
   useEffect(() => {
     setPage(1); // 카테고리 변경 시 페이지를 1로 설정
@@ -103,6 +106,19 @@ export default function Shop() {
   const handleSort = (value) => {
     setSort(value); // 정렬 변경 시 sort 상태 업데이트
   };
+
+  // 디버깅 로그
+  console.log('productPanigation:', productPanigation);
+  console.log('isFetching:', isFetching);
+  console.log('error:', error);
+
+  if (isFetching) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading products. Please try again later.</div>;
+  }
 
   return (
     <div className="container">
