@@ -41,14 +41,17 @@ export const getListProduct10 = async (dispatch, params) => {
   }
 };
 
-
+// /frontend/src/services/API/productApi.js
 export const getListProductPanigation = async (dispatch, params) => {
   dispatch(getProductPanigationStart());
   try {
-    const response = await axios.get(`${DOMAIN}/api/v1/products/${params}`);
-    dispatch(getProductPanigationSuccess(response.data));
+    const response = await axios.get(`${DOMAIN}/api/v1/products${params}`);
+    const { products, totalProducts } = response.data; // axios는 자동으로 JSON 응답을 파싱합니다.
+    dispatch({ type: 'SET_PRODUCT_PANIGATION', payload: products });
+    return { products, totalProducts };
   } catch (err) {
     dispatch(getProductPanigationFailed(err));
+    return { products: [], totalProducts: 0 }; // 에러 발생 시 기본 값 반환
   }
 };
 

@@ -19,9 +19,10 @@ export default function DetailProduct() {
   const listProduct = useSelector(
     (state) => state.product.products?.allProduct
   );
-  const limitedListProduct = listProduct?.slice(0, 12);
+  // const limitedListProduct = listProduct?.slice(0, 12);
+  const limitedListProduct = listProduct ? listProduct.slice(0, 12) : [];
   const user = useSelector((state) => state.auth.login.currentUser);
-  
+ 
   const listComment = useSelector((state) => {
     const comments = state.comment.loadComment.listComment;
     // console.log("Selected comments from state:", comments);

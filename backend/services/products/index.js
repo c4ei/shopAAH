@@ -101,7 +101,7 @@ const searchProduct = async (search) => {
       where: {
         [Op.or]: [
           {
-            name: {
+            good_name: {
               [Op.like]: "%search%",
             },
           },
@@ -158,6 +158,23 @@ const searchProducts = async (keyword, category, offset, limit) => {
   }
 };
 
+const getTotalProductsCount = async (keyWordSearch = "", category = "all") => {
+  try {
+    const whereClause = {};
+    if (keyWordSearch) {
+      whereClause.name = { [Op.like]: `%${keyWordSearch}%` };
+    }
+    if (category !== "all") {
+      whereClause.category = category;
+    }
+    const count = await Product.count({ where: whereClause });
+    console.log("### 171 ### /backend/services/products/index.js getTotalProductsCount count : "+count);
+    return count;
+  } catch (error) {
+    console.error("전체 제품 수를 가져오는 중 오류 발생:", error);
+    throw error;
+  }
+};
 
 module.exports = {
   addProduct,
@@ -170,4 +187,5 @@ module.exports = {
   updateProduct,
   searchProduct,
   searchProducts,
+  getTotalProductsCount,
 };

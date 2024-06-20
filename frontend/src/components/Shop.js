@@ -4,35 +4,24 @@ import { useDispatch, useSelector } from "react-redux";
 import Products from "./Products";
 import Pagination from "@mui/material/Pagination";
 import queryString from "query-string";
-import {
-  getListProduct,
-  getListProductFilter,
-  getListProductPanigation,
-} from "../services/API/productApi";
+import { getListProductFilter, getListProductPanigation } from "../services/API/productApi";
 import Search from "./Search";
 import Sort from "./Sort";
 
 export default function Shop() {
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState("default");
-  const [totalPage, setTotalPage] = useState();
+  const [totalPage, setTotalPage] = useState(1);
   const [pagination, setPagination] = useState({
     page: "1",
     size: "9",
     search: "",
-    category: "76",
+    category: "76", // 예시로 카테고리 초기값 설정
   });
-  const dispatch = useDispatch();
-  const productPanigation = useSelector(
-    (state) => state.product.productPanigation?.allProductPanigation
-  );
-  const productFilter = useSelector(
-    (state) => state.product.productFilter?.allProductFilter
-  );
-  // 제품 목록을 12개로 제한합니다
-  const limitedproductFilter = productFilter?.slice(0, 20);
 
-  // URL 쿼리 파라미터로부터 카테고리 값을 읽어 초기 설정
+  const dispatch = useDispatch();
+  const productPanigation = useSelector((state) => state.product.productPanigation?.allProductPanigation || []);
+
   useEffect(() => {
     const params = queryString.parse(window.location.search);
     if (params.category) {
@@ -54,9 +43,15 @@ export default function Shop() {
 
       const query = queryString.stringify(params);
       const newQuery = "?" + query;
-      await getListProductPanigation(dispatch, newQuery);
+      const { products, totalProducts } = await getListProductPanigation(dispatch, newQuery) || {};
+
+      console.log("/frontend/src/components/Shop.js --59 -- products: ", products);
+      console.log("/frontend/src/components/Shop.js --59 -- totalProducts: ", totalProducts);
+
+      // 상품 목록을 가져왔을 때 totalProducts로 totalPage 설정
+      setTotalPage(Math.ceil(totalProducts / pagination.size));
     })();
-  }, [pagination, page, sort]);
+  }, [pagination, page, sort]); // pagination, page, sort 변경 시에만 호출
 
   useEffect(() => {
     (async () => {
@@ -71,17 +66,11 @@ export default function Shop() {
       const newQuery = "?" + query;
       await getListProductFilter(dispatch, newQuery);
     })();
-  }, [page, pagination, sort]);
+  }, [pagination, sort]); // pagination, sort 변경 시에만 호출
 
   useEffect(() => {
-    let totalProduct = productFilter.length;
-    totalProduct = Math.ceil(totalProduct / pagination.size);
-    setTotalPage(totalProduct);
-  }, [page, pagination, sort, productFilter]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [pagination.category]);
+    setPage(1); // 카테고리 변경 시 페이지를 1로 설정
+  }, [pagination.category]); // pagination.category 변경 시에만 호출
 
   const handleChangePage = (e, value) => {
     e.preventDefault();
@@ -89,35 +78,30 @@ export default function Shop() {
 
     setPage(value);
 
-    setPagination({
-      page: value,
-      size: pagination.size,
-      search: pagination.search,
-      category: pagination.category,
-    });
+    setPagination((prev) => ({
+      ...prev,
+      page: value.toString(), // 페이지 번호는 문자열로 변환
+    }));
   };
 
   const handleCategory = (value) => {
-    setPage(1);  // 페이지를 1로 초기화
-    setPagination({
+    setPage(1); // 카테고리 변경 시 페이지를 1로 설정
+    setPagination((prev) => ({
+      ...prev,
       page: "1",
-      size: pagination.size,
-      search: pagination.search,
       category: value,
-    });
+    }));
   };
 
   const handleSearch = (value) => {
-    setPagination({
-      page: pagination.page,
-      size: pagination.size,
+    setPagination((prev) => ({
+      ...prev,
       search: value,
-      category: pagination.category,
-    });
+    }));
   };
 
   const handleSort = (value) => {
-    setSort(value);
+    setSort(value); // 정렬 변경 시 sort 상태 업데이트
   };
 
   return (
@@ -140,9 +124,7 @@ export default function Shop() {
           </div>
         </div>
       </div>
-      {
-      limitedproductFilter?.map((item, index) => (
-      // productFilter?.map((item, index) => (
+      {productPanigation.map((item, index) => (
         <div className="modal fade show" id={`product_${item.id}`} key={index}>
           <div
             className="modal-dialog modal-lg modal-dialog-centered"
@@ -156,14 +138,12 @@ export default function Shop() {
                       style={{ width: "100%" }}
                       className="product-view d-block h-100 bg-cover bg-center"
                       src={item.img1}
-                      data-lightbox={`product_${item._id}`}
+                      data-lightbox={`product_${item.id}`}
                     />
                     <img className="d-none" href={item.img2} />
                     <img className="d-none" href={item.img3} />
                   </div>
                   <div className="col-lg-6">
-                    {/* Để tắt modal phải có class="close" và data-dissmiss="modal" và aria-label="Close"
-                    모달을 끄려면 class="close" 및 data-dissmiss="modal" 및 aria-label="Close"가 있어야 합니다. */}
                     <a
                       className="close p-4"
                       type="button"
@@ -195,11 +175,10 @@ export default function Shop() {
                       <p className="text-muted font-weight-bold">
                         ₩{item.price}
                       </p>
-                      {/* <p className="text-small mb-4">{item.description}</p> */}
                       <div className="row align-items-stretch mb-4">
                         <div className="col-sm-5 pl-sm-0 fix_addwish">
                           <a className="btn btn-dark btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0">
-                            <i className="far fa-heart mr-2"></i>Add Too Wish
+                            <i className="far fa-heart mr-2"></i>Add To Wish
                             List
                           </a>
                         </div>
@@ -212,17 +191,11 @@ export default function Shop() {
           </div>
         </div>
       ))}
-      {/* -------------Modal Product----------------- */}
       <section className="py-5">
         <div className="container p-0">
           <div className="row">
             <div className="col-lg-3 order-2 order-lg-1">
               <h5 className="text-uppercase mb-4">Categories</h5>
-              {/* <div className="py-2 px-4 bg-dark text-white mb-3">
-                <strong className="small text-uppercase font-weight-bold">
-                  Fashion &amp; Acc
-                </strong>
-              </div> */}
               <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
@@ -230,29 +203,25 @@ export default function Shop() {
                     href="#"
                     onClick={() => handleCategory("all")}
                   >
-All
+                    All
                   </a>
                 </li>
-              </ul>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
                     href="#"
                     onClick={() => handleCategory("68")}
                   >
-건강
+                    건강
                   </a>
                 </li>
-              </ul>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
                     href="#"
                     onClick={() => handleCategory("72")}
                   >
-화장품
+                    화장품
                   </a>
                 </li>
                 <li className="mb-2">
@@ -264,8 +233,6 @@ All
                     Watches & ACC
                   </a>
                 </li>
-              </ul>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
@@ -275,8 +242,6 @@ All
                     가전
                   </a>
                 </li>
-              </ul>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
@@ -286,8 +251,6 @@ All
                     생활
                   </a>
                 </li>
-              </ul>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
@@ -297,8 +260,6 @@ All
                     주방
                   </a>
                 </li>
-              </ul>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
@@ -308,8 +269,6 @@ All
                     캐리어.잡화
                   </a>
                 </li>
-              </ul>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
@@ -319,8 +278,6 @@ All
                     캠핑
                   </a>
                 </li>
-              </ul>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
@@ -330,8 +287,6 @@ All
                     건강번들
                   </a>
                 </li>
-              </ul>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
@@ -341,8 +296,6 @@ All
                     먹거리
                   </a>
                 </li>
-              </ul>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
@@ -352,8 +305,6 @@ All
                     전자담배
                   </a>
                 </li>
-              </ul>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
                 <li className="mb-2">
                   <a
                     className="reset-anchor"
@@ -365,11 +316,9 @@ All
                 </li>
               </ul>
             </div>
-
             <div className="col-lg-9 order-1 order-lg-2 mb-5 mb-lg-0">
               <div className="row mb-3 align-items-center">
                 <Search handleSearch={handleSearch} />
-
                 <div className="col-lg-8">
                   <ul className="list-inline d-flex align-items-center justify-content-lg-end mb-0">
                     <li className="list-inline-item">
@@ -378,14 +327,14 @@ All
                   </ul>
                 </div>
               </div>
-
               <Products productPanigation={productPanigation} sort={sort} />
-
               <div className="d-flex justify-content-center mt-5">
                 <Pagination
                   count={totalPage}
-                  page={page}
+                  page={parseInt(page)}
                   onChange={handleChangePage}
+                  color="primary"
+                  size="large"
                 />
               </div>
             </div>

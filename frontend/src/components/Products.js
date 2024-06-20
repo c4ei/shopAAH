@@ -1,11 +1,10 @@
+// /frontend/src/components/Products.js
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 export default function Products({ productPanigation, sort }) {
-  if (!productPanigation) {
-    return;
-  }
-  const productSort = [...productPanigation];
+  // productPanigation이 배열이 아닌 경우 빈 배열로 설정
+  const productSort = Array.isArray(productPanigation) ? [...productPanigation] : [];
 
   if (sort === "DownToUp") {
     productSort.sort((a, b) => {
@@ -21,7 +20,7 @@ export default function Products({ productPanigation, sort }) {
 
   return (
     <div className="row">
-      {productSort?.map((item, index) => (
+      {productSort.map((item, index) => (
         <div className="col-lg-4 col-sm-6 Section_Category mb-5" key={index}>
           <div className="product text-center">
             <div className="position-relative mb-3">

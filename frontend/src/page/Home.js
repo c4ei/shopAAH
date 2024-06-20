@@ -10,14 +10,16 @@ export default function Home() {
   const listProduct = useSelector(
     (state) => state.product.products?.allProduct
   );
-  // 제품 목록을 12개로 제한합니다
-  const limitedListProduct = listProduct?.slice(0, 12);
-  
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     getListProduct10(dispatch);
   }, []);
+
+  // 제품 목록을 12개로 제한합니다
+  // const limitedListProduct = listProduct?.slice(0, 12);
+  const limitedListProduct = listProduct ? listProduct.slice(0, 12) : [];
 
   const productDiscount = listProduct?.filter((product) => {
     return product.promotionPercent >= 20;
