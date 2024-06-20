@@ -1,10 +1,12 @@
+// /frontend/src/redux/productSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const productSlice = createSlice({
   name: "product",
   initialState: {
     products: {
-      allProduct: null,
+      // allProduct: null,
+      allProduct: [],
       isFetching: false,
       error: false,
     },
@@ -37,10 +39,12 @@ const productSlice = createSlice({
   reducers: {
     getProductStart: (state) => {
       state.products.isFetching = true;
+      state.products.error = false; // 에러 상태 초기화
     },
     getProductSuccess: (state, action) => {
       state.products.isFetching = false;
       state.products.allProduct = action.payload;
+      state.products.error = false; // 성공 시 에러 상태 초기화
     },
     getProductFailed: (state) => {
       state.products.isFetching = false;

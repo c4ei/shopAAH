@@ -1,3 +1,4 @@
+// /shop.c4ei.net/frontend/src/App.js
 import "./App.css";
 import "./css/custom.css";
 import "./css/style.default.css";
@@ -17,10 +18,10 @@ import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <BrowserRouter>
+          <div className="App">
             <Routes>
               {publicRoutes.map((route, index) => {
                 const Component = route.component;
@@ -51,23 +52,24 @@ function App() {
                 );
               })}
             </Routes>
-          </PersistGate>
-        </Provider>
-      </BrowserRouter>
-      <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-    </div>
+            <ToastContainer
+              position="bottom-left"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
+          </div>
+        </BrowserRouter>
+      </PersistGate>
+    </Provider>
   );
 }
 
 export default App;
+

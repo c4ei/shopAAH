@@ -9,23 +9,21 @@ import ProductForYou from "./ProductForYou";
 import queryString from "query-string";
 import moment from "moment";
 import { toast } from "react-toastify";
-import "./DetailProduct.css"; // Import custom CSS file
+import "./DetailProduct.css"; // 커스텀 CSS 파일 임포트
 
 export default function DetailProduct() {
   const { id } = useParams();
-  // console.log("Product ID from URL:", id);
+  const dispatch = useDispatch();
 
   const product = useSelector((state) => state.product.productDetail?.product);
-  const listProduct = useSelector(
-    (state) => state.product.products?.allProduct
-  );
-  // const limitedListProduct = listProduct?.slice(0, 12);
-  const limitedListProduct = listProduct ? listProduct.slice(0, 12) : [];
+  const listProduct = useSelector((state) => state.product.products?.allProduct);
+  const isFetching = useSelector((state) => state.product.products.isFetching);
+  const error = useSelector((state) => state.product.products.error);
+
   const user = useSelector((state) => state.auth.login.currentUser);
- 
+
   const listComment = useSelector((state) => {
     const comments = state.comment.loadComment.listComment;
-    // console.log("Selected comments from state:", comments);
     return comments.filter(comment => comment.idProduct === parseInt(id));
   });
 
@@ -33,10 +31,11 @@ export default function DetailProduct() {
   const [comment, setComment] = useState("");
   const [loadComment, setLoadComment] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    getProductById(dispatch, id);
+    if (id) {
+      getProductById(dispatch, id);
+    }
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -44,21 +43,32 @@ export default function DetailProduct() {
   }, [dispatch]);
 
   useEffect(() => {
-    // console.log("useEffect triggered with loadComment:", loadComment, "and id:", id);
     const fetchComments = async () => {
       if (loadComment) {
-        const params = {
-          idProduct: id,
-        };
+        const params = { idProduct: id };
         const query = "?" + queryString.stringify(params);
-        // console.log("Fetching comments with query:", query);
         await getCommentProduct(dispatch, query);
-        // console.log("Comments fetched");
         setLoadComment(false);
       }
     };
     fetchComments();
   }, [loadComment, dispatch, id]);
+
+  // 디버깅 로그
+  console.log('product:', product);
+  console.log('listProduct:', listProduct);
+  console.log('isFetching:', isFetching);
+  console.log('error:', error);
+
+  if (isFetching) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading product details. Please try again later.</div>;
+  }
+
+  const limitedListProduct = Array.isArray(listProduct) ? listProduct.slice(0, 12) : [];
 
   const decrementQuantity = () => {
     if (quantity <= 1) {

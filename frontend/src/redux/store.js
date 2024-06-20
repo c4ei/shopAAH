@@ -1,3 +1,4 @@
+// /shop.c4ei.net/frontend/src/redux/store.js
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import productReducer from "./productSlice";
 import userReducer from "./userSlice";
@@ -20,6 +21,8 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
+import logger from 'redux-logger';
+
 const persistConfig = {
   key: "root",
   version: 1,
@@ -36,26 +39,19 @@ const rootReducer = combineReducers({
   messenger: messengerReducer,
   history: historyReducer,
 });
+
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export const store = configureStore({
+const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).concat(logger),
 });
 
-export let persistor = persistStore(store);
+const persistor = persistStore(store);
 
-// const store = configureStore({
-//   reducer: {
-//     product: productReducer,
-//     user: userReducer,
-//     auth: authReducer,
-//   },
-// });
-
-// export default store;
+export { store, persistor };

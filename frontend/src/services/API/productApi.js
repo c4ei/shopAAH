@@ -9,7 +9,6 @@ import {
   getProductDetailFailed,
   getProductDetailStart,
   getProductDetailSuccess,
-  getProductFailed,
   getProductFilterFailed,
   getProductFilterStart,
   getProductFilterSuccess,
@@ -18,6 +17,7 @@ import {
   getProductPanigationSuccess,
   getProductStart,
   getProductSuccess,
+  getProductFailed,
 } from "../../redux/productSlice";
 import { DOMAIN } from "../../utils/settings/config";
 
@@ -35,8 +35,10 @@ export const getListProduct10 = async (dispatch, params) => {
   dispatch(getProductStart());
   try {
     const response = await axios.get(`${DOMAIN}/api/v1/products/main`, { params });
+    console.log('API response:', response.data); // 디버깅 로그
     dispatch(getProductSuccess(response.data));
   } catch (err) {
+    console.error('API call failed:', err); // 디버깅 로그
     dispatch(getProductFailed(err));
   }
 };
