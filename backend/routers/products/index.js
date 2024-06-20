@@ -70,7 +70,8 @@ productRouter.get("/main", async (req, res) => {
     } else {
       let newProduct = panigationProducts.filter((value) => {
         return (
-          value.name.toLowerCase().indexOf(keyWordSearch.toLowerCase()) !== -1
+          // value.name.toLowerCase().indexOf(keyWordSearch.toLowerCase()) !== -1
+          value.name.indexOf(keyWordSearch) !== -1
         );
       });
       res.status(200).send(newProduct);
@@ -128,7 +129,8 @@ productRouter.get("/", async (req, res) => {
     } else {
       let newProduct = panigationProducts.filter((value) => {
         return (
-          value.name.toLowerCase().indexOf(keyWordSearch.toLowerCase()) !== -1
+          // value.name.toLowerCase().indexOf(keyWordSearch.toLowerCase()) !== -1
+          value.name.indexOf(keyWordSearch) !== -1
         );
       });
       res.status(200).send(newProduct);

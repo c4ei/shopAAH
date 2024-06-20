@@ -129,14 +129,14 @@ export default function DetailProduct() {
   const getCategoryName = (category) => {
     switch(category) {
       case "68": return "건강";
-      case "72": return "화장품";
-      case "75": return "Watches & ACC";
+      case "76": return "건강번들";
       case "69": return "가전";
-      case "5": return "생활";
       case "70": return "주방";
+      case "71": return "생활";
+      case "72": return "화장품";
       case "73": return "캐리어.잡화";
       case "74": return "캠핑";
-      case "76": return "건강번들";
+      case "75": return "Watches & ACC";
       case "81": return "먹거리";
       case "80": return "전자담배";
       case "78": return "계절가전";

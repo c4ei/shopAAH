@@ -1,3 +1,4 @@
+// /shop.c4ei.net/frontend/src/components/Shop.js
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Products from "./Products";
@@ -19,7 +20,6 @@ export default function Shop() {
     page: "1",
     size: "9",
     search: "",
-    // category: "all",
     category: "76",
   });
   const dispatch = useDispatch();
@@ -31,6 +31,17 @@ export default function Shop() {
   );
   // 제품 목록을 12개로 제한합니다
   const limitedproductFilter = productFilter?.slice(0, 20);
+
+  // URL 쿼리 파라미터로부터 카테고리 값을 읽어 초기 설정
+  useEffect(() => {
+    const params = queryString.parse(window.location.search);
+    if (params.category) {
+      setPagination((prev) => ({
+        ...prev,
+        category: params.category,
+      }));
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -87,8 +98,9 @@ export default function Shop() {
   };
 
   const handleCategory = (value) => {
+    setPage(1);  // 페이지를 1로 초기화
     setPagination({
-      page: pagination.page,
+      page: "1",
       size: pagination.size,
       search: pagination.search,
       category: value,
@@ -269,7 +281,7 @@ All
                   <a
                     className="reset-anchor"
                     href="#"
-                    onClick={() => handleCategory("5")}
+                    onClick={() => handleCategory("71")}
                   >
                     생활
                   </a>
