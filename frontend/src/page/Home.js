@@ -66,7 +66,6 @@ export default function Home() {
     "https://i.ibb.co/qsVhdMj/image.png",
     "https://i.ibb.co/0jkrgcG/image.png",
     "https://i.ibb.co/ZTq2jyg/image.png",
-    "https://i.ibb.co/hyy0R3p/image.png",
     "https://i.ibb.co/VTQDmMt/image.png",
     "https://i.ibb.co/58zByNQ/image.png",
     "https://i.ibb.co/khtFSw8/image.png",
