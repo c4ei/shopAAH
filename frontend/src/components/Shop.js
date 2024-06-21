@@ -8,7 +8,7 @@ import { getListProductFilter, getListProductPanigation } from "../services/API/
 import Search from "./Search";
 import Sort from "./Sort";
 import Category from "./Category";
-import Shopmodal from "./Shopmodal"; 
+// import Shopmodal from "./Shopmodal"; 
 
 export default function Shop() {
   const [page, setPage] = useState(1);
@@ -150,7 +150,7 @@ export default function Shop() {
         </div>
       </div>
 
-      <Shopmodal products={productPanigation} /> 
+      {/* <Shopmodal products={productPanigation} />  */}
 
       <section className="py-5">
         <div className="container p-0">
