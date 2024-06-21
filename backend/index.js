@@ -164,7 +164,7 @@ app.get('/api/products', (req, res) => {
   let countQuery = 'SELECT COUNT(*) AS total FROM Products WHERE 1=1';
   const queryParams = [];
 
-  if (category) {
+  if (category && category !== 'all') {
     query += ' AND category = ?';
     countQuery += ' AND category = ?';
     queryParams.push(category);
