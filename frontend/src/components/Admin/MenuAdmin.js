@@ -46,6 +46,11 @@ export default function MenuAdmin() {
                   </a>
                 </li>
                 <li className="sidebar-item">
+                  <a href="/GoodsAdmin" className="sidebar-link">
+                    <span className="hide-menu">GoodsAdmin</span>
+                  </a>
+                </li>
+                <li className="sidebar-item">
                   <a href="/products" className="sidebar-link">
                     <span className="hide-menu">Datatables Products</span>
                   </a>
