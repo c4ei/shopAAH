@@ -94,6 +94,11 @@ export default function GoodsAdmin() {
     }
   };
 
+  const handleUpdateClickID = (item) => {
+    const url = `https://shop.c4ei.net/detail/${item.id}`;
+    window.open(url, '_blank');
+  };
+
   return (
     <div className="container">
       <div className="py-5 bg-light">
@@ -155,7 +160,10 @@ export default function GoodsAdmin() {
                 {products.length > 0 ? (
                   products.map((item, index) => (
                     <tr key={index}>
-                      <td>{item.id}</td>
+                      <td>
+                        <a href="#" onClick={() => handleUpdateClickID(item)}>{item.id}</a>
+                      </td>
+                      
                       <td>{item.good_name}</td>
                       <td>₩{item.price}</td>
                       <td>
