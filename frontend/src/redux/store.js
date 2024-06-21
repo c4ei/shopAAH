@@ -21,7 +21,7 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import logger from 'redux-logger';
+// import logger from 'redux-logger';
 
 const persistConfig = {
   key: "root",
@@ -42,6 +42,15 @@ const rootReducer = combineReducers({
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
+// const store = configureStore({
+//   reducer: persistedReducer,
+//   middleware: (getDefaultMiddleware) =>
+//     getDefaultMiddleware({
+//       serializableCheck: {
+//         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+//       },
+//     }).concat(logger),
+// });
 const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
@@ -49,7 +58,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(logger),
+    }), // 로거 제거
 });
 
 const persistor = persistStore(store);

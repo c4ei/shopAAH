@@ -1,3 +1,4 @@
+// /shop.c4ei.net/frontend/src/services/API/productApi.js
 import axios from "axios";
 import {
   createProductFailed,
@@ -47,20 +48,20 @@ export const getListProduct10 = async (dispatch, params) => {
 export const getListProductPanigation = async (dispatch, params) => {
   dispatch(getProductPanigationStart());
   try {
-    const response = await axios.get(`${DOMAIN}/api/v1/products${params}`);
-    const { products, totalProducts } = response.data; // axios는 자동으로 JSON 응답을 파싱합니다.
+    const response = await axios.get(`${DOMAIN}/api/v1/products?${params}`);
+    const { products, totalProducts } = response.data;
     dispatch({ type: 'SET_PRODUCT_PANIGATION', payload: products });
     return { products, totalProducts };
   } catch (err) {
     dispatch(getProductPanigationFailed(err));
-    return { products: [], totalProducts: 0 }; // 에러 발생 시 기본 값 반환
+    return { products: [], totalProducts: 0 };
   }
 };
 
 export const getListProductFilter = async (dispatch, params) => {
   dispatch(getProductFilterStart());
   try {
-    const response = await axios.get(`${DOMAIN}/api/v1/products/${params}`);
+    const response = await axios.get(`${DOMAIN}/api/v1/products?${params}`);
     dispatch(getProductFilterSuccess(response.data));
   } catch (err) {
     dispatch(getProductFilterFailed(err));

@@ -54,22 +54,20 @@ productRouter.get("/", async (req, res) => {
     const size = Number.parseInt(req.query.size) || 10;
     const keyWordSearch = req.query.search || "";
     const category = req.query.category || "all";
+    const sort = req.query.sort || "default"; // sort 매개변수 추가
     
     const offset = (page - 1) * size;
     const limit = size;
     let products, totalProducts;
 
     if (keyWordSearch || category !== "all") {
-      products = await searchProducts(keyWordSearch, category, offset, limit);
-      // console.log("#### /backend/routers/products/index.js 64 line products.length : "+products.length);
-      totalProducts = await getTotalProductsCount(keyWordSearch, category); // 전체 제품 수를 가져오는 함수
+      products = await searchProducts(keyWordSearch, category, offset, limit, sort);
+      totalProducts = await getTotalProductsCount(keyWordSearch, category);
     } else {
       products = await getListProduct();
       totalProducts = products.length;
       products = products.slice(offset, offset + limit);
     }
-    // console.log("#### /backend/routers/products/index.js -- products: ", products);
-    // console.log("#### /backend/routers/products/index.js -- totalProducts: ", totalProducts);
 
     res.status(200).send({ products, totalProducts });
   } catch (error) {

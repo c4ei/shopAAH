@@ -1,3 +1,4 @@
+// /shop.c4ei.net/backend/services/products/index.js
 const { Product } = require("../../models"); // Sequelize 모델 가져오기
 const { Op } = require("sequelize"); // Sequelize 연산자 가져오기
 
@@ -123,7 +124,7 @@ const searchProduct = async (search) => {
 };
 
 // 검색 기능 추가
-const searchProducts = async (keyword, category, offset, limit) => {
+const searchProducts = async (keyword, category, offset, limit, sort) => {
   try {
     const where = {
       [Op.or]: [
@@ -146,10 +147,15 @@ const searchProducts = async (keyword, category, offset, limit) => {
       };
     }
     
+    const order = getOrder(sort); // 정렬 기준을 가져옴
+    console.log("### searchProducts where:", where);
+    console.log("### searchProducts order:", order);
+    
     const products = await Product.findAll({
       where,
       offset: offset,
       limit: limit,
+      order: order, // 정렬 기준 적용
     });
     return products;
   } catch (err) {
@@ -157,6 +163,18 @@ const searchProducts = async (keyword, category, offset, limit) => {
     throw err;
   }
 };
+
+// 정렬 기준을 반환하는 함수
+function getOrder(sort) {
+  switch (sort) {
+    case "DownToUp":
+      return [["price", "ASC"]];
+    case "UpToDown":
+      return [["price", "DESC"]];
+    default:
+      return [];
+  }
+}
 
 const getTotalProductsCount = async (keyWordSearch = "", category = "all") => {
   try {

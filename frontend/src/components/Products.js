@@ -12,9 +12,7 @@ export default function Products({ productPanigation, sort }) {
 
     if (sort === "DownToUp") {
       sortedProducts.sort((a, b) => a.price - b.price);
-    }
-
-    if (sort === "UpToDown") {
+    } else if (sort === "UpToDown") {
       sortedProducts.sort((a, b) => b.price - a.price);
     }
 
@@ -22,13 +20,14 @@ export default function Products({ productPanigation, sort }) {
     setProductSort(sortedProducts);
   }, [productPanigation, sort]);
 
+  if (productSort.length === 0) return <div>No products available</div>;
+
   return (
     <div className="row">
       {productSort.map((item, index) => (
         <div className="col-lg-4 col-sm-6 Section_Category mb-5" key={index}>
           <div className="product text-center">
             <div className="position-relative mb-3">
-              <div className="badge text-white badge-"></div>
               <NavLink className="d-block" to={`/detail/${item.id}`}>
                 <img className="img-fluid w-100" src={item.img1} alt="..." />
               </NavLink>

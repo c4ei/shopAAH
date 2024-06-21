@@ -5,7 +5,6 @@ const productSlice = createSlice({
   name: "product",
   initialState: {
     products: {
-      // allProduct: null,
       allProduct: [],
       isFetching: false,
       error: false,
@@ -16,7 +15,7 @@ const productSlice = createSlice({
       error: false,
     },
     productPanigation: {
-      allProductPanigation: null,
+      allProductPanigation: [],
       isFetching: false,
       error: false,
     },
@@ -39,12 +38,12 @@ const productSlice = createSlice({
   reducers: {
     getProductStart: (state) => {
       state.products.isFetching = true;
-      state.products.error = false; // 에러 상태 초기화
+      state.products.error = false;
     },
     getProductSuccess: (state, action) => {
       state.products.isFetching = false;
       state.products.allProduct = action.payload;
-      state.products.error = false; // 성공 시 에러 상태 초기화
+      state.products.error = false;
     },
     getProductFailed: (state) => {
       state.products.isFetching = false;
@@ -82,6 +81,9 @@ const productSlice = createSlice({
     getProductFilterFailed: (state) => {
       state.productFilter.isFetching = false;
       state.productFilter.error = true;
+    },
+    SET_PRODUCT_PANIGATION: (state, action) => {
+      state.productPanigation.allProductPanigation = action.payload;
     },
     createProductStart: (state) => {
       state.createProduct.isFetching = true;
@@ -121,6 +123,7 @@ export const {
   getProductFilterStart,
   getProductFilterSuccess,
   getProductFilterFailed,
+  SET_PRODUCT_PANIGATION,
   createProductStart,
   createProductSucess,
   createProductFailed,

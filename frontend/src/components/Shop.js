@@ -8,7 +8,6 @@ import { getListProductFilter, getListProductPanigation } from "../services/API/
 import Search from "./Search";
 import Sort from "./Sort";
 import Category from "./Category";
-// import Shopmodal from "./Shopmodal"; 
 
 export default function Shop() {
   const [page, setPage] = useState(1);
@@ -22,11 +21,11 @@ export default function Shop() {
   });
 
   const dispatch = useDispatch();
-  const productPanigation = useSelector((state) => state.product.productPanigation?.allProductPanigation || []);
+
+  const productPanigation = useSelector((state) => state.product.products.allProduct.products || []);
   const isFetching = useSelector((state) => state.product.products.isFetching);
   const error = useSelector((state) => state.product.products.error);
 
-  // 페이지와 정렬 변경시 데이터 fetch
   useEffect(() => {
     const fetchProducts = async () => {
       const params = {
@@ -34,17 +33,17 @@ export default function Shop() {
         size: pagination.size,
         search: pagination.search,
         category: pagination.category,
+        sort: sort,
       };
 
       const query = queryString.stringify(params);
       const newQuery = "?" + query;
-
+      console.log("### API request params:", params);
+      console.log("### API request query:", newQuery);
       try {
         const { products, totalProducts } = await getListProductPanigation(dispatch, newQuery) || {};
-
-        console.log("/frontend/src/components/Shop.js --43 -- products: ", products);
-        console.log("/frontend/src/components/Shop.js --44 -- totalProducts: ", totalProducts);
-
+        console.log("### API response products:", products);
+        console.log("### API response totalProducts:", totalProducts);
         setTotalPage(Math.ceil(totalProducts / pagination.size));
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -52,9 +51,8 @@ export default function Shop() {
     };
 
     fetchProducts();
-  }, [pagination, dispatch]);
+  }, [pagination, sort, dispatch]);
 
-  // 카테고리 변경시 데이터 fetch
   useEffect(() => {
     const fetchFilteredProducts = async () => {
       const params = {
@@ -75,7 +73,7 @@ export default function Shop() {
     };
 
     fetchFilteredProducts();
-  }, [pagination, dispatch]);
+  }, [pagination.category, dispatch]);
 
   useEffect(() => {
     setPage(1);
@@ -84,9 +82,7 @@ export default function Shop() {
   const handleChangePage = (e, value) => {
     e.preventDefault();
     window.scrollTo(0, 0);
-
     setPage(value);
-
     setPagination((prev) => ({
       ...prev,
       page: value,
@@ -106,6 +102,7 @@ export default function Shop() {
     setPagination((prev) => ({
       ...prev,
       search: value,
+      page: 1, // 검색 시 페이지를 1로 초기화
     }));
   };
 
@@ -113,7 +110,6 @@ export default function Shop() {
     setSort(value);
   };
 
-  // 확인용 로그
   useEffect(() => {
     console.log('Shop.js - productPanigation:', productPanigation);
     console.log('Shop.js - sort:', sort);
@@ -150,8 +146,6 @@ export default function Shop() {
         </div>
       </div>
 
-      {/* <Shopmodal products={productPanigation} />  */}
-
       <section className="py-5">
         <div className="container p-0">
           <div className="row">
@@ -167,11 +161,11 @@ export default function Shop() {
                   </ul>
                 </div>
               </div>
-              <Products productPanigation={productPanigation} sort={sort} />
+<Products productPanigation={productPanigation} sort={sort} />
               <div className="d-flex justify-content-center mt-5">
                 <Pagination
                   count={totalPage}
-                  page={parseInt(page)}
+                  page={page}
                   onChange={handleChangePage}
                   color="primary"
                   size="large"
