@@ -7,16 +7,18 @@ import queryString from "query-string";
 import { getListProductFilter, getListProductPanigation } from "../services/API/productApi";
 import Search from "./Search";
 import Sort from "./Sort";
+import Category from "./Category";
+import Shopmodal from "./Shopmodal"; 
 
 export default function Shop() {
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState("default");
   const [totalPage, setTotalPage] = useState(1);
   const [pagination, setPagination] = useState({
-    page: "1",
-    size: "9",
+    page: 1,
+    size: 9,
     search: "",
-    category: "76", // 예시로 카테고리 초기값 설정
+    category: "68",
   });
 
   const dispatch = useDispatch();
@@ -24,18 +26,9 @@ export default function Shop() {
   const isFetching = useSelector((state) => state.product.products.isFetching);
   const error = useSelector((state) => state.product.products.error);
 
+  // 페이지와 정렬 변경시 데이터 fetch
   useEffect(() => {
-    const params = queryString.parse(window.location.search);
-    if (params.category) {
-      setPagination((prev) => ({
-        ...prev,
-        category: params.category,
-      }));
-    }
-  }, []);
-
-  useEffect(() => {
-    (async () => {
+    const fetchProducts = async () => {
       const params = {
         page: pagination.page,
         size: pagination.size,
@@ -45,19 +38,25 @@ export default function Shop() {
 
       const query = queryString.stringify(params);
       const newQuery = "?" + query;
-      const { products, totalProducts } = await getListProductPanigation(dispatch, newQuery) || {};
 
-      // 디버깅 로그
-      console.log("/frontend/src/components/Shop.js --59 -- products: ", products);
-      console.log("/frontend/src/components/Shop.js --59 -- totalProducts: ", totalProducts);
+      try {
+        const { products, totalProducts } = await getListProductPanigation(dispatch, newQuery) || {};
 
-      // 상품 목록을 가져왔을 때 totalProducts로 totalPage 설정
-      setTotalPage(Math.ceil(totalProducts / pagination.size));
-    })();
-  }, [pagination, page, sort, dispatch]); // dispatch 추가
+        console.log("/frontend/src/components/Shop.js --43 -- products: ", products);
+        console.log("/frontend/src/components/Shop.js --44 -- totalProducts: ", totalProducts);
 
+        setTotalPage(Math.ceil(totalProducts / pagination.size));
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, [pagination, dispatch]);
+
+  // 카테고리 변경시 데이터 fetch
   useEffect(() => {
-    (async () => {
+    const fetchFilteredProducts = async () => {
       const params = {
         page: "",
         size: "",
@@ -67,13 +66,20 @@ export default function Shop() {
 
       const query = queryString.stringify(params);
       const newQuery = "?" + query;
-      await getListProductFilter(dispatch, newQuery);
-    })();
-  }, [pagination, sort, dispatch]); // dispatch 추가
+
+      try {
+        await getListProductFilter(dispatch, newQuery);
+      } catch (error) {
+        console.error("Error fetching filtered products:", error);
+      }
+    };
+
+    fetchFilteredProducts();
+  }, [pagination, dispatch]);
 
   useEffect(() => {
-    setPage(1); // 카테고리 변경 시 페이지를 1로 설정
-  }, [pagination.category]); // pagination.category 변경 시에만 호출
+    setPage(1);
+  }, [pagination.category]);
 
   const handleChangePage = (e, value) => {
     e.preventDefault();
@@ -83,15 +89,15 @@ export default function Shop() {
 
     setPagination((prev) => ({
       ...prev,
-      page: value.toString(), // 페이지 번호는 문자열로 변환
+      page: value,
     }));
   };
 
   const handleCategory = (value) => {
-    setPage(1); // 카테고리 변경 시 페이지를 1로 설정
+    setPage(1);
     setPagination((prev) => ({
       ...prev,
-      page: "1",
+      page: 1,
       category: value,
     }));
   };
@@ -104,13 +110,16 @@ export default function Shop() {
   };
 
   const handleSort = (value) => {
-    setSort(value); // 정렬 변경 시 sort 상태 업데이트
+    setSort(value);
   };
 
-  // 디버깅 로그
-  console.log('productPanigation:', productPanigation);
-  console.log('isFetching:', isFetching);
-  console.log('error:', error);
+  // 확인용 로그
+  useEffect(() => {
+    console.log('Shop.js - productPanigation:', productPanigation);
+    console.log('Shop.js - sort:', sort);
+    console.log('Shop.js - isFetching:', isFetching);
+    console.log('Shop.js - error:', error);
+  }, [productPanigation, sort, isFetching, error]);
 
   if (isFetching) {
     return <div>Loading...</div>;
@@ -140,198 +149,13 @@ export default function Shop() {
           </div>
         </div>
       </div>
-      {productPanigation.map((item, index) => (
-        <div className="modal fade show" id={`product_${item.id}`} key={index}>
-          <div
-            className="modal-dialog modal-lg modal-dialog-centered"
-            role="document"
-          >
-            <div className="modal-content">
-              <div className="modal-body p-0">
-                <div className="row align-items-stretch">
-                  <div className="col-lg-6 p-lg-0">
-                    <img
-                      style={{ width: "100%" }}
-                      className="product-view d-block h-100 bg-cover bg-center"
-                      src={item.img1}
-                      data-lightbox={`product_${item.id}`}
-                    />
-                    <img className="d-none" href={item.img2} />
-                    <img className="d-none" href={item.img3} />
-                  </div>
-                  <div className="col-lg-6">
-                    <a
-                      className="close p-4"
-                      type="button"
-                      href="#section_product"
-                      data-dismiss="modal"
-                      aria-label="Close"
-                    >
-                      ×
-                    </a>
-                    <div className="p-5 my-md-4">
-                      <ul className="list-inline mb-2">
-                        <li className="list-inline-item m-0">
-                          <i className="fas fa-star small text-warning"></i>
-                        </li>
-                        <li className="list-inline-item m-0">
-                          <i className="fas fa-star small text-warning"></i>
-                        </li>
-                        <li className="list-inline-item m-0">
-                          <i className="fas fa-star small text-warning"></i>
-                        </li>
-                        <li className="list-inline-item m-0">
-                          <i className="fas fa-star small text-warning"></i>
-                        </li>
-                        <li className="list-inline-item m-0">
-                          <i className="fas fa-star small text-warning"></i>
-                        </li>
-                      </ul>
-                      <h2 className="h4">{item.good_name}</h2>
-                      <p className="text-muted font-weight-bold">
-                        ₩{item.price}
-                      </p>
-                      <div className="row align-items-stretch mb-4">
-                        <div className="col-sm-5 pl-sm-0 fix_addwish">
-                          <a className="btn btn-dark btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0">
-                            <i className="far fa-heart mr-2"></i>Add To Wish
-                            List
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
+
+      <Shopmodal products={productPanigation} /> 
+
       <section className="py-5">
         <div className="container p-0">
           <div className="row">
-            <div className="col-lg-3 order-2 order-lg-1">
-              <h5 className="text-uppercase mb-4">Categories</h5>
-              <ul className="list-unstyled small text-muted pl-lg-4 font-weight-normal">
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("all")}
-                  >
-                    All
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("68")}
-                  >
-                    건강
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("72")}
-                  >
-                    화장품
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("75")}
-                  >
-                    Watches & ACC
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("69")}
-                  >
-                    가전
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("71")}
-                  >
-                    생활
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("70")}
-                  >
-                    주방
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("73")}
-                  >
-                    캐리어.잡화
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("74")}
-                  >
-                    캠핑
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("76")}
-                  >
-                    건강번들
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("81")}
-                  >
-                    먹거리
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("80")}
-                  >
-                    전자담배
-                  </a>
-                </li>
-                <li className="mb-2">
-                  <a
-                    className="reset-anchor"
-                    href="#"
-                    onClick={() => handleCategory("78")}
-                  >
-                    계절가전
-                  </a>
-                </li>
-              </ul>
-            </div>
+            <Category handleCategory={handleCategory} />
             <div className="col-lg-9 order-1 order-lg-2 mb-5 mb-lg-0">
               <div className="row mb-3 align-items-center">
                 <Search handleSearch={handleSearch} />
