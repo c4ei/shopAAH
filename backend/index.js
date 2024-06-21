@@ -152,6 +152,57 @@ app.post('/saveProduct', (req, res) => {
 });
 // ###################### Product ######################
 
+// ###################### Goods ######################
+// 상품 목록을 페이징하여 가져오는 API 엔드포인트
+app.get('/api/products', (req, res) => {
+  const { page = 1, size = 9, search = '', category = '' } = req.query;
+  const offset = (page - 1) * size;
+
+  console.log('### API request received with params:', { page, size, search, category });
+
+  let query = 'SELECT * FROM Products WHERE 1=1';
+  let countQuery = 'SELECT COUNT(*) AS total FROM Products WHERE 1=1';
+  const queryParams = [];
+
+  if (category) {
+    query += ' AND category = ?';
+    countQuery += ' AND category = ?';
+    queryParams.push(category);
+  }
+
+  if (search) {
+    query += ' AND good_name LIKE ?';
+    countQuery += ' AND good_name LIKE ?';
+    queryParams.push(`%${search}%`);
+  }
+
+  query += ' LIMIT ? OFFSET ?';
+  queryParams.push(parseInt(size), offset);
+
+  // console.log('### Constructed query:', query);
+  // console.log('### Query params:', queryParams);
+
+  db.query(query, queryParams, (err, results) => {
+    if (err) {
+      console.error('상품 조회 오류:', err);
+      return res.status(500).send('서버 오류가 발생했습니다.');
+    }
+
+    db.query(countQuery, queryParams.slice(0, queryParams.length - 2), (err, countResults) => {
+      if (err) {
+        console.error('상품 수 조회 오류:', err);
+        return res.status(500).send('서버 오류가 발생했습니다.');
+      }
+
+      const totalProducts = countResults[0].total;
+      // console.log('### Query results:', results);
+      // console.log('### Total products:', totalProducts);
+
+      res.status(200).json({ products: results, totalProducts });
+    });
+  });
+});
+// ###################### Goods ######################
 
 const publicPathDirectory = path.join(__dirname, "public");
 app.use(express.static(publicPathDirectory));

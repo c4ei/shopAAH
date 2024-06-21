@@ -1,17 +1,15 @@
-// /frontend/src/components/Shop.js
+// /shop.c4ei.net/frontend/src/components/Goods.js
 import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Products from "./Products";
 import Pagination from "@mui/material/Pagination";
 import queryString from "query-string";
-import { getListProductFilter, getListProductPanigation } from "../services/API/productApi";
+import { getListProductPanigation } from "../services/API/goodsApi";
 import Search from "./Search";
-import Sort from "./Sort";
 import Category from "./Category";
 
-export default function Shop() {
+export default function Goods() {
   const [page, setPage] = useState(1);
-  const [sort, setSort] = useState("default");
   const [totalPage, setTotalPage] = useState(1);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -21,10 +19,7 @@ export default function Shop() {
   });
 
   const dispatch = useDispatch();
-
-  const productPanigation = useSelector((state) => state.product.products.allProduct.products || []);
-  const isFetching = useSelector((state) => state.product.products.isFetching);
-  const error = useSelector((state) => state.product.products.error);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -33,56 +28,28 @@ export default function Shop() {
         size: pagination.size,
         search: pagination.search,
         category: pagination.category,
-        sort: sort,
       };
 
       const query = queryString.stringify(params);
       const newQuery = "?" + query;
-      console.log("### API request params:", params);
-      console.log("### API request query:", newQuery);
+    //   console.log("### API request params:", params);
+    //   console.log("### API request query:", newQuery);
       try {
-        const { products, totalProducts } = await getListProductPanigation(dispatch, newQuery) || {};
+        const { products, totalProducts } = await getListProductPanigation(newQuery) || {};
         console.log("### API response products:", products);
         console.log("### API response totalProducts:", totalProducts);
+        setProducts(products);
         setTotalPage(Math.ceil(totalProducts / pagination.size));
-        console.log("### Total pages set to:", Math.ceil(totalProducts / pagination.size));
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
 
     fetchProducts();
-  }, [pagination, sort, dispatch]);
-
-  useEffect(() => {
-    const fetchFilteredProducts = async () => {
-      const params = {
-        page: "",
-        size: "",
-        search: pagination.search,
-        category: pagination.category,
-      };
-
-      const query = queryString.stringify(params);
-      const newQuery = "?" + query;
-
-      try {
-        await getListProductFilter(dispatch, newQuery);
-      } catch (error) {
-        console.error("Error fetching filtered products:", error);
-      }
-    };
-
-    fetchFilteredProducts();
-  }, [pagination.category, dispatch]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [pagination.category]);
+  }, [pagination, dispatch]);
 
   const handleChangePage = (e, value) => {
     e.preventDefault();
-    console.log("### handleChangePage called with value:", value);
     window.scrollTo(0, 0);
     setPage(value);
     setPagination((prev) => ({
@@ -92,7 +59,6 @@ export default function Shop() {
   };
 
   const handleCategory = (value) => {
-    console.log("### handleCategory called with value:", value);
     setPage(1);
     setPagination((prev) => ({
       ...prev,
@@ -102,7 +68,6 @@ export default function Shop() {
   };
 
   const handleSearch = (value) => {
-    console.log("### handleSearch called with value:", value);
     setPagination((prev) => ({
       ...prev,
       search: value,
@@ -110,41 +75,19 @@ export default function Shop() {
     }));
   };
 
-  const handleSort = (value) => {
-    console.log("### handleSort called with value:", value);
-    setSort(value);
-  };
-
-  useEffect(() => {
-    console.log('Shop.js - productPanigation:', productPanigation);
-    console.log('Shop.js - sort:', sort);
-    console.log('Shop.js - isFetching:', isFetching);
-    console.log('Shop.js - error:', error);
-    console.log('Shop.js - totalPage:', totalPage);
-    console.log('Shop.js - current page:', page);
-  }, [productPanigation, sort, isFetching, error, totalPage, page]);
-
-  if (isFetching) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error loading products. Please try again later.</div>;
-  }
-
   return (
     <div className="container">
       <div className="py-5 bg-light">
         <div className="container">
           <div className="row px-4 px-lg-5 py-lg-4 align-items-center">
             <div className="col-lg-6">
-              <h1 className="h2 text-uppercase mb-0">Shop</h1>
+              <h1 className="h2 text-uppercase mb-0">Goods</h1>
             </div>
             <div className="col-lg-6 text-lg-right">
               <nav aria-label="breadcrumb">
                 <ol className="breadcrumb justify-content-lg-end mb-0 px-0">
                   <li className="breadcrumb-item active" aria-current="page">
-                    Shop
+                    Goods
                   </li>
                 </ol>
               </nav>
@@ -160,15 +103,37 @@ export default function Shop() {
             <div className="col-lg-9 order-1 order-lg-2 mb-5 mb-lg-0">
               <div className="row mb-3 align-items-center">
                 <Search handleSearch={handleSearch} />
-                <div className="col-lg-8">
-                  <ul className="list-inline d-flex align-items-center justify-content-lg-end mb-0">
-                    <li className="list-inline-item">
-                      <Sort handleSort={handleSort} />
-                    </li>
-                  </ul>
-                </div>
               </div>
-              <Products productPanigation={productPanigation} sort={sort} />
+              <div className="row">
+                {products.length > 0 ? (
+                  products.map((item, index) => (
+                    <div className="col-lg-4 col-sm-6 Section_Category mb-5" key={index}>
+                      <div className="product text-center">
+                        <div className="position-relative mb-3">
+                          <NavLink className="d-block" to={`/detail/${item.id}`}>
+                            <img className="img-fluid w-100" src={item.img1} alt="..." />
+                          </NavLink>
+                          <div className="product-overlay">
+                            <ul className="mb-0 list-inline">
+                              <li className="list-inline-item m-0 p-0">
+                                <NavLink className="btn btn-sm btn-dark" to={`/detail/${item.id}`}>
+                                  SHOW
+                                </NavLink>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <h6>
+                          <a className="reset-anchor">{item.good_name}</a>
+                        </h6>
+                        <p className="small text-muted">₩{item.price}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div>No products available</div>
+                )}
+              </div>
               <div className="d-flex justify-content-center mt-5">
                 <Pagination
                   count={totalPage}

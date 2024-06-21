@@ -56,8 +56,8 @@ export default function Header() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" to="/shop">
-                Shop
+              <NavLink className="nav-link" to="/Goods">
+                Goods
               </NavLink>
             </li>
           </ul>

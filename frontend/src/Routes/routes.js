@@ -1,9 +1,11 @@
+// /frontend/src/Routes/routes.js
 import Login from "../components/Auth/Login";
 import Register from "../components/Auth/Register";
 import CartProduct from "../components/CartProduct";
 import Checkout from "../components/Checkout";
 import DetailProduct from "../components/DetailProduct";
 import Shop from "../components/Shop";
+import Goods from "../components/Goods"; // 새로 만든 Goods 컴포넌트
 import HistoryUser from "../components/User/HistoryUser";
 import Home from "../page/Home";
 import ManageShop from "../components/ManageShop";
@@ -33,6 +35,10 @@ const publicRoutes = [
   {
     path: "/shop",
     component: Shop,
+  },
+  {
+    path: "/Goods",
+    component: Goods,
   },
   {
     path: "/Checkout",

@@ -63,7 +63,7 @@ export default function CartProduct() {
                       <div className="col-md-6 mb-3 mb-md-0 text-md-left">
                         <NavLink
                           className="btn btn-link p-0 text-dark btn-sm"
-                          to="/shop"
+                          to="/Goods"
                         >
                           <i className="fas fa-long-arrow-alt-left mr-2"> </i>
                           Continue shopping

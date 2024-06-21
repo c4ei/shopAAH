@@ -18,7 +18,7 @@ export default function CartEmpty() {
           장바구니에 담긴 상품이 없습니다.
         </p>
         <NavLink
-          to="/shop"
+          to="/Goods"
           className="text-sm text-center py-3 px-4 border border-dark bg-dark text-white hover-zoom my-5"
         >
           계속 쇼핑 

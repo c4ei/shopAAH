@@ -134,7 +134,7 @@ export default function Home() {
             </div>
             <div className="row">
               <div className="col-md-4 mb-4 mb-md-0">
-                <NavLink className="category-item" to="/shop?category=75">
+                <NavLink className="category-item" to="/Goods?category=75">
                   <img
                     className="img-fluid"
                     src="/image/cat-img-1.jpg"
@@ -144,7 +144,7 @@ export default function Home() {
                 </NavLink>
               </div>
               <div className="col-md-4 mb-4 mb-md-0">
-                <NavLink className="category-item mb-4" to="/shop?category=68">
+                <NavLink className="category-item mb-4" to="/Goods?category=68">
                   <img
                     className="img-fluid"
                     src="/image/cat-img-2.jpg"
@@ -152,7 +152,7 @@ export default function Home() {
                   />
                   <strong className="category-item-title">건강</strong>
                 </NavLink>
-                <NavLink className="category-item" to="/shop?category=72">
+                <NavLink className="category-item" to="/Goods?category=72">
                   <img
                     className="img-fluid"
                     src="/image/cat-img-3.jpg"
@@ -162,7 +162,7 @@ export default function Home() {
                 </NavLink>
               </div>
               <div className="col-md-4">
-                <NavLink className="category-item" to="/shop?category=69">
+                <NavLink className="category-item" to="/Goods?category=69">
                   <img
                     className="img-fluid"
                     src="/image/cat-img-4.jpg"
