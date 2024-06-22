@@ -1,7 +1,7 @@
 // /shop.c4ei.net/frontend/src/components/Goods.js
 import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { NavLink, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import Pagination from "@mui/material/Pagination";
 import queryString from "query-string";
 import { getListProductPanigation } from "../services/API/goodsApi";
@@ -9,6 +9,7 @@ import Search from "./Search";
 import Category from "./Category";
 
 export default function Goods() {
+  const location = useLocation();
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [pagination, setPagination] = useState({
@@ -20,6 +21,16 @@ export default function Goods() {
 
   const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const queryParams = queryString.parse(location.search);
+    const initialCategory = queryParams.category || "68"; // 기본값을 68로 설정
+
+    setPagination((prev) => ({
+      ...prev,
+      category: initialCategory,
+    }));
+  }, [location.search]);
 
   useEffect(() => {
     const fetchProducts = async () => {
