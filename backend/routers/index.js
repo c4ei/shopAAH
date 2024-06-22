@@ -1,3 +1,4 @@
+// /shop.c4ei.net/backend/routers/index.js
 const express = require("express");
 const userRouter = require("./users");
 const productRouter = require("./products");
