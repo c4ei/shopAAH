@@ -36,8 +36,8 @@ export default function Goods() {
     //   console.log("### API request query:", newQuery);
       try {
         const { products, totalProducts } = await getListProductPanigation(newQuery) || {};
-        console.log("### API response products:", products);
-        console.log("### API response totalProducts:", totalProducts);
+        // console.log("### API response products:", products);
+        // console.log("### API response totalProducts:", totalProducts);
         setProducts(products);
         setTotalPage(Math.ceil(totalProducts / pagination.size));
       } catch (error) {

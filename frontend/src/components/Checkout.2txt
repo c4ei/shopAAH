@@ -1,13 +1,15 @@
 // /shop.c4ei.net/frontend/src/components/Checkout.js
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; // Link 컴포넌트를 import합니다.
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-import axios from "axios";
+import queryString from "query-string";
+import { checkoutProduct, sendMailCheckout } from "../services/API/checkoutApi";
 import "../css/checkout.css";
+import { createHistoryUser } from "../services/API/historyApi";
 import io from "socket.io-client";
-import { clearCart } from "../redux/cartSlice";
+import { clearCart } from "../redux/cartSlice"; // clearCart 액션 가져오기
 const socket = io("https://shop.c4ei.net");
 
 export default function Checkout() {
@@ -43,71 +45,48 @@ export default function Checkout() {
         .matches(/^[0-9]+$/, "Number phone is invalid")
         .min(10)
         .max(11),
-      address: Yup.string()
+        address: Yup.string()
         .required("Required")
         .matches(
           "^[/0-9a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
           "ẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-          "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣0-9\\s,()\\-]+$",
+          "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣0-9\\s,()\\-]+$", // - 추가
           "Address is invalid"
         )
         .max(100),
-    }),
+      }),
     onSubmit: async (values) => {
-      try {
-        setLoad(true);
+      const paramsHistory = {
+        idUser: currentUser.id,
+        phone: values.phone,
+        address: values.address,
+        fullname: values.fullName,
+        total: cartTotalPrice,
+      };
 
-        const paramsHistory = {
-          idUser: currentUser.id,
-          phone: values.phone,
-          address: values.address,
-          fullname: values.fullName,
-          total: cartTotalPrice,
-        };
+      const detailsData = carts.map((item) => ({
+        productId: item.product.id,
+        purchasePrice: item.product.price,
+        quantity: item.quantity,
+      }));
 
-        const detailsData = carts.map((item) => ({
-          productId: item.product.id,
-          purchasePrice: item.product.price,
-          quantity: item.quantity,
-        }));
+      await createHistoryUser(dispatch, paramsHistory, detailsData);
 
-        // Create history
-        await axios.post(
-          "https://shop.c4ei.net/api/history",
-          {
-            paramsHistory,
-            detailsData,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${currentUser.token}`,
-            },
-          }
-        );
+      // send data to server
+      socket.emit("send_order", currentUser.id);
 
-        // Send data to server
-        socket.emit("send_order", currentUser.id);
+      setLoad(true); // 로딩 상태를 설정합니다.
+      await sendMailCheckout(dispatch, values, currentUser.token);
+      setLoad(false); // 로딩 상태를 해제합니다.
 
-        // Send mail checkout
-        await axios.post(
-          "https://shop.c4ei.net/api/sendMailCheckout",
-          values,
-          {
-            headers: {
-              Authorization: `Bearer ${currentUser.token}`,
-            },
-          }
-        );
+      // 장바구니 비우기
+      dispatch(clearCart());
 
-        // Clear cart
-        dispatch(clearCart());
-
+      setLoad(!load);
+      setTimeout(() => {
         setLoad(false);
-        setSuccess(true);
-      } catch (error) {
-        console.error("Error during checkout process:", error);
-        setLoad(false);
-      }
+        setSuccess(!success);
+      }, 4000);
     },
   });
 
@@ -137,7 +116,10 @@ export default function Checkout() {
                 <form onSubmit={formik.handleSubmit}>
                   <div className="row">
                     <div className="col-lg-12 form-group m-0">
-                      <label className="text-small text-uppercase" htmlFor="Fullname">
+                      <label
+                        className="text-small text-uppercase"
+                        htmlFor="Fullname"
+                      >
                         Full Name:
                       </label>
                       <input
@@ -154,7 +136,10 @@ export default function Checkout() {
                       </p>
                     </div>
                     <div className="col-lg-12 form-group m-0">
-                      <label className="text-small text-uppercase" htmlFor="Email">
+                      <label
+                        className="text-small text-uppercase"
+                        htmlFor="Email"
+                      >
                         Email:{" "}
                       </label>
                       <input
@@ -171,7 +156,10 @@ export default function Checkout() {
                       </p>
                     </div>
                     <div className="col-lg-12 form-group m-0">
-                      <label className="text-small text-uppercase" htmlFor="Phone">
+                      <label
+                        className="text-small text-uppercase"
+                        htmlFor="Phone"
+                      >
                         Phone Number:{" "}
                       </label>
                       <input
@@ -188,8 +176,11 @@ export default function Checkout() {
                       </p>
                     </div>
                     <div className="col-lg-12 form-group m-0">
-                      <label className="text-small text-uppercase" htmlFor="Address">
-                        Address: <Link to="/manage" className="btn btn-secondary ml-3">주소 설정 하러 가기</Link>{" "}
+                      <label
+                        className="text-small text-uppercase"
+                        htmlFor="Address"
+                      >
+                        Address: <Link to="/manage" className="btn btn-secondary ml-3">주소 설정 하러 가기</Link> {" "}
                       </label>
                       <input
                         className="form-control form-control-lg"
@@ -242,9 +233,7 @@ export default function Checkout() {
                         <span>₩{cartTotalPrice}</span>
                       </li>
                     </ul>
-                    <h5 className="text-uppercase mb-4">
-                      입금하실 계좌정보 : 카카오뱅크 3333-27-5746222 예금주:씨포이아이(C4EI)
-                    </h5>
+                    <h5 className="text-uppercase mb-4">입금하실 계좌정보 : 카카오뱅크 3333-27-5746222 예금주:씨포이아이(C4EI)</h5>
                   </div>
                 </div>
               </div>

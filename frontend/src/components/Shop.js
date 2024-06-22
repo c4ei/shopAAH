@@ -38,14 +38,14 @@ export default function Shop() {
 
       const query = queryString.stringify(params);
       const newQuery = "?" + query;
-      console.log("### API request params:", params);
-      console.log("### API request query:", newQuery);
+      // console.log("### API request params:", params);
+      // console.log("### API request query:", newQuery);
       try {
         const { products, totalProducts } = await getListProductPanigation(dispatch, newQuery) || {};
-        console.log("### API response products:", products);
-        console.log("### API response totalProducts:", totalProducts);
+        // console.log("### API response products:", products);
+        // console.log("### API response totalProducts:", totalProducts);
         setTotalPage(Math.ceil(totalProducts / pagination.size));
-        console.log("### Total pages set to:", Math.ceil(totalProducts / pagination.size));
+        // console.log("### Total pages set to:", Math.ceil(totalProducts / pagination.size));
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -82,7 +82,7 @@ export default function Shop() {
 
   const handleChangePage = (e, value) => {
     e.preventDefault();
-    console.log("### handleChangePage called with value:", value);
+    // console.log("### handleChangePage called with value:", value);
     window.scrollTo(0, 0);
     setPage(value);
     setPagination((prev) => ({
@@ -92,7 +92,7 @@ export default function Shop() {
   };
 
   const handleCategory = (value) => {
-    console.log("### handleCategory called with value:", value);
+    // console.log("### handleCategory called with value:", value);
     setPage(1);
     setPagination((prev) => ({
       ...prev,
@@ -102,7 +102,7 @@ export default function Shop() {
   };
 
   const handleSearch = (value) => {
-    console.log("### handleSearch called with value:", value);
+    // console.log("### handleSearch called with value:", value);
     setPagination((prev) => ({
       ...prev,
       search: value,
@@ -111,17 +111,17 @@ export default function Shop() {
   };
 
   const handleSort = (value) => {
-    console.log("### handleSort called with value:", value);
+    // console.log("### handleSort called with value:", value);
     setSort(value);
   };
 
   useEffect(() => {
-    console.log('Shop.js - productPanigation:', productPanigation);
-    console.log('Shop.js - sort:', sort);
-    console.log('Shop.js - isFetching:', isFetching);
-    console.log('Shop.js - error:', error);
-    console.log('Shop.js - totalPage:', totalPage);
-    console.log('Shop.js - current page:', page);
+    // console.log('Shop.js - productPanigation:', productPanigation);
+    // console.log('Shop.js - sort:', sort);
+    // console.log('Shop.js - isFetching:', isFetching);
+    // console.log('Shop.js - error:', error);
+    // console.log('Shop.js - totalPage:', totalPage);
+    // console.log('Shop.js - current page:', page);
   }, [productPanigation, sort, isFetching, error, totalPage, page]);
 
   if (isFetching) {

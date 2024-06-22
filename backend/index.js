@@ -38,10 +38,6 @@ sequelize
     console.log("Unable to connect to the database", err);
   });
 
-// (async () => {
-//   await sequelize.sync();
-// })();
-
 io.on("connection", (socket) => {
   socket.on("send_message", (data) => {
     const dataNew = {
@@ -61,7 +57,7 @@ io.on("connection", (socket) => {
 });
 
 // ###################### subscribe ######################
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -75,17 +71,18 @@ const pool = mysql.createPool({
   database: process.env.DB_DATABASE
 });
 
-pool.getConnection((err, connection) => {
-  if (err) {
+(async () => {
+  try {
+    const connection = await pool.getConnection();
+    console.log('MySQL에 성공적으로 연결되었습니다.');
+    connection.release();
+  } catch (err) {
     console.error('MySQL 연결 오류:', err);
-    return;
   }
-  console.log('MySQL에 성공적으로 연결되었습니다.');
-  connection.release();
-});
+})();
 
 // 이메일 주소를 저장하는 라우트
-app.post('/subscribe', (req, res) => {
+app.post('/subscribe', async (req, res) => {
   const email = req.body.email;
 
   if (!email) {
@@ -94,36 +91,37 @@ app.post('/subscribe', (req, res) => {
 
   const query = 'INSERT INTO subscribers (email) VALUES (?)';
 
-  pool.query(query, [email], (err, result) => {
-    if (err) {
-      if (err.code === 'ER_DUP_ENTRY') {
-        return res.status(400).send('이미 가입된 이메일 주소입니다.');
-      }
-      console.error('데이터베이스 오류:', err);
-      return res.status(500).send('서버 오류가 발생했습니다.');
-    }
+  try {
+    await pool.query(query, [email]);
     res.status(200).send('구독해 주셔서 감사합니다!');
-  });
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.status(400).send('이미 가입된 이메일 주소입니다.');
+    }
+    console.error('데이터베이스 오류:', err);
+    res.status(500).send('서버 오류가 발생했습니다.');
+  }
 });
 // ###################### subscribe ######################
 
 // ###################### address ######################
-app.post('/saveUserInfo', (req, res) => {
+app.post('/saveUserInfo', async (req, res) => {
   const { id, email, phone, address1, address2, postcode } = req.body;
-  
+
   const query = `UPDATE Users SET email = ?, phone = ?, address1 = ?, address2 = ?, postcode = ? WHERE id = ?`;
 
-  pool.query(query, [email, phone, address1, address2, postcode, id], (err, result) => {
-    if (err) {
-      return res.status(500).send("정보를 저장하는 동안 오류가 발생했습니다.");
-    }
+  try {
+    await pool.query(query, [email, phone, address1, address2, postcode, id]);
     res.send("정보가 성공적으로 저장되었습니다.");
-  });
+  } catch (err) {
+    console.error("정보를 저장하는 동안 오류가 발생했습니다.", err);
+    res.status(500).send("정보를 저장하는 동안 오류가 발생했습니다.");
+  }
 });
 // ###################### address ######################
 
 // ###################### Product ######################
-app.post('/saveProduct', (req, res) => {
+app.post('/saveProduct', async (req, res) => {
   const {
     id, good_name, description, price, img1, img2, img3, img4, category, 
     originalPrice, promotionPercent, ORG_ITEM, GDS_PRICE_ORG, 
@@ -137,22 +135,22 @@ app.post('/saveProduct', (req, res) => {
     GDS_AAH_PRICE = ?, GDS_STOCK = ? 
     WHERE id = ?`;
 
-  pool.query(query, [
-    good_name, description, price, img1, img2, img3, img4, category, 
-    originalPrice, promotionPercent, ORG_ITEM, GDS_PRICE_ORG, 
-    GDS_AAH_PRICE, GDS_STOCK, id
-  ], (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).send('제품 정보를 저장하는 동안 오류가 발생했습니다.');
-    }
+  try {
+    await pool.query(query, [
+      good_name, description, price, img1, img2, img3, img4, category, 
+      originalPrice, promotionPercent, ORG_ITEM, GDS_PRICE_ORG, 
+      GDS_AAH_PRICE, GDS_STOCK, id
+    ]);
     res.send('제품 정보가 DB에 성공적으로 저장되었습니다.\n페이지를 새로 고침 하셔야 반영확인 됩니다.');
-  });
+  } catch (err) {
+    console.error('제품 정보를 저장하는 동안 오류가 발생했습니다.', err);
+    res.status(500).send('제품 정보를 저장하는 동안 오류가 발생했습니다.');
+  }
 });
 // ###################### Product ######################
 
 // ###################### Goods ######################
-app.get('/api/products', (req, res) => {
+app.get('/api/products', async (req, res) => {
   const { page = 1, size = 9, search = '', category = '' } = req.query;
   const offset = (page - 1) * size;
 
@@ -177,46 +175,38 @@ app.get('/api/products', (req, res) => {
   query += ' LIMIT ? OFFSET ?';
   queryParams.push(parseInt(size), offset);
 
-  pool.query(query, queryParams, (err, results) => {
-    if (err) {
-      console.error('상품 조회 오류:', err);
-      return res.status(500).send('서버 오류가 발생했습니다.');
-    }
-
-    pool.query(countQuery, queryParams.slice(0, queryParams.length - 2), (err, countResults) => {
-      if (err) {
-        console.error('상품 수 조회 오류:', err);
-        return res.status(500).send('서버 오류가 발생했습니다.');
-      }
-
-      const totalProducts = countResults[0].total;
-      res.status(200).json({ products: results, totalProducts });
-    });
-  });
+  try {
+    const [results] = await pool.query(query, queryParams);
+    const [countResults] = await pool.query(countQuery, queryParams.slice(0, queryParams.length - 2));
+    const totalProducts = countResults[0].total;
+    res.status(200).json({ products: results, totalProducts });
+  } catch (err) {
+    console.error('상품 조회 오류:', err);
+    res.status(500).send('서버 오류가 발생했습니다.');
+  }
 });
 // ###################### Goods ######################
 
 // ###################### 친구, 포인트 ######################
 // 친구 목록 가져오기
-app.get('/api/friends/:userId', (req, res) => {
+app.get('/api/friends/:userId', async (req, res) => {
   const { userId } = req.params;
   const query = `
     SELECT id, email 
     FROM Users 
     WHERE referrer_id = ?
   `;
-  pool.query(query, [userId], (error, results) => {
-    if (error) {
-      console.error("친구 목록을 가져오는 동안 오류가 발생했습니다:", error);
-      res.status(500).send("서버 오류가 발생했습니다.");
-      return;
-    }
+  try {
+    const [results] = await pool.query(query, [userId]);
     res.json(results);
-  });
+  } catch (error) {
+    console.error("친구 목록을 가져오는 동안 오류가 발생했습니다:", error);
+    res.status(500).send("서버 오류가 발생했습니다.");
+  }
 });
 
 // 포인트 및 적립금액 가져오기
-app.get('/api/rewards/:userId', (req, res) => {
+app.get('/api/rewards/:userId', async (req, res) => {
   const { userId } = req.params;
   const userQuery = `
     SELECT reward_points 
@@ -232,31 +222,244 @@ app.get('/api/rewards/:userId', (req, res) => {
     WHERE U.referrer_id = ?
   `;
   
-  pool.query(userQuery, [userId], (error, userResults) => {
-    if (error) {
-      console.error("포인트를 가져오는 동안 오류가 발생했습니다:", error);
-      res.status(500).send("서버 오류가 발생했습니다.");
-      return;
-    }
+  try {
+    const [userResults] = await pool.query(userQuery, [userId]);
+    const [rewardsResults] = await pool.query(rewardsQuery, [userId]);
     
-    pool.query(rewardsQuery, [userId], (error, rewardsResults) => {
-      if (error) {
-        console.error("적립금액을 가져오는 동안 오류가 발생했습니다:", error);
-        res.status(500).send("서버 오류가 발생했습니다.");
-        return;
-      }
-      
-      const reward_points = userResults[0]?.reward_points || 0;
-      const total_rewards = rewardsResults[0]?.total_rewards || 0;
-      
-      res.json({
-        reward_points,
-        total_rewards
-      });
+    const reward_points = userResults[0]?.reward_points || 0;
+    const total_rewards = rewardsResults[0]?.total_rewards || 0;
+    
+    res.json({
+      reward_points,
+      total_rewards
     });
-  });
+  } catch (error) {
+    console.error("포인트 및 적립금액을 가져오는 동안 오류가 발생했습니다:", error);
+    res.status(500).send("서버 오류가 발생했습니다.");
+  }
 });
 // ###################### 친구, 포인트 ######################
+
+// ###################### cart, history, 이메일 ######################
+
+app.post("/api/cart", loginchk, async (req, res) => {
+  const { idProduct, productCount } = req.query;
+  const user = req.user;
+
+  try {
+    const productQuery = "SELECT * FROM Products WHERE id = ?";
+    const [productResult] = await pool.query(productQuery, [idProduct]);
+    const product = productResult[0];
+
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    const cartQuery = `INSERT INTO Cart (idUser, idProduct, nameProduct, priceProduct, count, img)
+                       VALUES (?, ?, ?, ?, ?, ?)`;
+    await pool.query(cartQuery, [
+      user.id,
+      idProduct,
+      product.good_name,
+      product.price,
+      productCount,
+      product.img1,
+    ]);
+
+    res.status(200).send("Cart item added successfully");
+  } catch (err) {
+    console.error("Error adding to cart:", err);
+    res.status(500).send("Error adding to cart");
+  }
+});
+
+const getCartByUser = async (idUser) => {
+  try {
+    const cartQuery = "SELECT * FROM Cart WHERE idUser = ?";
+    const [cartResult] = await pool.query(cartQuery, [idUser]);
+    return cartResult;
+  } catch (err) {
+    console.error("Error fetching cart:", err);
+    throw err;
+  }
+};
+
+const addToCart = async (product) => {
+  try {
+    const cartQuery = `INSERT INTO Cart (idUser, idProduct, nameProduct, priceProduct, count, img)
+                       VALUES (?, ?, ?, ?, ?, ?)`;
+    await pool.query(cartQuery, [
+      product.idUser,
+      product.idProduct,
+      product.nameProduct,
+      product.priceProduct,
+      product.count,
+      product.img,
+    ]);
+    return true;
+  } catch (err) {
+    console.error("Error adding to cart:", err);
+    throw err;
+  }
+};
+
+// 주문 생성 엔드포인트 추가
+app.post("/api/history", loginchk, async (req, res) => {
+  const { paramsHistory, detailsData } = req.body;
+  const user = req.user;
+
+  const historyData = {
+    idUser: user.id,
+    phone: paramsHistory.phone,
+    address: paramsHistory.address,
+    fullname: paramsHistory.fullname,
+    total: paramsHistory.total,
+    status: paramsHistory.status,
+    delivery: paramsHistory.delivery,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    memo: paramsHistory.memo
+  };
+
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    const historyQuery = `
+      INSERT INTO Histories (idUser, phone, address, fullname, total, status, delivery, createdAt, updatedAt, memo) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const historyParams = [
+      historyData.idUser, historyData.phone, historyData.address, historyData.fullname, 
+      historyData.total, historyData.status, historyData.delivery, historyData.createdAt, 
+      historyData.updatedAt, historyData.memo
+    ];
+    const [historyResult] = await connection.query(historyQuery, historyParams);
+    const historyId = historyResult.insertId;
+
+    const detailQuery = `
+      INSERT INTO HistoryDetails (historyId, productId, purchasePrice, quantity, createdAt, updatedAt) 
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    for (const detail of detailsData) {
+      const detailParams = [
+        historyId, detail.productId, detail.purchasePrice, detail.quantity, new Date(), new Date()
+      ];
+      await connection.query(detailQuery, detailParams);
+    }
+
+    await connection.commit();
+    res.status(200).send("History and details added successfully.");
+  } catch (error) {
+    await connection.rollback();
+    console.error('Error during transaction:', error);
+    res.status(500).send("Error creating history.");
+  } finally {
+    connection.release();
+  }
+});
+
+// ################## 이메일 ##################
+const { sendMail } = require("./mailer");
+const nodeMailer = require("nodemailer");
+
+const getHistory = async (userId) => {
+  const query = 'SELECT * FROM Histories WHERE idUser = ? ORDER BY createdAt DESC';
+  try {
+    const [results] = await pool.query(query, [userId]);
+    return results;
+  } catch (err) {
+    console.error('Error fetching history:', err);
+    throw err;
+  }
+};
+const getHistoryDetail = async (historyId) => {
+  const query = `
+    SELECT hd.*, p.good_name 
+    FROM HistoryDetails hd
+    JOIN Products p ON hd.productId = p.id
+    WHERE hd.historyId = ?
+  `;
+  try {
+    const [results] = await pool.query(query, [historyId]);
+    return results;
+  } catch (err) {
+    console.error('Error fetching history details:', err);
+    throw err;
+  }
+};
+
+app.post("/api/sendMailCheckout", loginchk, async (req, res) => {
+  const { fullName, email, phone, address } = req.body;
+  const user = req.user;
+  const subject = "AAH MALL";
+  
+  try {
+    const userHistory = await getHistory(user.id);
+    const recentHistory = userHistory.length > 0 ? userHistory[0] : null;
+    if (!recentHistory) {
+      return res.status(400).send({ message: "No history found for the user." });
+    }
+
+    const historyDetails = await getHistoryDetail(recentHistory.id);
+    const total = historyDetails.reduce((total, item) => {
+      return total + parseFloat(item.purchasePrice) * parseInt(item.quantity);
+    }, 0);
+
+    const htmlHead = `<table style="width:50%">
+      <tr style="border: 1px solid black;">
+        <th style="border: 1px solid black;">제품명</th>
+        <th style="border: 1px solid black;">가격</th>
+        <th style="border: 1px solid black;">수량</th>
+        <th style="border: 1px solid black;">구매금액</th>
+      </tr>`;
+
+    let htmlContent = "";
+
+    for (const detail of historyDetails) {
+      const productName = detail.good_name || "Unknown Product";
+      const price = detail.purchasePrice;
+      const count = detail.quantity;
+      const totalPrice = parseFloat(price) * parseInt(count);
+
+      htmlContent += `<tr>
+        <td style="border: 1px solid black; font-size: 1.2rem; text-align: center;">
+          ${productName}
+        </td>
+        <td style="border: 1px solid black; font-size: 1.2rem; text-align: center;">
+          ${price}₩
+        </td>
+        <td style="border: 1px solid black; font-size: 1.2rem; text-align: center;">
+          ${count}
+        </td>
+        <td style="border: 1px solid black; font-size: 1.2rem; text-align: center;">
+          ${totalPrice}₩
+        </td>
+      </tr>`;
+    }
+
+    const htmlResult = `
+      <h1>안녕하세요 ${fullName}님</h1>
+      <h3>Phone: ${phone}</h3>
+      <h3>Address: ${address}</h3>
+      <h3>입금하실 계좌정보 : 카카오뱅크 3333-27-5746222 예금주:씨포이아이(C4EI)</h3>
+      <h3>총 결제금액: ${total} ₩</h3>
+      ${htmlHead}
+      ${htmlContent}
+      </table>
+      <p>감사합니다!</p>
+    `;
+
+    const info = await sendMail(email, subject, htmlResult);
+    res.status(200).send({ sendEmail: nodeMailer.getTestMessageUrl(info) });
+  } catch (err) {
+    console.error("Error during email sending:", err);
+    res.status(500).send("Error during email sending");
+  }
+});
+
+// ###################### cart, history, 이메일 ######################
 
 const publicPathDirectory = path.join(__dirname, "public");
 app.use(express.static(publicPathDirectory));
@@ -266,6 +469,25 @@ app.get('/', function(req,resp){
 })
 
 const jwt = require("jsonwebtoken");
+function loginchk(req, res, next) {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      return res.status(401).send("No refresh token found, please login.");
+    }
+
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, (err, user) => {
+      if (err) {
+        return res.status(403).send("Token is not valid.");
+      }
+      req.user = user;
+      next();
+    });
+  } catch (err) {
+    return res.status(401).send("You're not authenticated" + err);
+  }
+};
+
 function isAdmin(req, res, next) {
   const refreshToken = req.cookies.refreshToken;
 
