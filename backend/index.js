@@ -1,4 +1,3 @@
-// /shop.c4ei.net/backend/index.js
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -57,7 +56,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_order", (data) => {
-    //처리 후 서버는 receive_order 키가 있는 소켓을 통해 클라이언트 관리자에게 이를 다시 보냅니다.
     socket.broadcast.emit("receive_order", data);
   });
 });
@@ -68,20 +66,22 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// MySQL 데이터베이스 연결 설정
-const db = mysql.createConnection({
+// MySQL 데이터베이스 연결 풀 설정
+const pool = mysql.createPool({
+  connectionLimit: 10,
   host: process.env.DB_HOST,
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE
 });
 
-db.connect(err => {
+pool.getConnection((err, connection) => {
   if (err) {
     console.error('MySQL 연결 오류:', err);
     return;
   }
   console.log('MySQL에 성공적으로 연결되었습니다.');
+  connection.release();
 });
 
 // 이메일 주소를 저장하는 라우트
@@ -94,10 +94,9 @@ app.post('/subscribe', (req, res) => {
 
   const query = 'INSERT INTO subscribers (email) VALUES (?)';
 
-  db.query(query, [email], (err, result) => {
+  pool.query(query, [email], (err, result) => {
     if (err) {
       if (err.code === 'ER_DUP_ENTRY') {
-        // 이미 존재하는 이메일의 경우
         return res.status(400).send('이미 가입된 이메일 주소입니다.');
       }
       console.error('데이터베이스 오류:', err);
@@ -112,9 +111,9 @@ app.post('/subscribe', (req, res) => {
 app.post('/saveUserInfo', (req, res) => {
   const { id, email, phone, address1, address2, postcode } = req.body;
   
-  const query = ` UPDATE Users SET  email = ?,  phone = ?,  address1 = ?,  address2 = ?,  postcode = ? WHERE id = ? `;
-  // console.log(phone + " : phone / " +id + " : id ");
-  db.query(query, [email, phone, address1, address2, postcode, id], (err, result) => {
+  const query = `UPDATE Users SET email = ?, phone = ?, address1 = ?, address2 = ?, postcode = ? WHERE id = ?`;
+
+  pool.query(query, [email, phone, address1, address2, postcode, id], (err, result) => {
     if (err) {
       return res.status(500).send("정보를 저장하는 동안 오류가 발생했습니다.");
     }
@@ -138,7 +137,7 @@ app.post('/saveProduct', (req, res) => {
     GDS_AAH_PRICE = ?, GDS_STOCK = ? 
     WHERE id = ?`;
 
-  db.query(query, [
+  pool.query(query, [
     good_name, description, price, img1, img2, img3, img4, category, 
     originalPrice, promotionPercent, ORG_ITEM, GDS_PRICE_ORG, 
     GDS_AAH_PRICE, GDS_STOCK, id
@@ -153,7 +152,6 @@ app.post('/saveProduct', (req, res) => {
 // ###################### Product ######################
 
 // ###################### Goods ######################
-// 상품 목록을 페이징하여 가져오는 API 엔드포인트
 app.get('/api/products', (req, res) => {
   const { page = 1, size = 9, search = '', category = '' } = req.query;
   const offset = (page - 1) * size;
@@ -179,25 +177,19 @@ app.get('/api/products', (req, res) => {
   query += ' LIMIT ? OFFSET ?';
   queryParams.push(parseInt(size), offset);
 
-  // console.log('### Constructed query:', query);
-  // console.log('### Query params:', queryParams);
-
-  db.query(query, queryParams, (err, results) => {
+  pool.query(query, queryParams, (err, results) => {
     if (err) {
       console.error('상품 조회 오류:', err);
       return res.status(500).send('서버 오류가 발생했습니다.');
     }
 
-    db.query(countQuery, queryParams.slice(0, queryParams.length - 2), (err, countResults) => {
+    pool.query(countQuery, queryParams.slice(0, queryParams.length - 2), (err, countResults) => {
       if (err) {
         console.error('상품 수 조회 오류:', err);
         return res.status(500).send('서버 오류가 발생했습니다.');
       }
 
       const totalProducts = countResults[0].total;
-      // console.log('### Query results:', results);
-      // console.log('### Total products:', totalProducts);
-
       res.status(200).json({ products: results, totalProducts });
     });
   });
@@ -208,7 +200,7 @@ const publicPathDirectory = path.join(__dirname, "public");
 app.use(express.static(publicPathDirectory));
 
 app.get('/', function(req,resp){
-  resp.sendFile( path.join(__dirname, 'public/index.html') )
+  resp.sendFile(path.join(__dirname, 'public/index.html'))
 })
 
 const jwt = require("jsonwebtoken");
@@ -219,25 +211,22 @@ function isAdmin(req, res, next) {
     return res.status(401).send("No refresh token found, please login.");
   }
 
-  // Continue with your logic, e.g., verifying the token
   jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, (err, user) => {
     if (err) {
       return res.status(403).send("Token is not valid.");
     }
 
-    // Set user information on req.user
     req.user = user;
 
-    const userIsAdmin = req.user && req.user.admin=="1";
+    const userIsAdmin = req.user && req.user.admin == "1";
     if (userIsAdmin) {
-      next(); // User is an admin, proceed to the next middleware/route handler
+      next();
     } else {
       res.status(403).send('Access denied. Only administrators can access this resource.');
     }
   });
 }
 
-// Restricted routes
 const adminRoutes = [
   '/admin',
   '/users',
@@ -252,11 +241,9 @@ adminRoutes.forEach(route => {
   });
 });
 
-//이 코드는 항상 가장 하단에 놓아야 잘됩니다. 
 app.get('*', function (req, resp) {
   resp.sendFile(path.join(__dirname, 'public/index.html'));
 });
-
 
 const PORT = process.env.PORT || 3021;
 
