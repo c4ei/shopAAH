@@ -9,7 +9,7 @@ import Goods from "../components/Goods"; // 새로 만든 Goods 컴포넌트
 import HistoryUser from "../components/User/HistoryUser";
 import Home from "../page/Home";
 import ManageShop from "../components/ManageShop";
-
+import MyFriend from "../components/MyFriend";
 
 const publicRoutes = [
   {
@@ -52,6 +52,11 @@ const publicRoutes = [
     path: "/manage",
     component: ManageShop,
   },
+  {
+    path: "/MyFriend",
+    component: MyFriend,
+  },
+  
 ];
 
 export default publicRoutes;

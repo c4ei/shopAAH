@@ -196,6 +196,68 @@ app.get('/api/products', (req, res) => {
 });
 // ###################### Goods ######################
 
+// ###################### 친구, 포인트 ######################
+// 친구 목록 가져오기
+app.get('/api/friends/:userId', (req, res) => {
+  const { userId } = req.params;
+  const query = `
+    SELECT id, email 
+    FROM Users 
+    WHERE referrer_id = ?
+  `;
+  pool.query(query, [userId], (error, results) => {
+    if (error) {
+      console.error("친구 목록을 가져오는 동안 오류가 발생했습니다:", error);
+      res.status(500).send("서버 오류가 발생했습니다.");
+      return;
+    }
+    res.json(results);
+  });
+});
+
+// 포인트 및 적립금액 가져오기
+app.get('/api/rewards/:userId', (req, res) => {
+  const { userId } = req.params;
+  const userQuery = `
+    SELECT reward_points 
+    FROM Users 
+    WHERE id = ?
+  `;
+  const rewardsQuery = `
+    SELECT 
+      SUM(CAST(H.total AS DECIMAL(10,2))) AS total_purchase,
+      SUM(CAST(H.total AS DECIMAL(10,2))) * 0.01 AS total_rewards
+    FROM Histories H
+    JOIN Users U ON U.id = H.idUser
+    WHERE U.referrer_id = ?
+  `;
+  
+  pool.query(userQuery, [userId], (error, userResults) => {
+    if (error) {
+      console.error("포인트를 가져오는 동안 오류가 발생했습니다:", error);
+      res.status(500).send("서버 오류가 발생했습니다.");
+      return;
+    }
+    
+    pool.query(rewardsQuery, [userId], (error, rewardsResults) => {
+      if (error) {
+        console.error("적립금액을 가져오는 동안 오류가 발생했습니다:", error);
+        res.status(500).send("서버 오류가 발생했습니다.");
+        return;
+      }
+      
+      const reward_points = userResults[0]?.reward_points || 0;
+      const total_rewards = rewardsResults[0]?.total_rewards || 0;
+      
+      res.json({
+        reward_points,
+        total_rewards
+      });
+    });
+  });
+});
+// ###################### 친구, 포인트 ######################
+
 const publicPathDirectory = path.join(__dirname, "public");
 app.use(express.static(publicPathDirectory));
 
