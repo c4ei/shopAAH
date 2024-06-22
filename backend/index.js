@@ -68,7 +68,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // MySQL 데이터베이스 연결 풀 설정
 const pool = mysql.createPool({
-  connectionLimit: 10,
+  connectionLimit: 50,
   host: process.env.DB_HOST,
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
