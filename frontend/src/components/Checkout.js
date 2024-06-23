@@ -28,9 +28,7 @@ export default function Checkout() {
     validationSchema: Yup.object({
       fullName: Yup.string()
         .matches(
-          "^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
-            "ẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-            "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣0-9\\s]+$",
+          "^[a-zA-Z가-힣0-9\\s]+$",
           "Fullname is invalid"
         )
         .min(2)
@@ -47,19 +45,22 @@ export default function Checkout() {
       address: Yup.string()
         .required("Required")
         .matches(
-          "^[/0-9a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
-          "ẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
-          "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ가-힣0-9\\s,()\\-]+$",
+          "^[/0-9a-zA-Z가-힣0-9\\s,()\\-]+$",
           "Address is invalid"
         )
         .max(100),
       memo: Yup.string() // 메모 필드 검증 규칙 추가
         .max(200, "Memo cannot be longer than 200 characters")
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values, { setErrors }) => {
+      if (values.address.includes('null null null') || values.address.length < 15) {
+        setErrors({ address: '주소를 설정해 주세요.' });
+        return;
+      }
+    
       try {
         setLoad(true);
-
+    
         const paramsHistory = {
           idUser: currentUser.id,
           phone: values.phone,
@@ -68,13 +69,13 @@ export default function Checkout() {
           total: cartTotalPrice,
           memo: values.memo // 메모 필드 추가
         };
-
+    
         const detailsData = carts.map((item) => ({
           productId: item.product.id,
           purchasePrice: item.product.price,
           quantity: item.quantity,
         }));
-
+    
         // Create history
         await axios.post(
           "https://shop.c4ei.net/api/history",
@@ -88,10 +89,10 @@ export default function Checkout() {
             },
           }
         );
-
+    
         // Send data to server
         socket.emit("send_order", currentUser.id);
-
+    
         // Send mail checkout
         await axios.post(
           "https://shop.c4ei.net/api/sendMailCheckout",
@@ -102,10 +103,10 @@ export default function Checkout() {
             },
           }
         );
-
+    
         // Clear cart
         dispatch(clearCart());
-
+    
         setLoad(false);
         setSuccess(true);
       } catch (error) {
@@ -195,6 +196,9 @@ export default function Checkout() {
                       <label className="text-small text-uppercase" htmlFor="Address">
                         Address: <Link to="/manage" className="btn btn-secondary ml-3">주소 설정 하러 가기</Link>{" "}
                       </label>
+                      {/* {formik.values.address === 'null null null' && (
+                        <p className="text-2xs text-danger">주소를 설정해 주세요.</p>
+                      )} */}
                       <input
                         className="form-control form-control-lg"
                         type="text"
@@ -232,7 +236,7 @@ export default function Checkout() {
                         type="submit"
                         disabled={formik.isSubmitting} // 버튼 비활성화 설정
                       >
-                        Place order
+                        주문하기(Place order)
                       </button>
                     </div>
                   </div>

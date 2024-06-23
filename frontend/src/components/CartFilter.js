@@ -65,27 +65,27 @@ export default function CartFilter() {
           <tr className="text-center">
             <th className="border-0" scope="col">
               {" "}
-              <strong className="text-small text-uppercase">Image</strong>
+              <strong className="text-small text-uppercase">이미지</strong>
             </th>
             <th className="border-0" scope="col">
               {" "}
-              <strong className="text-small text-uppercase">Product</strong>
+              <strong className="text-small text-uppercase">상품</strong>
             </th>
             <th className="border-0" scope="col">
               {" "}
-              <strong className="text-small text-uppercase">Price</strong>
+              <strong className="text-small text-uppercase">가격</strong>
             </th>
             <th className="border-0" scope="col">
               {" "}
-              <strong className="text-small text-uppercase">Quantity</strong>
+              <strong className="text-small text-uppercase">수량</strong>
             </th>
             <th className="border-0" scope="col">
               {" "}
-              <strong className="text-small text-uppercase">Total</strong>
+              <strong className="text-small text-uppercase">합계</strong>
             </th>
             <th className="border-0" scope="col">
               {" "}
-              <strong className="text-small text-uppercase">Remove</strong>
+              <strong className="text-small text-uppercase">삭제</strong>
             </th>
           </tr>
         </thead>

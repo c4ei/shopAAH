@@ -117,7 +117,7 @@ export default function DetailProduct() {
 
   const handleAddToCart = (product, quantity) => {
     dispatch(incrementItem({ product, quantity }));
-    toast.success("Add Product To Cart Success", {
+    toast.success("장바구니에 물품이 담겼습니다.\n우측 최상단의 cart를 클릭 하시면 주문 가능 합니다.", {
       position: "bottom-left",
       autoClose: 5000,
       hideProgressBar: false,
@@ -271,7 +271,7 @@ export default function DetailProduct() {
             <div className="col-sm-5 pr-sm-0">
               <div className="border d-flex align-items-center justify-content-between px-3 bg-white border-black">
                 <span className="small text-uppercase text-gray mr-4 no-select">
-                  Quantity
+                  수량(Qty)
                 </span>
                 <div className="quantity">
                   <button
@@ -311,7 +311,7 @@ export default function DetailProduct() {
                   className="btn btn-dark btn-md btn-block d-flex align-items-center justify-content-center px-0 text-white ml-2"
                   onClick={() => handleAddToCart(product, quantity)}
                 >
-                  Add to cart
+                  장바구니에 담기(Add to cart)
                 </button>
               )}
             </div>
