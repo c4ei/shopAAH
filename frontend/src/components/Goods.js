@@ -7,6 +7,7 @@ import queryString from "query-string";
 import { getListProductPanigation } from "../services/API/goodsApi";
 import Search from "./Search";
 import Category from "./Category";
+import "./Goods.css"; // 커스텀 CSS 파일 임포트
 
 export default function Goods() {
   const location = useLocation();
@@ -145,7 +146,7 @@ export default function Goods() {
                   <div>No products available</div>
                 )}
               </div>
-              <div className="d-flex justify-content-center mt-5">
+              <div className="pagination-container d-flex justify-content-center mt-5">
                 <Pagination
                   count={totalPage}
                   page={page}
