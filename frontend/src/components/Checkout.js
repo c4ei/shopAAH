@@ -23,6 +23,7 @@ export default function Checkout() {
       email: currentUser ? currentUser.email : "",
       phone: currentUser ? currentUser.phone : "",
       address: currentUser ? `${currentUser.address1} ${currentUser.address2} ${currentUser.postcode}` : "",
+      memo: "" // 메모 필드 추가
     },
     validationSchema: Yup.object({
       fullName: Yup.string()
@@ -52,6 +53,8 @@ export default function Checkout() {
           "Address is invalid"
         )
         .max(100),
+      memo: Yup.string() // 메모 필드 검증 규칙 추가
+        .max(200, "Memo cannot be longer than 200 characters")
     }),
     onSubmit: async (values) => {
       try {
@@ -63,6 +66,7 @@ export default function Checkout() {
           address: values.address,
           fullname: values.fullName,
           total: cartTotalPrice,
+          memo: values.memo // 메모 필드 추가
         };
 
         const detailsData = carts.map((item) => ({
@@ -202,6 +206,23 @@ export default function Checkout() {
                       />
                       <p className="text-2xs text-danger">
                         {formik.errors.address}
+                      </p>
+                    </div>
+                    <div className="col-lg-12 form-group m-0">
+                      <label className="text-small text-uppercase" htmlFor="memo">
+                        Memo:
+                      </label>
+                      <input
+                        className="form-control form-control-lg"
+                        type="text"
+                        placeholder="Enter Memo Here (optional)"
+                        id="memo"
+                        name="memo"
+                        value={formik.values.memo}
+                        onChange={formik.handleChange}
+                      />
+                      <p className="text-2xs text-danger">
+                        {formik.errors.memo}
                       </p>
                     </div>
                     <div className="col-lg-12 form-group m-0">

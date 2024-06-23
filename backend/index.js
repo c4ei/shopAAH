@@ -314,8 +314,8 @@ app.post("/api/history", loginchk, async (req, res) => {
     address: paramsHistory.address,
     fullname: paramsHistory.fullname,
     total: paramsHistory.total,
-    status: paramsHistory.status,
-    delivery: paramsHistory.delivery,
+    status: paramsHistory.status || 0, // 기본값 0
+    delivery: paramsHistory.delivery || 0, // 기본값 0
     createdAt: new Date(),
     updatedAt: new Date(),
     memo: paramsHistory.memo
