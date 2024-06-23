@@ -461,6 +461,64 @@ app.post("/api/sendMailCheckout", loginchk, async (req, res) => {
 
 // ###################### cart, history, 이메일 ######################
 
+// ###################### History 조회 및 업데이트 ######################
+// 히스토리 조회 엔드포인트
+app.get('/api/history', isAdmin, async (req, res) => {
+  const { search = '', page = 1 } = req.query;
+  const limit = 15;
+  const offset = (page - 1) * limit;
+
+  const searchPattern = `%${search}%`;
+
+  const dataQuery = `
+    SELECT * FROM Histories
+    WHERE fullname LIKE ? OR address LIKE ? OR phone LIKE ? OR memo LIKE ?
+    ORDER BY id DESC
+    LIMIT ? OFFSET ?
+  `;
+  
+  const countQuery = `
+    SELECT COUNT(*) as total FROM Histories
+    WHERE fullname LIKE ? OR address LIKE ? OR phone LIKE ? OR memo LIKE ?
+  `;
+
+  try {
+    const [dataResults] = await pool.query(dataQuery, [searchPattern, searchPattern, searchPattern, searchPattern, limit, offset]);
+    const [[{ total }]] = await pool.query(countQuery, [searchPattern, searchPattern, searchPattern, searchPattern]);
+
+    res.json({
+      data: dataResults,
+      total,
+    });
+  } catch (err) {
+    console.error('히스토리 조회 오류:', err);
+    res.status(500).send('서버 오류가 발생했습니다.');
+  }
+});
+
+
+// 히스토리 업데이트 엔드포인트
+app.put('/api/history/:id', isAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { delivery, status } = req.body;
+
+  const query = `
+    UPDATE Histories 
+    SET delivery = ?, status = ?, updatedAt = ? 
+    WHERE id = ?
+  `;
+  try {
+    await pool.query(query, [delivery, status, new Date(), id]);
+    res.status(200).send('히스토리가 성공적으로 업데이트되었습니다.');
+  } catch (err) {
+    console.error('히스토리 업데이트 오류:', err);
+    res.status(500).send('서버 오류가 발생했습니다.');
+  }
+});
+// ###################### History 조회 및 업데이트 ######################
+
+
+
 const publicPathDirectory = path.join(__dirname, "public");
 app.use(express.static(publicPathDirectory));
 
