@@ -1,13 +1,14 @@
 // /shop.c4ei.net/frontend/src/components/Checkout.js
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import axios from "axios";
-import "../css/checkout.css";
 import io from "socket.io-client";
 import { clearCart } from "../redux/cartSlice";
+import "../css/checkout.css";
+
 const socket = io("https://shop.c4ei.net");
 
 export default function Checkout() {
@@ -16,6 +17,30 @@ export default function Checkout() {
   const dispatch = useDispatch();
   const [success, setSuccess] = useState(false);
   const [load, setLoad] = useState(false);
+  const [dbAddress, setDbAddress] = useState({ address1: "", address2: "", postcode: "" });
+
+  useEffect(() => {
+    if (currentUser) {
+      axios.get(`/api/userInfo/${currentUser.id}`)
+        .then(response => {
+          const dbAddress = response.data[0];
+          setDbAddress(dbAddress);
+          compareAddresses(dbAddress);
+        })
+        .catch(error => {
+          console.error('DB에서 주소를 가져오는 동안 오류가 발생했습니다:', error);
+        });
+    }
+  }, [currentUser]);
+
+  const compareAddresses = (dbAddress) => {
+    const currentAddress = `${currentUser.address1} ${currentUser.address2} ${currentUser.postcode}`;
+    const dbFullAddress = `${dbAddress.address1} ${dbAddress.address2} ${dbAddress.postcode}`;
+
+    if (currentAddress !== dbFullAddress) {
+      formik.setFieldValue('address', dbFullAddress);
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -23,14 +48,11 @@ export default function Checkout() {
       email: currentUser ? currentUser.email : "",
       phone: currentUser ? currentUser.phone : "",
       address: currentUser ? `${currentUser.address1} ${currentUser.address2} ${currentUser.postcode}` : "",
-      memo: "" // 메모 필드 추가
+      memo: ""
     },
     validationSchema: Yup.object({
       fullName: Yup.string()
-        .matches(
-          "^[a-zA-Z가-힣0-9\\s]+$",
-          "Fullname is invalid"
-        )
+        .matches("^[a-zA-Z가-힣0-9\\s]+$", "Fullname is invalid")
         .min(2)
         .max(20),
       email: Yup.string()
@@ -44,12 +66,9 @@ export default function Checkout() {
         .max(11),
       address: Yup.string()
         .required("Required")
-        .matches(
-          "^[/0-9a-zA-Z가-힣0-9\\s,()\\-]+$",
-          "Address is invalid"
-        )
+        .matches("^[/0-9a-zA-Z가-힣0-9\\s,()\\-]+$", "Address is invalid")
         .max(100),
-      memo: Yup.string() // 메모 필드 검증 규칙 추가
+      memo: Yup.string()
         .max(200, "Memo cannot be longer than 200 characters")
     }),
     onSubmit: async (values, { setErrors }) => {
@@ -57,25 +76,25 @@ export default function Checkout() {
         setErrors({ address: '주소를 설정해 주세요.' });
         return;
       }
-    
+
       try {
         setLoad(true);
-    
+
         const paramsHistory = {
           idUser: currentUser.id,
           phone: values.phone,
           address: values.address,
           fullname: values.fullName,
           total: cartTotalPrice,
-          memo: values.memo // 메모 필드 추가
+          memo: values.memo
         };
-    
+
         const detailsData = carts.map((item) => ({
           productId: item.product.id,
           purchasePrice: item.product.price,
           quantity: item.quantity,
         }));
-    
+
         // Create history
         await axios.post(
           "https://shop.c4ei.net/api/history",
@@ -89,10 +108,10 @@ export default function Checkout() {
             },
           }
         );
-    
+
         // Send data to server
         socket.emit("send_order", currentUser.id);
-    
+
         // Send mail checkout
         await axios.post(
           "https://shop.c4ei.net/api/sendMailCheckout",
@@ -103,10 +122,10 @@ export default function Checkout() {
             },
           }
         );
-    
+
         // Clear cart
         dispatch(clearCart());
-    
+
         setLoad(false);
         setSuccess(true);
       } catch (error) {
@@ -143,7 +162,7 @@ export default function Checkout() {
                   <div className="row">
                     <div className="col-lg-12 form-group m-0">
                       <label className="text-small text-uppercase" htmlFor="Fullname">
-                        Full Name:
+                        받는분 성함:
                       </label>
                       <input
                         className="form-control form-control-lg"
@@ -177,7 +196,7 @@ export default function Checkout() {
                     </div>
                     <div className="col-lg-12 form-group m-0">
                       <label className="text-small text-uppercase" htmlFor="Phone">
-                        Phone Number:{" "}
+                        전화번호:{" "}
                       </label>
                       <input
                         className="form-control form-control-lg"
@@ -194,11 +213,8 @@ export default function Checkout() {
                     </div>
                     <div className="col-lg-12 form-group m-0">
                       <label className="text-small text-uppercase" htmlFor="Address">
-                        Address: <Link to="/manage" className="btn btn-secondary ml-3">주소 설정 하러 가기</Link>{" "}
+                        주소: <Link to="/manage" className="btn btn-secondary ml-3">주소 설정 하러 가기</Link>{" "}
                       </label>
-                      {/* {formik.values.address === 'null null null' && (
-                        <p className="text-2xs text-danger">주소를 설정해 주세요.</p>
-                      )} */}
                       <input
                         className="form-control form-control-lg"
                         type="text"
@@ -214,7 +230,7 @@ export default function Checkout() {
                     </div>
                     <div className="col-lg-12 form-group m-0">
                       <label className="text-small text-uppercase" htmlFor="memo">
-                        Memo:
+                        메모:
                       </label>
                       <input
                         className="form-control form-control-lg"
@@ -280,8 +296,8 @@ export default function Checkout() {
         {success && (
           <section className="py-5">
             <div className="p-5">
-              <h1>You Have Successfully Ordered!</h1>
-              <p style={{ fontSize: "1.2rem" }}>Please Check Your Email.</p>
+              <h1>성공적으로 주문되었습니다!(You Have Successfully Ordered!)</h1>
+              <p style={{ fontSize: "1.2rem" }}>이메일을 확인하세요.(Please Check Your Email.)</p>
             </div>
           </section>
         )}

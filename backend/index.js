@@ -118,6 +118,23 @@ app.post('/saveUserInfo', async (req, res) => {
     res.status(500).send("정보를 저장하는 동안 오류가 발생했습니다.");
   }
 });
+
+app.get('/api/userInfo/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const query = `
+    SELECT address1, address2, postcode 
+    FROM Users 
+    WHERE id = ?
+  `;
+  try {
+    const [results] = await pool.query(query, [userId]);
+    res.json(results);
+  } catch (error) {
+    console.error("친구 주소를 가져오는 동안 오류가 발생했습니다:", error);
+    res.status(500).send("서버 오류가 발생했습니다.");
+  }
+});
+
 // ###################### address ######################
 
 // ###################### Product ######################
