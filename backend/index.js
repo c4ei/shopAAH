@@ -203,6 +203,19 @@ app.get('/api/products', async (req, res) => {
     res.status(500).send('서버 오류가 발생했습니다.');
   }
 });
+
+app.get('/api/bigsaleprod', async (req, res) => {
+  let query = 'SELECT * FROM Products WHERE promotionPercent >= 5 LIMIT 10';
+  const queryParams = [];
+
+  try {
+    const [results] = await pool.query(query, queryParams);
+    res.status(200).json({ products: results });
+  } catch (err) {
+    console.error('BIGSALE 상품 조회 오류:', err);
+    res.status(500).send('서버 오류가 발생했습니다.');
+  }
+});
 // ###################### Goods ######################
 
 // ###################### 친구, 포인트 ######################

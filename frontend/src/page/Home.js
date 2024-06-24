@@ -1,12 +1,14 @@
 // /shop.c4ei.net/frontend/src/page/Home.js
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getListProduct10 } from "../services/API/productApi";
 import ProductBigSale from "../components/ProductBigSale";
 import ProductForYou from "../components/ProductForYou";
+import axios from 'axios';
 
 export default function Home() {
+  const [bigSaleProducts, setBigSaleProducts] = useState([]);
   const listProduct = useSelector((state) => state.product.products.allProduct);
   const isFetching = useSelector((state) => state.product.products.isFetching);
   const error = useSelector((state) => state.product.products.error);
@@ -14,13 +16,18 @@ export default function Home() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const fetchBigSaleProducts = async () => {
+      try {
+        const response = await axios.get('/api/bigsaleprod');
+        setBigSaleProducts(response.data.products);
+      } catch (error) {
+        console.error('Error fetching big sale products:', error);
+      }
+    };
+
+    fetchBigSaleProducts();
     getListProduct10(dispatch);
   }, [dispatch]);
-
-  // 디버깅 로그
-  // console.log('listProduct:', listProduct);
-  // console.log('isFetching:', isFetching);
-  // console.log('error:', error);
 
   if (isFetching) {
     return <div>Loading...</div>;
@@ -32,9 +39,9 @@ export default function Home() {
 
   const limitedListProduct = Array.isArray(listProduct) ? listProduct.slice(0, 12) : [];
 
-  const productDiscount = Array.isArray(listProduct) ? listProduct.filter((product) => {
-    return product.promotionPercent >= 20;
-  }) : [];
+  // const productDiscount = Array.isArray(listProduct) ? listProduct.filter((product) => {
+  //   return product.promotionPercent >= 5;
+  // }) : [];
 
   
   const partnerImages = [
@@ -177,10 +184,10 @@ export default function Home() {
               <p className="small text-muted small text-uppercase mb-1">
                 Made the hard way
               </p>
-              <h2 className="h5 text-uppercase mb-4">Big Discount Products</h2>
+              <h2 className="h5 text-uppercase mb-4">Discount Products</h2>
             </div>
             <div className="row d-block">
-              <ProductBigSale productDiscount={productDiscount} />
+              <ProductBigSale productDiscount={bigSaleProducts} />
             </div>
           </div>
 

@@ -1,3 +1,4 @@
+// /shop.c4ei.net/frontend/src/components/ProductBigSale.js
 import React, { Fragment } from "react";
 import { NavLink } from "react-router-dom";
 import Slider from "react-slick";
@@ -58,16 +59,6 @@ export default function ProductBigSale({ productDiscount }) {
                         SHOW
                       </NavLink>
                     </li>
-                    {/* 모달을 사용하려면 href가 있어야 표시되고 모달을 열려면 data-toggle="modal" 속성이 있어야 합니다.*/}
-                    {/* <li className="list-inline-item mr-0">
-                      <a
-                        className="btn btn-sm btn-outline-dark"
-                        href={`#product_${item.id}`}
-                        data-toggle="modal"
-                      >
-                        <i className="fas fa-expand"></i>
-                      </a>
-                    </li> */}
                   </ul>
                 </div>
               </div>
