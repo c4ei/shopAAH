@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Pagination from "@mui/material/Pagination";
+import Box from "@mui/material/Box";
 import queryString from "query-string";
 import { getListProductPanigation } from "../services/API/goodsApi";
 import Search from "./Search";
@@ -147,13 +148,23 @@ export default function Goods() {
                 )}
               </div>
               <div className="pagination-container d-flex justify-content-center mt-5">
-                <Pagination
-                  count={totalPage}
-                  page={page}
-                  onChange={handleChangePage}
-                  color="primary"
-                  size="large"
-                />
+                <Box sx={{ overflowX: 'auto', display: 'flex', justifyContent: 'center', padding: '0 10px', whiteSpace: 'nowrap' }}>
+                  <Pagination
+                    count={totalPage}
+                    page={page}
+                    onChange={handleChangePage}
+                    color="primary"
+                    size="large"
+                    sx={{
+                      '& .MuiPaginationItem-root': { minWidth: '32px', margin: '0 2px', flexShrink: 0 },
+                      '& .MuiPaginationItem-previousNext': { margin: '0 4px' },
+                      '@media (max-width: 412px)': {
+                        '& .MuiPaginationItem-root': { minWidth: '28px', margin: '0 1px' },
+                        '& .MuiPaginationItem-previousNext': { margin: '0 2px' }
+                      }
+                    }}
+                  />
+                </Box>
               </div>
             </div>
           </div>

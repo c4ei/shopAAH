@@ -6,6 +6,7 @@
   justify-content: center;
   flex-wrap: nowrap; /* 한 줄에 유지 */
   overflow-x: auto; /* 필요 시 가로 스크롤 */
+  padding: 0 10px; /* 여유 공간 확보 */
 }
 
 .pagination-container .MuiPaginationItem-root {
@@ -21,6 +22,8 @@
 @media (max-width: 412px) {
   .pagination-container {
     justify-content: flex-start; /* 작은 화면에서 왼쪽 정렬 */
+    flex-wrap: nowrap; /* 한 줄에 유지 */
+    padding: 0 5px; /* 여유 공간 확보 */
   }
 
   .pagination-container .MuiPaginationItem-root {
@@ -32,3 +35,4 @@
     margin: 0 4px; /* 작은 화면에서 여백 조정 */
   }
 }
+
