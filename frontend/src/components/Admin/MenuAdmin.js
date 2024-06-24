@@ -42,22 +42,17 @@ export default function MenuAdmin() {
               >
                 <li className="sidebar-item">
                   <a href="/users" className="sidebar-link">
-                    <span className="hide-menu">Datatables Users</span>
+                    <span className="hide-menu">배송관리</span>
                   </a>
                 </li>
                 <li className="sidebar-item">
                   <a href="/GoodsAdmin" className="sidebar-link">
-                    <span className="hide-menu">GoodsAdmin</span>
-                  </a>
-                </li>
-                <li className="sidebar-item">
-                  <a href="/products" className="sidebar-link">
-                    <span className="hide-menu">Datatables Products</span>
+                    <span className="hide-menu">상품관리</span>
                   </a>
                 </li>
                 <li className="sidebar-item">
                   <a href="/history" className="sidebar-link">
-                    <span className="hide-menu">Datatables History</span>
+                    <span className="hide-menu">배송관리</span>
                   </a>
                 </li>
               </ul>

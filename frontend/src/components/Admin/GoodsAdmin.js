@@ -1,5 +1,6 @@
 // /shop.c4ei.net/frontend/src/components/Admin/GoodsAdmin.js
 import React, { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import Pagination from "@mui/material/Pagination";
 import queryString from "query-string";
@@ -10,6 +11,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import add_styles from './GoodsAdmin.css';
 
 export default function GoodsAdmin() {
   const [page, setPage] = useState(1);
@@ -99,6 +101,47 @@ export default function GoodsAdmin() {
     window.open(url, '_blank');
   };
 
+  const handleCategoryClick = (category) => {
+    setPagination((prev) => ({
+      ...prev,
+      category: category,
+      page: 1, // 카테고리를 변경하면 항상 첫 페이지로 리셋
+    }));
+  };
+
+  const getCategoryName = (category) => {
+    switch (category) {
+      case "68":
+        return "건강";
+      case "76":
+        return "건강번들";
+      case "69":
+        return "가전";
+      case "70":
+        return "주방";
+      case "71":
+        return "생활";
+      case "72":
+        return "화장품";
+      case "73":
+        return "캐리어.잡화";
+      case "74":
+        return "캠핑";
+      case "75":
+        return "Watches & ACC";
+      case "81":
+        return "먹거리";
+      case "80":
+        return "전자담배";
+      case "78":
+        return "계절가전";
+      default:
+        return "Unknown category";
+    }
+  };
+
+  const categories = ["68", "76", "69", "70", "71", "72", "73", "74", "75", "81", "80", "78"];
+
   return (
     <div className="container">
       <div className="py-5 bg-light">
@@ -122,7 +165,20 @@ export default function GoodsAdmin() {
 
       <section className="py-5">
         <div className="container p-0">
-
+        <div>
+          <h2>카테고리 목록</h2>
+          
+          <a href="/GoodsAdmin">초기화</a>&nbsp;
+          {categories.map((category) => (
+              <Link to={`/GoodsAdmin?category=${category}`}
+                style={{ marginRight: '10px' }} 
+                onClick={() => handleCategoryClick(category)}
+                key={category}
+                >
+                {getCategoryName(category)}
+              </Link>
+          ))}
+        </div>
         <div className="row mb-3">
             <div className="col-md-8">
               <input
@@ -149,9 +205,9 @@ export default function GoodsAdmin() {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Name</th>
-                  <th>Price</th>
-                  <th>Image</th>
+                  <th>상품명</th>
+                  <th>가격</th>
+                  <th>이미지</th>
                   <th>Category</th>
                   <th>Edit</th>
                 </tr>
@@ -164,7 +220,7 @@ export default function GoodsAdmin() {
                         <a href="#" onClick={() => handleUpdateClickID(item)}>{item.id}</a>
                       </td>
                       
-                      <td>{item.good_name}</td>
+                      <td className={add_styles.wrapText}>{item.good_name}</td>
                       <td>₩{item.price}</td>
                       <td>
                         <img
