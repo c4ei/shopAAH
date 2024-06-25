@@ -1,3 +1,4 @@
+// /frontend/src/components/ChatGPTChat.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import './ChatGPTChat.css';
@@ -10,16 +11,16 @@ const ChatGPTChat = () => {
     if (input.trim() === '') return;
 
     const userMessage = { sender: 'user', text: input };
-    setMessages([...messages, userMessage]);
+    setMessages((prevMessages) => [userMessage, ...prevMessages]);
 
     try {
       const response = await axios.post('/api/chat', { prompt: input });
       const botMessage = { sender: 'bot', text: response.data.generatedText };
-      setMessages((prevMessages) => [...prevMessages, userMessage, botMessage]);
+      setMessages((prevMessages) => [botMessage, ...prevMessages]);
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = { sender: 'bot', text: 'Failed to get a response. Please try again.' };
-      setMessages((prevMessages) => [...prevMessages, userMessage, errorMessage]);
+      setMessages((prevMessages) => [errorMessage, userMessage, ...prevMessages]);
     }
 
     setInput('');
