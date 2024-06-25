@@ -9,6 +9,7 @@ const path = require("path");
 const { createMess } = require("./services/messenger");
 const app = express();
 const httpServer = require("http").createServer(app);
+const axios = require('axios');
 
 dotenv.config();
 
@@ -548,14 +549,28 @@ app.put('/api/history/:id', isAdmin, async (req, res) => {
 });
 // ###################### History 조회 및 업데이트 ######################
 
+// ###################### chatGPT ######################
+app.post('/api/chat', async (req, res) => {
+  const { prompt } = req.body;
+
+  if (!prompt) {
+    return res.status(400).json({ error: 'Prompt is required' });
+  }
+
+  try {
+    const response = await axios.post('http://localhost:5000/api/generate', { prompt });
+    res.json({ generatedText: response.data.generatedText });
+  } catch (error) {
+    console.error('Error generating text:', error);
+    res.status(500).json({ error: 'Failed to generate text' });
+  }
+});
+// ###################### chatGPT ######################
 
 
 const publicPathDirectory = path.join(__dirname, "public");
 app.use(express.static(publicPathDirectory));
 
-app.get('/', function(req,resp){
-  resp.sendFile(path.join(__dirname, 'public/index.html'))
-})
 
 const jwt = require("jsonwebtoken");
 function loginchk(req, res, next) {
@@ -608,14 +623,18 @@ const adminRoutes = [
   '/chat'
 ];
 
+app.get('/', function(req,resp){
+  resp.sendFile(path.join(__dirname, '../frontend/build/index.html'))
+})
+
 adminRoutes.forEach(route => {
   app.get(route, isAdmin, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
+    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
   });
 });
 
 app.get('*', function (req, resp) {
-  resp.sendFile(path.join(__dirname, 'public/index.html'));
+  resp.sendFile(path.join(__dirname, '../frontend/build/index.html'));
 });
 
 const PORT = process.env.PORT || 3021;

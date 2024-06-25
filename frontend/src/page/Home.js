@@ -6,6 +6,7 @@ import { getListProduct10 } from "../services/API/productApi";
 import ProductBigSale from "../components/ProductBigSale";
 import ProductForYou from "../components/ProductForYou";
 import axios from 'axios';
+import ChatGPTChat from '../components/ChatGPTChat'; // 추가된 라인
 
 export default function Home() {
   const [bigSaleProducts, setBigSaleProducts] = useState([]);
@@ -126,7 +127,6 @@ export default function Home() {
               <h2 className="h5 text-uppercase mb-4">Product Spend For You</h2>
             </div>
             <div className="row d-block">
-              {/* <ProductForYou listProduct={listProduct} /> */}
               <ProductForYou listProduct={limitedListProduct} />
             </div>
           </div>
@@ -188,6 +188,19 @@ export default function Home() {
             </div>
             <div className="row d-block">
               <ProductBigSale productDiscount={bigSaleProducts} />
+            </div>
+          </div>
+
+          {/* ChatGPT Chat Section */}
+          <div className="py-5" id="section_chatgpt">
+            <div className="text-center">
+              <p className="small text-muted small text-uppercase mb-1">
+                Chat with GPT-2
+              </p>
+              <h2 className="h5 text-uppercase mb-4">AI Chat Assistant</h2>
+            </div>
+            <div className="row d-block">
+              <ChatGPTChat />
             </div>
           </div>
 
