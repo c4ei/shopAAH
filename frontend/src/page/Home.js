@@ -196,7 +196,7 @@ export default function Home() {
           <div className="py-5" id="section_chatgpt">
             <div className="text-center">
               <p className="small text-muted small text-uppercase mb-1">
-                Chat with GPT-2
+                Chat with GPT
               </p>
               <h2 className="h5 text-uppercase mb-4">AI Chat Assistant</h2>
             </div>

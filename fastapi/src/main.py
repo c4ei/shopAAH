@@ -7,8 +7,9 @@ import uvicorn
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000",
-    "localhost:3000"
+    "https://shop.c4ei.net",
+    "http://localhost:3021",
+    "localhost:3021"
 ]
 
 app.add_middleware(
@@ -22,9 +23,10 @@ app.add_middleware(
 client = Client()
 
 @app.get("/api/v1/chatbot")
-async def chatbot(message: str = "Hello"):
+async def chatbot(message: str = "안녕하세요"):
     chat_completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
+        # model="gpt-4",
         messages=[{"role": "user", "content": message}], 
         stream=True
     )
