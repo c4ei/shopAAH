@@ -550,20 +550,23 @@ app.put('/api/history/:id', isAdmin, async (req, res) => {
 });
 // ###################### History 조회 및 업데이트 ######################
 
+
 // ###################### chatGPT ######################
 app.post('/api/chat', async (req, res) => {
   const { prompt } = req.body;
-
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required' });
   }
-
   try {
-    const response = await axios.post('http://localhost:5000/api/generate', { prompt });
-    res.json({ generatedText: response.data.generatedText });
+      console.log(`Sending message: ${prompt}`);
+      const response = await axios.get('http://localhost:5000/api/v1/chatbot', {
+          params: { message: prompt }
+      });
+      const chatbotResponse = response.data.response;
+      console.log("chatbotResponse : "+chatbotResponse);
+      res.json({ generatedText: chatbotResponse });
   } catch (error) {
-    console.error('Error generating text:', error);
-    res.status(500).json({ error: 'Failed to generate text' });
+      console.error(error);
   }
 });
 // ###################### chatGPT ######################

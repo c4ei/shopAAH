@@ -13,6 +13,7 @@
     "express": "^4.18.1",
     "google-auth-library": "^9.11.0",
     "gpt4free": "^0.0.1",
+    "http-proxy-middleware": "^3.0.0",
     "install": "^0.13.0",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^3.10.0",
