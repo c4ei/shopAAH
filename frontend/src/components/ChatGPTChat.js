@@ -1,5 +1,4 @@
 // /frontend/src/components/ChatGPTChat.js
-// /frontend/src/components/ChatGPTChat.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ChatGPTChat.css';
@@ -52,7 +51,8 @@ const ChatGPTChat = () => {
       <div className="chat-window">
         {messages.map((message, index) => (
           <div key={index} className={`message ${message.sender}`}>
-            {message.text}
+            {/* HTML을 안전하게 렌더링하기 위해 dangerouslySetInnerHTML 사용 */}
+            {message.sender === 'bot' ? <div dangerouslySetInnerHTML={{ __html: message.text }} /> : <div>{message.text}</div>}
           </div>
         ))}
         {loading && <div className="loading-indicator">Loading...</div>}

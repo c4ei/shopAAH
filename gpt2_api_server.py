@@ -5,6 +5,7 @@
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 from flask import Flask, request, jsonify
 import sys
+import re
 
 # 표준 출력 인코딩 설정
 sys.stdout.reconfigure(encoding='utf-8')
@@ -38,50 +39,50 @@ def generate_text():
             return jsonify({'error': 'Prompt is required'}), 400
 
         # 입력값 인코딩
-        # inputs = tokenizer(prompt, return_tensors='pt', padding=True, truncation=True, max_length=512)
         inputs = tokenizer(prompt, return_tensors='pt', padding=True, truncation=True, max_length=100)
         
-        # 디버깅을 위한 입력값 출력
-        print(f"Input IDs: {inputs['input_ids']}")
-        print(f"Attention Mask: {inputs['attention_mask']}")
-
         # 텍스트 생성
-        generated_text = None
-        while not generated_text or '홍삼' not in generated_text:
-            outputs = model.generate(
-                input_ids=inputs['input_ids'],
-                attention_mask=inputs['attention_mask'],
-                max_length=200,  # 출력 텍스트의 최대 길이
-                # min_length=50,  # 출력 텍스트의 최소 길이
-                num_return_sequences=1,
-                pad_token_id=tokenizer.eos_token_id,
-                no_repeat_ngram_size=2,
-                early_stopping=True,
-                do_sample=True,  # 샘플링 설정
-                temperature=0.7,
-                top_k=50,
-                top_p=0.9,
-                num_beams=5  # 빔 서치 설정
-            )
+        outputs = model.generate(
+            input_ids=inputs['input_ids'],
+            attention_mask=inputs['attention_mask'],
+            max_length=200,
+            num_return_sequences=1,
+            pad_token_id=tokenizer.eos_token_id,
+            no_repeat_ngram_size=2,
+            early_stopping=True,
+            do_sample=True,
+            temperature=0.7,
+            top_k=50,
+            top_p=0.9,
+            num_beams=5
+        )
 
-            generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+        # 텍스트에서 상품 링크를 HTML 링크로 변환하는 함수
+        def replace_links_with_html(text):
+            pattern = r'https://shop\.c4ei\.net/detail/\d+'
+            return re.sub(pattern, lambda x: f'<a href="{x.group(0)}">상품바로가기</a>', text)
+
+        generated_text_with_links = replace_links_with_html(generated_text)
 
         # 잘린 텍스트가 있으면 잘라내기
-        if generated_text[-1] not in ['.', '!', '?']:
-            generated_text = generated_text.rsplit(' ', 1)[0] + '...'
+        if generated_text_with_links[-1] not in ['.', '!', '?']:
+            generated_text_with_links = generated_text_with_links.rsplit(' ', 1)[0] + '...'
 
         # 디버깅을 위해 콘솔에 출력
         print(f"Prompt: {prompt}")
-        print(f"Generated Text: {generated_text}")
+        print(f"Generated Text with Links: {generated_text_with_links}")
 
         # 첫 번째 문장만 선택하여 반환
-        generated_text_first_sentence = generated_text.split('.')[0] + '.'
+        generated_text_first_sentence = generated_text_with_links.split('.')[0] + '.'
 
         return jsonify({'generatedText': generated_text_first_sentence})
 
     except Exception as e:
         print(f"텍스트 생성 중 에러 발생: {e}")
         return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
