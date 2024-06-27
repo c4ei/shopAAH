@@ -68,6 +68,9 @@ const ChatGPTChat = () => {
         />
         <button onClick={handleSend} className="send-button">Send</button>
       </div>
+      <div>
+        <a href='/Goods'>상품 직접 검색하러가기(AI보다 아주빠름!!!)클릭</a>
+      </div>
     </div>
   );
 };
