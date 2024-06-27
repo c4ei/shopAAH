@@ -61,7 +61,7 @@ export default function Search({ handleSearch }) {
         <input
           className="form-control form-control-lg"
           type="text"
-          placeholder="Enter Search Here!"
+          placeholder="검색 할 내용을 입력 하세요."
           onChange={onChangeText}
           value={search}
         />

@@ -68,7 +68,7 @@ export default function ManageShop() {
   const saveNewPhone = () => {
     if (/^\d{11}$/.test(newPhone)) {
       const updatedUserInfo = { ...userInfo, phone: newPhone };
-      axios.post('/saveUserInfo', updatedUserInfo)
+      axios.post('/api/saveUserInfo', updatedUserInfo)
         .then(response => {
           alert("전화번호가 성공적으로 저장되었습니다.");
           setUserInfo(updatedUserInfo);
@@ -86,7 +86,7 @@ export default function ManageShop() {
 
   // 정보 저장 함수
   const saveUserInfo = () => {
-    axios.post('/saveUserInfo', userInfo)
+    axios.post('/api/saveUserInfo', userInfo)
       .then(response => {
         alert("정보가 성공적으로 저장되었습니다.");
         // 정보 저장 후 업데이트된 주소 반영

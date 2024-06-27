@@ -140,7 +140,7 @@ export default function ProductsAdmin() {
   };
 
   const handleSave = () => {
-    axios.post('/saveProduct', currentProduct)
+    axios.post('/api/saveProduct', currentProduct)
       .then(response => {
         alert(response.data);
         setShowModal(false);
@@ -188,7 +188,7 @@ export default function ProductsAdmin() {
                   <input
                     className="form-control w-25"
                     type="text"
-                    placeholder="Enter Search!"
+                    placeholder="검색 할 내용을 입력 하세요."
                   />
                   <div>
                     <button

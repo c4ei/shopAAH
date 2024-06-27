@@ -53,7 +53,7 @@ export default function UsersAdmin() {
                 <input
                   className="form-control w-25"
                   type="text"
-                  placeholder="Enter Search!"
+                  placeholder="검색 할 내용을 입력 하세요."
                 />
                 <br />
                 <div className="table-responsive">

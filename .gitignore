@@ -1,6 +1,7 @@
 /ai
 /model_cache
 /__pycache__
+*.pyc
 /backend/public
 /frontend/build
 /backend/config/config.json

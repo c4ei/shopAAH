@@ -82,7 +82,7 @@ export default function GoodsAdmin() {
 
   const handleSave = async () => {
     try {
-      const response = await axios.post('/saveProduct', currentProduct);
+      const response = await axios.post('/api/saveProduct', currentProduct);
       alert(response.data);
       setShowModal(false);
       // 제품 정보를 다시 가져와서 갱신

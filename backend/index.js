@@ -58,7 +58,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// ###################### subscribe ######################
+// ###################### mysql ######################
 const mysql = require('mysql2/promise');
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -82,9 +82,10 @@ const pool = mysql.createPool({
     console.error('MySQL 연결 오류:', err);
   }
 })();
+// ###################### mysql ######################
 
-// 이메일 주소를 저장하는 라우트
-app.post('/subscribe', async (req, res) => {
+// ###################### subscribe ######################
+app.post('/api/subscribe', async (req, res) => {
   const email = req.body.email;
 
   if (!email) {
@@ -107,7 +108,7 @@ app.post('/subscribe', async (req, res) => {
 // ###################### subscribe ######################
 
 // ###################### address ######################
-app.post('/saveUserInfo', async (req, res) => {
+app.post('/api/saveUserInfo', async (req, res) => {
   const { id, email, phone, address1, address2, postcode } = req.body;
 
   const query = `UPDATE Users SET email = ?, phone = ?, address1 = ?, address2 = ?, postcode = ? WHERE id = ?`;
@@ -140,7 +141,7 @@ app.get('/api/userInfo/:userId', async (req, res) => {
 // ###################### address ######################
 
 // ###################### Product ######################
-app.post('/saveProduct', async (req, res) => {
+app.post('/api/saveProduct', async (req, res) => {
   const {
     id, good_name, description, price, img1, img2, img3, img4, category, 
     originalPrice, promotionPercent, ORG_ITEM, GDS_PRICE_ORG, 

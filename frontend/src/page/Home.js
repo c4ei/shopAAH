@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getListProduct10 } from "../services/API/productApi";
 import ProductBigSale from "../components/ProductBigSale";
 import ProductForYou from "../components/ProductForYou";
+import Subscr from "../components/Subscr";
 import axios from 'axios';
 import ChatGPTChat from '../components/ChatGPTChat'; // 추가된 라인
 
@@ -217,6 +218,11 @@ export default function Home() {
               ))}
             </div>
           </div>
+
+          <div className="py-5" id="section_partners">
+          <Subscr />
+          </div>
+
         </div>
       </div>
     </div>
