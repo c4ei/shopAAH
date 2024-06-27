@@ -3,13 +3,11 @@ module.exports = {
   apps: [
     {
       name: 'shopGTP5000',
-      script: '/home/dev/.local/bin/gunicorn',  // gunicorn의 절대 경로
-      args: '-w 1 -b 0.0.0.0:5000 gpt2_api_server:app',
-      // args: '-w 2 -b 0.0.0.0:5000 gpt2_api_server:app',
-      // args: '-w 4 -b 0.0.0.0:5000 gpt2_api_server:app',
-      interpreter: '/usr/bin/python3',  // python3 경로
+      script: '/home/dev/.local/bin/gunicorn',
+      args: '-w 1 -b 0.0.0.0:5000 gpt2_api_server:app',  // 워커 수를 필요에 따라 조정하십시오.
+      interpreter: '/usr/bin/python3',
       env: {
-        PATH: process.env.PATH,  // 환경 변수 설정
+        PATH: process.env.PATH,
       },
     },
   ],
