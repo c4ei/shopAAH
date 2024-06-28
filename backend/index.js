@@ -40,7 +40,13 @@ sequelize
     console.log("Unable to connect to the database", err);
   });
 
+let activeUsers = 0;
+
 io.on("connection", (socket) => {
+  // 새로운 클라이언트가 접속했을 때 activeUsers 증가 및 업데이트
+  activeUsers++;
+  io.emit('activeUsers', activeUsers);
+
   socket.on("send_message", (data) => {
     const dataNew = {
       senderId: data.receiverId,
@@ -55,6 +61,12 @@ io.on("connection", (socket) => {
 
   socket.on("send_order", (data) => {
     socket.broadcast.emit("receive_order", data);
+  });
+
+  // 클라이언트가 연결을 끊었을 때 activeUsers 감소 및 업데이트
+  socket.on('disconnect', () => {
+    activeUsers--;
+    io.emit('activeUsers', activeUsers);
   });
 });
 

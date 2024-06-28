@@ -1,6 +1,21 @@
-import React from "react";
+// /shop.c4ei.net/frontend/src/Layouts/Footer.js
+import React, { useEffect, useState } from "react";
+import io from "socket.io-client";
+const socket = io("https://shop.c4ei.net");
 
 export default function Footer() {
+  const [activeUsers, setActiveUsers] = useState(0);
+
+  useEffect(() => {
+    socket.on('activeUsers', (count) => {
+      setActiveUsers(count);
+    });
+
+    return () => {
+      socket.off('activeUsers');
+    };
+  }, []);
+
   return (
     <footer className="bg-dark text-white">
       <div className="container py-4">
@@ -92,7 +107,9 @@ export default function Footer() {
                 <br/>
                 <a className="text-white reset-anchor" href="https://c4ei.net" target="_blank">
                   c4ei.net</a> - C4EI, AAH Coin 정보
-                <br/><br/>
+                <br/>
+                현재접속자 : {activeUsers} 명
+                <br/>
                 &copy; 2024 All rights reserved.
               </p>
             </div>
