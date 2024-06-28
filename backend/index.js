@@ -550,29 +550,6 @@ app.put('/api/history/:id', isAdmin, async (req, res) => {
 });
 // ###################### History 조회 및 업데이트 ######################
 
-// // yarn add gpt4free-client
-// const GptClient = require('gpt4free-client');
-// async function generateText(msg) {
-//   // Create chat completion
-//   const completion = await GptClient.create({
-//       model: 'gpt-4-0613',
-//       temperature: 0.7,
-//       // systemPrompt: 'You are powerful AI assistant\n',
-//       systemPrompt: '한국어로해줘\n',
-//       messages: [
-//           {
-//               role: 'system',
-//               messages: msg
-//           }
-//       ]
-//   });
-  
-//   // Get generated text
-//   const generatedText = await completion;
-  
-//   // console.log(generatedText);
-//   return generatedText;
-// }
 // ###################### chatGPT ######################
 const { G4F } = require("g4f");
 app.post('/api/chat', async (req, res) => {
@@ -589,36 +566,17 @@ app.post('/api/chat', async (req, res) => {
       ];
       // const chatbotResponse = await g4f.chatCompletion(messages).then(console.log);
       const chatbotResponse = await g4f.chatCompletion(messages);
+      // #### log start ####
+      const query = `insert into talkAI (ask , answer) values (? , ?) `;
+      try {
+        await pool.query(query, [prompt, chatbotResponse]);
+      } catch (err) {
+        console.error("AI LOG 저장하는 동안 오류가 발생했습니다.", err);
+      }
+      // #### log end ####
       res.json({ generatedText: chatbotResponse });
       // g4f.chatCompletion(messages).then(console.log);
-      
-      //3  gpt4free 모델 npm
-      // let _aiMsg = await generateText(prompt);
-      // res.json({ generatedText: _aiMsg });
-      // console.log(`Sending message: ${prompt}`);
-
-      //2  gpt4free 모델 
-      /*
-      const response = await axios.get('http://localhost:1337/v1/chat/completions', {
-        "model": "gpt-3.5-turbo-16k",
-        "stream": false,
-        "messages": [
-            {"role": "assistant", "content": prompt}
-        ]
-      });
-      const chatbotResponse = response.data.response;
-      res.json({ generatedText: chatbotResponse });
-      */
-      //1  작동하나 중국어 모델 
-      /*
-      const response = await axios.get('http://localhost:5000/api/v1/chatbot', {
-        params: { message: prompt }
-      });
-      // const chatbotResponse = response.data.response;
-      console.log("chatbotResponse : "+chatbotResponse);
-      res.json({ generatedText: chatbotResponse });
-      */
-      
+    
   } catch (error) {
       console.error(error);
   }
