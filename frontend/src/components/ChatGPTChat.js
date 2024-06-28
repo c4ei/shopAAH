@@ -10,10 +10,10 @@ const ChatGPTChat = () => {
 
   useEffect(() => {
     const initialMessage = "안녕하세요 아래 창에 제품 관련 문의를 해주세요";
-    typeMessage(initialMessage);
+    typeMessage(initialMessage, true);
   }, []);
 
-  const typeMessage = (message) => {
+  const typeMessage = (message, instant = false) => {
     let index = 0;
     const interval = setInterval(() => {
       if (index < message.length) {
@@ -21,8 +21,9 @@ const ChatGPTChat = () => {
         index++;
       } else {
         clearInterval(interval);
+        if (!instant) setLoading(false);
       }
-    }, 100);
+    }, instant ? 0 : Math.min(5000 / message.length, 100));
   };
 
   const handleSend = async () => {
@@ -35,13 +36,17 @@ const ChatGPTChat = () => {
 
     try {
       const response = await axios.post('/api/chat', { prompt: input });
-      const botMessage = { sender: 'bot', text: response.data.generatedText };
-      setMessages((prevMessages) => [botMessage, ...prevMessages]);
+      const botMessageFull = response.data.generatedText;
+      
+      // 전체 메시지 바로 출력
+      setMessages((prevMessages) => [{ sender: 'bot', text: botMessageFull }, ...prevMessages]);
+
+      // 타자 효과 적용
+      typeMessage(botMessageFull, false);
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = { sender: 'bot', text: 'Failed to get a response. Please try again.' };
       setMessages((prevMessages) => [errorMessage, ...prevMessages]);
-    } finally {
       setLoading(false);
     }
   };
@@ -51,7 +56,6 @@ const ChatGPTChat = () => {
       <div className="chat-window">
         {messages.map((message, index) => (
           <div key={index} className={`message ${message.sender}`}>
-            {/* HTML을 안전하게 렌더링하기 위해 dangerouslySetInnerHTML 사용 */}
             {message.sender === 'bot' ? <div dangerouslySetInnerHTML={{ __html: message.text }} /> : <div>{message.text}</div>}
           </div>
         ))}
@@ -62,14 +66,15 @@ const ChatGPTChat = () => {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-          placeholder="궁금하신 상품을 물어 보세요..."
+          onKeyDown={(e) => e.key === 'Enter' && !loading && handleSend()}
+          placeholder="궁금하신 내용을 물어 보세요..."
           className="chat-input"
+          disabled={loading}
         />
-        <button onClick={handleSend} className="send-button">Send</button>
+        <button onClick={handleSend} className="send-button" disabled={loading}>Send</button>
       </div>
       <div>
-        <a href='/Goods'>상품 직접 검색하러가기(AI보다 아주빠름!!!)클릭</a>
+        <a href='/Goods'>상품검색 하기</a>
       </div>
     </div>
   );

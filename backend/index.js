@@ -550,6 +550,7 @@ app.put('/api/history/:id', isAdmin, async (req, res) => {
 });
 // ###################### History 조회 및 업데이트 ######################
 
+
 // ###################### chatGPT ######################
 const { G4F } = require("g4f");
 app.post('/api/chat', async (req, res) => {
@@ -557,6 +558,7 @@ app.post('/api/chat', async (req, res) => {
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required' });
   }
+  let idUser=getUid(req);
   try {
       //4 yarn add g4f
       // https://github.com/c4ei/g4f-ts
@@ -567,9 +569,9 @@ app.post('/api/chat', async (req, res) => {
       // const chatbotResponse = await g4f.chatCompletion(messages).then(console.log);
       const chatbotResponse = await g4f.chatCompletion(messages);
       // #### log start ####
-      const query = `insert into talkAI (ask , answer) values (? , ?) `;
+      const query = `insert into talkAI (idUser, ask, answer) values (? , ? , ?) `;
       try {
-        await pool.query(query, [prompt, chatbotResponse]);
+        await pool.query(query, [idUser ,prompt, chatbotResponse]);
       } catch (err) {
         console.error("AI LOG 저장하는 동안 오류가 발생했습니다.", err);
       }
@@ -583,12 +585,30 @@ app.post('/api/chat', async (req, res) => {
 });
 // ###################### chatGPT ######################
 
-
 const publicPathDirectory = path.join(__dirname, "public");
 app.use(express.static(publicPathDirectory));
 
-
 const jwt = require("jsonwebtoken");
+function getUid(req) {
+  let loginID = 0;
+  try{
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      return loginID;
+    }
+  
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, (err, user) => {
+      if (err) {
+        return loginID;
+      }
+      loginID = user.id;
+    });
+  }catch(e){
+
+  }
+  return loginID;
+}
+
 function loginchk(req, res, next) {
   try {
     const refreshToken = req.cookies.refreshToken;
