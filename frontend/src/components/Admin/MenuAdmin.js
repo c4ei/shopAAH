@@ -42,7 +42,7 @@ export default function MenuAdmin() {
               >
                 <li className="sidebar-item">
                   <a href="/users" className="sidebar-link">
-                    <span className="hide-menu">배송관리</span>
+                    <span className="hide-menu">회원관리</span>
                   </a>
                 </li>
                 <li className="sidebar-item">

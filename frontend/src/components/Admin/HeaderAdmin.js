@@ -110,7 +110,7 @@ export default function HeaderAdmin() {
                 />
                 <span className="ml-2 d-none d-lg-inline-block">
                   <span>Hello,</span>{" "}
-                  <span className="text-dark">{user.fullname}</span>{" "}
+                  <span className="text-dark">{user ? user.fullname : "게스트"}</span>{" "}
                   <i data-feather="chevron-down" className="svg-icon"></i>
                 </span>
               </a>
