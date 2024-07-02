@@ -78,7 +78,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // MySQL 데이터베이스 연결 풀 설정
 const pool = mysql.createPool({
-  connectionLimit: 50,
+  connectionLimit: 20,
   host: process.env.DB_HOST,
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
@@ -565,36 +565,39 @@ app.put('/api/history/:id', isAdmin, async (req, res) => {
 
 // ###################### chatGPT ######################
 const { G4F } = require("g4f");
+
 app.post('/api/chat', async (req, res) => {
   const { prompt } = req.body;
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required' });
   }
-  let idUser=getUid(req);
+  let idUser = getUid(req);
   try {
-      //4 yarn add g4f
-      // https://github.com/c4ei/g4f-ts
-      const g4f = new G4F();
-      const messages = [
-          { role: "user", content: prompt}
-      ];
-      // const chatbotResponse = await g4f.chatCompletion(messages).then(console.log);
-      const chatbotResponse = await g4f.chatCompletion(messages);
-      // #### log start ####
-      const query = `insert into talkAI (idUser, ask, answer) values (? , ? , ?) `;
-      try {
-        await pool.query(query, [idUser ,prompt, chatbotResponse]);
-      } catch (err) {
-        console.error("AI LOG 저장하는 동안 오류가 발생했습니다.", err);
-      }
-      // #### log end ####
-      res.json({ generatedText: chatbotResponse });
-      // g4f.chatCompletion(messages).then(console.log);
-    
+    const g4f = new G4F();
+    let pre_ins_msg="1. 대답은 한국말을 우선으로 해야되. 2. 너는 shop.c4ei.net 의 상품 설명 및 사용자에게 물건을 판매 하게 유도 하는 봇이야. 3. shop.c4ei.net 는 AAH 코인으로 물건을 구매 할 수있는 특징이있어 AAH 코인 구매는 https://c4ex.net 에 서 가능해. 4. AAH코인은 c4ei.net 에서 만든 코인이고 1개당 1500원의 가치를 지니고 있어 코인관련 정보는 https://c4ei.net 에 있을 을 알려줘. 5. 사람들에게 친근한 말투를 써야되. 6. 주력으로 판배 하는 제품은 정관장 홍삼정화액 100g 1병이 ₩58000원이야 링크는 https://shop.c4ei.net/detail/61 이야. 7. 상품 검색은 https://shop.c4ei.net/Goods 에서 가능 해. 8. 셀트리온,동화약품,한미약품 등 30여개 이상의 대기업과 중소기업과도 파트너로 활동 하고있어 믿을 수 있다는 점을 강조 해줘."
+    const messages = [
+      { role: "system", content: pre_ins_msg },  // 시스템 메시지 추가
+      { role: "user", content: prompt }
+    ];
+
+    const chatbotResponse = await g4f.chatCompletion(messages);
+
+    // #### log start ####
+    const query = `insert into talkAI (idUser, ask, answer) values (? , ? , ?) `;
+    try {
+      await pool.query(query, [idUser, prompt, chatbotResponse]);
+    } catch (err) {
+      console.error("AI LOG 저장하는 동안 오류가 발생했습니다.", err);
+    }
+    // #### log end ####
+
+    res.json({ generatedText: chatbotResponse });
+
   } catch (error) {
-      console.error(error);
+    console.error(error);
   }
 });
+
 // ###################### chatGPT ######################
 
 const publicPathDirectory = path.join(__dirname, "public");
